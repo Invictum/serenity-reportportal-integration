@@ -1,0 +1,10 @@
+# IDE files
+.idea
+*.iml
+
+# Maven output
+target
+
+# OS files
+DS_Store
+.DS_Store
