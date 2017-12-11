@@ -3,7 +3,7 @@ package com.github.invictum.reportportal;
 import com.epam.ta.reportportal.ws.model.StartTestItemRQ;
 
 /**
- * Interface represents operations related to ReportPortal <-> Serenity interactions.
+ * Interface represents operations related to interactions between Serenity and ReportPortal.
  */
 public interface Handler {
 

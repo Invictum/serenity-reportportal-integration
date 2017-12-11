@@ -76,7 +76,7 @@ public class ReportPortalListener implements StepListener {
     /**
      * Declare that a step has failed after it has finished.
      *
-     * @param failure
+     * @param failure failure
      */
     public void lastStepFailed(StepFailure failure) {
     }
@@ -94,7 +94,7 @@ public class ReportPortalListener implements StepListener {
     /**
      * The step is marked as pending with a descriptive message.
      *
-     * @param message
+     * @param message message
      */
     public void stepPending(String message) {
     }
@@ -132,7 +132,7 @@ public class ReportPortalListener implements StepListener {
     /**
      * The current scenario is a data-driven scenario using test data from the specified table.
      *
-     * @param table
+     * @param table table
      */
     public void useExamplesFrom(DataTable table) {
     }
@@ -140,7 +140,7 @@ public class ReportPortalListener implements StepListener {
     /**
      * If multiple tables are used, this method will add any new rows to the test data
      *
-     * @param table
+     * @param table table
      */
     public void addNewExamplesFrom(DataTable table) {
     }
@@ -148,7 +148,7 @@ public class ReportPortalListener implements StepListener {
     /**
      * A new example has just started.
      *
-     * @param data
+     * @param data data
      */
     public void exampleStarted(Map<String, String> data) {
     }
