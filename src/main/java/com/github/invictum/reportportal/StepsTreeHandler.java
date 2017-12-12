@@ -43,7 +43,6 @@ public class StepsTreeHandler extends BasicHandler {
     @Override
     public void failStep(Throwable throwable) {
         if (steps.get().peekFirst() != null) {
-            /* TODO: Format fail reason nice */
             ReportPortal.emitLog(Utils.verboseError(throwable), "ERROR", Calendar.getInstance().getTime());
             FinishTestItemRQ finishStep = new FinishTestItemRQ();
             finishStep.setEndTime(Calendar.getInstance().getTime());
@@ -59,6 +58,17 @@ public class StepsTreeHandler extends BasicHandler {
             finishStep.setEndTime(Calendar.getInstance().getTime());
             finishStep.setStatus("SKIPPED");
             portal.finishTestItem(steps.get().pollFirst(), finishStep);
+        }
+    }
+
+    @Override
+    public void ignoreStep(String reason) {
+        if (steps.get().peekFirst() != null) {
+            FinishTestItemRQ ignoredStep = new FinishTestItemRQ();
+            ignoredStep.setDescription(reason);
+            ignoredStep.setEndTime(Calendar.getInstance().getTime());
+            ignoredStep.setStatus("SKIPPED");
+            portal.finishTestItem(steps.get().pollFirst(), ignoredStep);
         }
     }
 }
