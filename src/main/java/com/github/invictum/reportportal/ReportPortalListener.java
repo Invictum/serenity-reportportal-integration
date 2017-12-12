@@ -85,18 +85,12 @@ public class ReportPortalListener implements StepListener {
         handler.ignoreStep();
     }
 
-    /**
-     * The step is marked as pending.
-     */
     public void stepPending() {
+        handler.ignoreStep();
     }
 
-    /**
-     * The step is marked as pending with a descriptive message.
-     *
-     * @param message message
-     */
     public void stepPending(String message) {
+        handler.ignoreStep(message);
     }
 
     public void stepFinished() {
@@ -117,10 +111,8 @@ public class ReportPortalListener implements StepListener {
     public void testSkipped() {
     }
 
-    /**
-     * The test as a whole should be marked as 'pending'.
-     */
     public void testPending() {
+        handler.ignoreTest();
     }
 
     public void testIsManual() {

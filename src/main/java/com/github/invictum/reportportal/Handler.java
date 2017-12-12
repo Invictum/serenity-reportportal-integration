@@ -68,4 +68,11 @@ public interface Handler {
      */
     void ignoreStep();
 
+    /**
+     * Finishes current active step with SKIPPED status.
+     *
+     * @param reason to skip current step.
+     */
+    void ignoreStep(String reason);
+
 }
