@@ -77,12 +77,17 @@ public class Storage {
         Maybe<String> id = parent == null ? portal.startTestItem(start) : portal.startTestItem(parent, start);
         /* Emmit all logs */
         for (Message message : node.getMessages()) {
-            ReportPortal.emitLog(message.getMessage(), message.getLevel().toString(), message.getDate());
+            if (message.getBody() != null) {
+                ReportPortal.emitLog(message.getBody(), message.getLevel().toString(), message.getDate());
+            } else {
+                ReportPortal.emitLog(message.getMessage(), message.getLevel().toString(), message.getDate());
+            }
         }
         /* Proceed children */
         while (node.getChildren().peekFirst() != null) {
             dumpNode(node.getChildren().pollFirst(), id);
         }
+        /* Finish */
         FinishTestItemRQ finish = new FinishTestItemRQ();
         finish.setStatus(node.getStatus().toString());
         finish.setEndTime(node.getEndTime());

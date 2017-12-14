@@ -9,6 +9,7 @@ import com.github.invictum.reportportal.storage.events.*;
 /**
  * Handles steps as a tree of nested entities.
  * Realization supposed to be thread-safe.
+ * Uploads execution results lazy by suite chunks.
  */
 public class StepsTreeHandler extends BasicHandler {
 

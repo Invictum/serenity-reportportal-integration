@@ -46,7 +46,7 @@ public abstract class BasicHandler implements Handler {
     @Override
     public void failTest(Throwable cause) {
         storage.get().fire(new UpdateStatusEvent(ItemType.TEST, Status.FAILED));
-        storage.get().fire(new ReportErrorEvent(cause));
+        storage.get().fire(new ReportErrorEvent("Test failed", cause));
     }
 
     @Override

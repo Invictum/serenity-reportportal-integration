@@ -11,19 +11,32 @@ import java.util.Date;
  */
 public class Message {
 
-    private ReportPortalMessage message;
+    private ReportPortalMessage body;
+    private String message;
     private Date date = Calendar.getInstance().getTime();
     private MessageLevel level = MessageLevel.INFO;
 
-    public Message(ReportPortalMessage message) {
+    public Message(ReportPortalMessage body) {
+        this.body = body;
+    }
+
+    public Message(String message) {
         this.message = message;
     }
 
-    public ReportPortalMessage getMessage() {
+    public ReportPortalMessage getBody() {
+        return body;
+    }
+
+    public void setBody(ReportPortalMessage body) {
+        this.body = body;
+    }
+
+    public String getMessage() {
         return message;
     }
 
-    public void setMessage(ReportPortalMessage message) {
+    public void setMessage(String message) {
         this.message = message;
     }
 
