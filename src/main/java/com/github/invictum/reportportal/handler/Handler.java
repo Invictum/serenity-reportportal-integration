@@ -1,6 +1,6 @@
-package com.github.invictum.reportportal;
+package com.github.invictum.reportportal.handler;
 
-import com.epam.ta.reportportal.ws.model.StartTestItemRQ;
+import com.github.invictum.reportportal.EventData;
 
 /**
  * Interface represents operations related to interactions between Serenity and ReportPortal.
@@ -13,43 +13,48 @@ public interface Handler {
      */
     void init();
 
-    void startSuite(StartTestItemRQ suiteDetails);
+    /**
+     * Starts new suite.
+     *
+     * @param suiteData related to new suite
+     */
+    void startSuite(EventData suiteData);
 
     /**
-     * Finishes current active suite if open one is present. Otherwise nothing happens.
+     * Finishes current active suite.
      */
     void finishSuite();
 
     /**
-     * Start new active test if possible. If there is another active test method do nothing.
+     * Start new test.
      *
-     * @param testDetails related to new test
+     * @param testData related to new test
      */
-    void startTest(StartTestItemRQ testDetails);
+    void startTest(EventData testData);
 
     /**
-     * Finishes currently active test if possible. Otherwise nothing happens.
+     * Finishes currently active test.
      */
     void finishTest();
 
     /**
-     * Finish current active test with FAILED status. Attach related stack trace.
+     * Updates current active test status to FAILED. Attach related stack trace.
      *
      * @param cause fail test occur.
      */
     void failTest(Throwable cause);
 
     /**
-     * Finishes currently active test with SKIPPED status.
+     * Updates currently active test status to SKIPPED.
      */
     void ignoreTest();
 
     /**
      * Starts a new step.
      *
-     * @param stepDetails related to new step
+     * @param stepData related to new step
      */
-    void startStep(StartTestItemRQ stepDetails);
+    void startStep(EventData stepData);
 
     /**
      * Finishes current active step.

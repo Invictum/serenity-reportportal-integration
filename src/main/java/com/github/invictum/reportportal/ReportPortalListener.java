@@ -1,6 +1,6 @@
 package com.github.invictum.reportportal;
 
-import com.epam.ta.reportportal.ws.model.StartTestItemRQ;
+import com.github.invictum.reportportal.handler.Handler;
 import com.google.inject.Guice;
 import net.thucydides.core.model.DataTable;
 import net.thucydides.core.model.Story;
@@ -20,15 +20,15 @@ public class ReportPortalListener implements StepListener {
     }
 
     public void testSuiteStarted(Class<?> storyClass) {
-        StartTestItemRQ suiteDetails = new StartTestItemRQ();
-        suiteDetails.setName(storyClass.getSimpleName());
-        handler.startSuite(suiteDetails);
+        EventData suiteData = new EventData();
+        suiteData.setName(storyClass.getSimpleName());
+        handler.startSuite(suiteData);
     }
 
     public void testSuiteStarted(Story story) {
-        StartTestItemRQ suiteDetails = new StartTestItemRQ();
-        suiteDetails.setName(story.getDisplayName());
-        handler.startSuite(suiteDetails);
+        EventData suiteData = new EventData();
+        suiteData.setName(story.getDisplayName());
+        handler.startSuite(suiteData);
     }
 
     public void testSuiteFinished() {
@@ -36,15 +36,15 @@ public class ReportPortalListener implements StepListener {
     }
 
     public void testStarted(String description) {
-        StartTestItemRQ testDetails = new StartTestItemRQ();
-        testDetails.setName(description);
-        handler.startTest(testDetails);
+        EventData testData = new EventData();
+        testData.setName(description);
+        handler.startTest(testData);
     }
 
     public void testStarted(String description, String id) {
-        StartTestItemRQ testDetails = new StartTestItemRQ();
-        testDetails.setName(description);
-        handler.startTest(testDetails);
+        EventData testData = new EventData();
+        testData.setName(description);
+        handler.startTest(testData);
     }
 
     public void testFinished(TestOutcome result) {
@@ -58,15 +58,15 @@ public class ReportPortalListener implements StepListener {
     }
 
     public void stepStarted(ExecutedStepDescription description) {
-        StartTestItemRQ stepItem = new StartTestItemRQ();
-        stepItem.setName(description.getTitle());
-        handler.startStep(stepItem);
+        EventData stepData = new EventData();
+        stepData.setName(description.getTitle());
+        handler.startStep(stepData);
     }
 
     public void skippedStepStarted(ExecutedStepDescription description) {
-        StartTestItemRQ stepItem = new StartTestItemRQ();
-        stepItem.setName(description.getTitle());
-        handler.startStep(stepItem);
+        EventData stepData = new EventData();
+        stepData.setName(description.getTitle());
+        handler.startStep(stepData);
     }
 
     public void stepFailed(StepFailure failure) {
@@ -105,10 +105,8 @@ public class ReportPortalListener implements StepListener {
         handler.ignoreTest();
     }
 
-    /**
-     * The test as a whole was skipped.
-     */
     public void testSkipped() {
+        handler.ignoreTest();
     }
 
     public void testPending() {
