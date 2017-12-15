@@ -31,13 +31,13 @@ public class ReportPortalProvider implements Provider<ReportPortal> {
         startEvent.setDescription(parameters.getDescription());
         /* Start launch session */
         ReportPortal portal = ReportPortal.startLaunch(client, parameters, startEvent);
-        LOG.debug("Report Portal communication is engaged");
+        LOG.info("Report Portal communication is engaged");
         /* Register shutdown hook. RP connection will be closed before VM shutdown */
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             FinishExecutionRQ finishExecutionRQ = new FinishExecutionRQ();
             finishExecutionRQ.setEndTime(Calendar.getInstance().getTime());
             portal.finishLaunch(finishExecutionRQ);
-            LOG.debug("Report Portal communication is disengaged");
+            LOG.info("Report Portal communication is disengaged");
         }));
         return portal;
     }
