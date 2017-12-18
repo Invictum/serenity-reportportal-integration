@@ -10,7 +10,7 @@ To add support of Serenity with Report Portal integration simply add dependencie
 <dependency>
    <groupId>com.github.invictum</groupId>
    <artifactId>serenity-reportportal-integration</artifactId>
-   <version>1.0.3-SNAPSHOT</version>
+   <version>1.0.3</version>
 </dependency>
 ```
 Report Portal uses external repository, so it URL also should be added to your build configuration
@@ -37,8 +37,8 @@ Integration configuration
 -------------
 Integration provides two reporting styles:
 
-- build steps as nested entities into tree (default)
-- build steps as sequence of emited logs
+- build steps as nested entities into tree `StepTreeHandler.class` (default)
+- build steps as sequence of emited logs `StepFlatHandler.class`
 
 This behaviour may be configured using code snippet
 ```
