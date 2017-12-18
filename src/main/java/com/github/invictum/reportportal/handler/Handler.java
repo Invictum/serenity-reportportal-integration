@@ -6,13 +6,6 @@ import com.github.invictum.reportportal.EventData;
  * Interface represents operations related to interactions between Serenity and ReportPortal.
  */
 public interface Handler {
-
-    /**
-     * Initializes handler.
-     * Usually used to init Report Portal communication facility.
-     */
-    void init();
-
     /**
      * Starts new suite.
      *

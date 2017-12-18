@@ -1,7 +1,6 @@
 package com.github.invictum.reportportal;
 
 import com.github.invictum.reportportal.handler.Handler;
-import com.google.inject.Guice;
 import net.thucydides.core.model.DataTable;
 import net.thucydides.core.model.Story;
 import net.thucydides.core.model.TestOutcome;
@@ -13,11 +12,7 @@ import java.util.Map;
 
 public class ReportPortalListener implements StepListener {
 
-    private Handler handler = Guice.createInjector(new SerenityPortalModule()).getInstance(Handler.class);
-
-    public ReportPortalListener() {
-        handler.init();
-    }
+    private Handler handler = IntegrationInjector.getInjector().getInstance(Handler.class);
 
     public void testSuiteStarted(Class<?> storyClass) {
         EventData suiteData = new EventData();
