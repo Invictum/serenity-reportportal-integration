@@ -1,6 +1,10 @@
 package com.github.invictum.reportportal;
 
-import com.github.invictum.reportportal.handler.Handler;
+import com.epam.reportportal.service.ReportPortal;
+import com.epam.ta.reportportal.ws.model.FinishTestItemRQ;
+import com.epam.ta.reportportal.ws.model.StartTestItemRQ;
+import com.google.inject.Inject;
+import io.reactivex.Maybe;
 import net.thucydides.core.model.DataTable;
 import net.thucydides.core.model.Story;
 import net.thucydides.core.model.TestOutcome;
@@ -8,145 +12,166 @@ import net.thucydides.core.steps.ExecutedStepDescription;
 import net.thucydides.core.steps.StepFailure;
 import net.thucydides.core.steps.StepListener;
 
+import java.time.Duration;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Map;
 
 public class ReportPortalListener implements StepListener {
 
-    private Handler handler = IntegrationInjector.getInjector().getInstance(Handler.class);
+    @Inject
+    private ReportPortal portal;
+
+    @Inject
+    private StepProcessorsHolder holder;
+
+    private Maybe<String> suiteId = null;
+    private Maybe<String> testId = null;
+
+    public ReportPortalListener() {
+        IntegrationInjector.getInjector().injectMembers(this);
+    }
 
     public void testSuiteStarted(Class<?> storyClass) {
-        EventData suiteData = new EventData();
-        suiteData.setName(storyClass.getSimpleName());
-        handler.startSuite(suiteData);
+        if (suiteId == null) {
+            StartTestItemRQ startSuite = new StartTestItemRQ();
+            startSuite.setType(ItemType.SUITE.key());
+            startSuite.setName(storyClass.getSimpleName());
+            startSuite.setStartTime(Calendar.getInstance().getTime());
+            suiteId = portal.startTestItem(startSuite);
+        }
     }
 
     public void testSuiteStarted(Story story) {
-        EventData suiteData = new EventData();
-        suiteData.setName(story.getDisplayName());
-        handler.startSuite(suiteData);
+        if (suiteId == null) {
+            StartTestItemRQ startSuite = new StartTestItemRQ();
+            startSuite.setType(ItemType.SUITE.key());
+            startSuite.setName(story.getDisplayName());
+            startSuite.setStartTime(Calendar.getInstance().getTime());
+            startSuite.setDescription(story.getNarrative());
+            suiteId = portal.startTestItem(startSuite);
+        }
     }
 
     public void testSuiteFinished() {
-        handler.finishSuite();
+        if (suiteId != null) {
+            FinishTestItemRQ finishSuite = new FinishTestItemRQ();
+            finishSuite.setEndTime(Calendar.getInstance().getTime());
+            finishSuite.setStatus(Status.PASSED.toString());
+            portal.finishTestItem(suiteId, finishSuite);
+            suiteId = null;
+        }
     }
 
     public void testStarted(String description) {
-        EventData testData = new EventData();
-        testData.setName(description);
-        handler.startTest(testData);
+        if (testId == null) {
+            StartTestItemRQ startTest = new StartTestItemRQ();
+            startTest.setType(ItemType.TEST.key());
+            startTest.setName(description);
+            startTest.setStartTime(Calendar.getInstance().getTime());
+            testId = portal.startTestItem(suiteId, startTest);
+        }
     }
 
     public void testStarted(String description, String id) {
-        EventData testData = new EventData();
-        testData.setName(description);
-        handler.startTest(testData);
+        testStarted(description);
     }
 
     public void testFinished(TestOutcome result) {
-        handler.finishTest();
+        if (testId != null) {
+            /* Proceed all steps */
+            result.getFlattenedTestSteps().forEach(step -> holder.proceed(step));
+            /* Finish active test */
+            FinishTestItemRQ finishTest = new FinishTestItemRQ();
+            Date endDate = Date.from(result.getStartTime().plus(Duration.ofMillis(result.getDuration())).toInstant());
+            finishTest.setEndTime(endDate);
+            finishTest.setStatus(Status.mapTo(result.getResult()).toString());
+            portal.finishTestItem(testId, finishTest);
+            testId = null;
+        }
     }
 
-    /**
-     * The last test run is about to be restarted
-     */
     public void testRetried() {
+        /* Not used by listener */
     }
 
     public void stepStarted(ExecutedStepDescription description) {
-        EventData stepData = new EventData();
-        stepData.setName(description.getTitle());
-        handler.startStep(stepData);
+        /* Not used by listener */
     }
 
     public void skippedStepStarted(ExecutedStepDescription description) {
-        EventData stepData = new EventData();
-        stepData.setName(description.getTitle());
-        handler.startStep(stepData);
+        /* Not used by listener */
     }
 
     public void stepFailed(StepFailure failure) {
-        handler.failStep(failure.getException());
+        /* Not used by listener */
     }
 
-    /**
-     * Declare that a step has failed after it has finished.
-     *
-     * @param failure failure
-     */
     public void lastStepFailed(StepFailure failure) {
+        /* Not used by listener */
     }
 
     public void stepIgnored() {
-        handler.ignoreStep();
+        /* Not used by listener */
     }
 
     public void stepPending() {
-        handler.ignoreStep();
+        /* Not used by listener */
     }
 
     public void stepPending(String message) {
-        handler.ignoreStep(message);
+        /* Not used by listener */
     }
 
     public void stepFinished() {
-        handler.finishStep();
+        /* Not used by listener */
     }
 
     public void testFailed(TestOutcome testOutcome, Throwable cause) {
-        handler.failTest(cause);
+        /* Not used by listener */
     }
 
     public void testIgnored() {
-        handler.ignoreTest();
+        /* Not used by listener */
     }
 
     public void testSkipped() {
-        handler.ignoreTest();
+        /* Not used by listener */
     }
 
     public void testPending() {
-        handler.ignoreTest();
+        /* Not used by listener */
     }
 
     public void testIsManual() {
+        /* Not used by listener */
     }
 
     public void notifyScreenChange() {
+        /* Not used by listener */
     }
 
-    /**
-     * The current scenario is a data-driven scenario using test data from the specified table.
-     *
-     * @param table table
-     */
     public void useExamplesFrom(DataTable table) {
+        /* Not used by listener */
     }
 
-    /**
-     * If multiple tables are used, this method will add any new rows to the test data
-     *
-     * @param table table
-     */
     public void addNewExamplesFrom(DataTable table) {
+        /* Not used by listener */
     }
 
-    /**
-     * A new example has just started.
-     *
-     * @param data data
-     */
     public void exampleStarted(Map<String, String> data) {
+        /* Not used by listener */
     }
 
-    /**
-     * An example has finished.
-     */
     public void exampleFinished() {
+        /* Not used by listener */
     }
 
     public void assumptionViolated(String message) {
+        /* Not used by listener */
     }
 
     public void testRunFinished() {
+        /* Not used by listener */
     }
 }

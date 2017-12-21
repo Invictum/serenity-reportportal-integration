@@ -6,8 +6,7 @@ package com.github.invictum.reportportal;
 public enum ItemType {
 
     SUITE("TEST"),
-    TEST("STEP"),
-    STEP("STEP");
+    TEST("STEP");
 
     private String key;
 

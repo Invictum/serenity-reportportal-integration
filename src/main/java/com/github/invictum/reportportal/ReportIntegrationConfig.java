@@ -1,17 +1,14 @@
 package com.github.invictum.reportportal;
 
-import com.github.invictum.reportportal.handler.Handler;
-import com.github.invictum.reportportal.handler.StepTreeHandler;
-
 /**
- * Static configuration entry point. Allows to redefine a handler class for integration module.
- * Handler should be defined only once, before tests invocation. If classes graph was build, setHandlerClass method has no any affect.
+ * Static configuration entry point. Allows to redefine a profile for integration module.
+ * Profile should be defined only once, before tests invocation. If classes graph was build, useProfile method has no any affect.
  */
 public class ReportIntegrationConfig {
 
-    static Class<? extends Handler> handlerClass = StepTreeHandler.class;
+    static StepsSetProfile profile = StepsSetProfile.DEFAULT;
 
-    public static void setHandlerClass(Class<? extends Handler> handlerClass) {
-        ReportIntegrationConfig.handlerClass = handlerClass;
+    public static void useProfile(StepsSetProfile profile) {
+        ReportIntegrationConfig.profile = profile;
     }
 }

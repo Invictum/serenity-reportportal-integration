@@ -1,9 +1,35 @@
 package com.github.invictum.reportportal;
 
+import net.thucydides.core.model.TestResult;
+
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * Describes available items statuses.
  * The same statuses a defined n Report Portal level.
  */
 public enum Status {
-    PASSED, FAILED, STOPPED, SKIPPED, RESETED, CANCELLED
+
+    PASSED(LogLevel.INFO, TestResult.SUCCESS),
+    FAILED(LogLevel.ERROR, TestResult.ERROR, TestResult.FAILURE),
+    SKIPPED(LogLevel.DEBUG, TestResult.IGNORED, TestResult.SKIPPED, TestResult.PENDING),
+    RESETED(LogLevel.WARN, TestResult.COMPROMISED),
+    CANCELLED(LogLevel.FATAL, TestResult.UNDEFINED);
+
+    private List<TestResult> map;
+    private LogLevel level;
+
+    Status(LogLevel level, TestResult... statuses) {
+        map = Arrays.asList(statuses);
+        this.level = level;
+    }
+
+    public LogLevel logLevel() {
+        return level;
+    }
+
+    public static Status mapTo(TestResult result) {
+        return Arrays.stream(values()).filter(item -> item.map.contains(result)).findFirst().orElse(Status.RESETED);
+    }
 }

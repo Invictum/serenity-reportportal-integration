@@ -1,19 +1,31 @@
 package com.github.invictum.reportportal;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
+import net.thucydides.core.model.TestResult;
+import net.thucydides.core.model.TestStep;
+
+import java.time.Duration;
+import java.time.ZonedDateTime;
+import java.util.Date;
 
 public class Utils {
+    /**
+     * Defines log level based on step result status.
+     *
+     * @param testResult used to define log level
+     * @return log level as a {@link String} representation
+     */
+    public static String logLevel(TestResult testResult) {
+        return Status.mapTo(testResult).logLevel().toString();
+    }
 
     /**
-     * Builds a stack trace for Throwable
+     * Calculates step's end time.
      *
-     * @param cause should be verbosed
-     * @return stack trace represented as String
+     * @param step to calculate time on
+     * @return step end time in {@link Date} format
      */
-    public static String verboseError(Throwable cause) {
-        StringWriter writer = new StringWriter();
-        cause.printStackTrace(new PrintWriter(writer));
-        return writer.toString();
+    public static Date stepEndDate(TestStep step) {
+        ZonedDateTime endTimeZoned = step.getStartTime().plus(Duration.ofMillis(step.getDuration()));
+        return Date.from(endTimeZoned.toInstant());
     }
 }
