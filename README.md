@@ -1,7 +1,7 @@
 Serenity integration with ReportPortal
 ===================
 
-Module allows to report Serenity powered tests to [Report Portal]((http://reportportal.io)).
+Module allows to report Serenity powered tests to [reportportal.io]((http://reportportal.io)).
 
 Setup
 -------------
@@ -10,10 +10,10 @@ To add support of Serenity with Report Portal integration simply add dependencie
 <dependency>
    <groupId>com.github.invictum</groupId>
    <artifactId>serenity-reportportal-integration</artifactId>
-   <version>1.0.3</version>
+   <version>1.0.4</version>
 </dependency>
 ```
-Report Portal uses external repository, so it URL also should be added to your build configuration
+Report Portal core libraries are used, but it uses external repository, so it URL also should be added to your build configuration
 ```
 <repositories>
     <repository>
@@ -26,26 +26,54 @@ Report Portal uses external repository, so it URL also should be added to your b
     </repository>
 </repositories>
 ```
-Actually from this point setup of integration is done. The only thing you should to do is to configure Report Portal itself. This process is described in [Report Portal Documentation](http://reportportal.io/docs/JVM-based-clients-configuration).
-Now run your tests normally and report should appear on Report Portal. To add custom messages into report portal, just emit logs
+Actually from this point setup of integration is done. The only thing you should to do is to configure Report Portal itself. In general it means just adding of `reportportal.properties` file to you project. Properties example is described below
+```
+rp.endpoint = http://report-portal-url
+rp.uuid = 385bha54-c1df-42c7-afa4-9e4c028930af
+rp.launch = My_Cool_Launch
+rp.project = My_Cool_Project
+```
+For more details related to Report Portal configuration please reffer to [Report Portal Documentation](http://reportportal.io/docs/JVM-based-clients-configuration).
+
+Now run your tests normally and report should appear on Report Portal in accordance to provided configuration. To add custom messages to Report Portal, you may emit logs in any place in your test
 ```
 ReportPortal.emitLog("My message", "INFO", Calendar.getInstance().getTime());
 ```
-Message will appear in the scope of entity it was triggered. I. e. inside related test or step.
+Message will appear in the scope of entity it was triggered. I. e. inside related step.
+> **Notice**
+> Actually to add logs to Report Portal, they should be emitted in scope of test method
 
 Integration configuration
 -------------
-Integration provides two reporting styles:
 
-- build steps as nested entities into tree `StepTreeHandler.class` (default)
-- build steps as sequence of emited logs `StepFlatHandler.class`
+Each Serenity `TestStep` is passed throug chain of configured `StepProcessors`. This approach allows to flexible configure reporting behaviour on the step level. All configuration is accessible from the code. By default integration provides two configuration profiles:
 
-This behaviour may be configured using code snippet
+- DEFAULT
+- CUSTOM
+
+`DEFAULT` profile is used by default and contains all usually required reporting details. To change default behavior `CUSTOM` profile shoul be used.
 ```
-ReportIntegrationConfig.setHandlerClass(StepFlatHandler.class);
+StepsSetProfile config = StepsSetProfile.CUSTOM.registerProcessors(new ScreenshotAttacher());
+ReportIntegrationConfig.useProfile(config);
 ```
-> **Note**
-Configuration should be provided only once, before any Serenity facility initialization. For example in `@BeforeClass` method
+In example above `CUSTOM` profile with `ScreenshotAttacher` processor is configured. All step processors available out of the box may be observed in `com.github.invictum.reportportal.processor` package.
+It is possible to use integrated processors as well as implemented by your own
+```
+public class StartStepLogger implements StepProcessor {
+
+    @Override
+    public void proceed(final TestStep step) {
+        // You logic here to emit logs
+    }
+}
+```
+> **Warning**
+To emit log to Report Portal date should be specified. If log timestams is out of range of step it won't be emitted at all. `TestStep` contains all data to calculate start, end dates and duration
+
+The order of processors registtration is matters, this order the same as order of invocation.
+
+> **Notice**
+Profile configuration should be provided before Serenity facility init (For example on `@BeforeClass` method on the parent test class). Otherwise default profile will be used.
 
 Limitations
 -------------
