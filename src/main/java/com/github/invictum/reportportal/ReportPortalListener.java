@@ -8,14 +8,17 @@ import io.reactivex.Maybe;
 import net.thucydides.core.model.DataTable;
 import net.thucydides.core.model.Story;
 import net.thucydides.core.model.TestOutcome;
+import net.thucydides.core.requirements.annotations.NarrativeFinder;
 import net.thucydides.core.steps.ExecutedStepDescription;
 import net.thucydides.core.steps.StepFailure;
 import net.thucydides.core.steps.StepListener;
 
 import java.time.Duration;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class ReportPortalListener implements StepListener {
 
@@ -38,6 +41,12 @@ public class ReportPortalListener implements StepListener {
             startSuite.setType(ItemType.SUITE.key());
             startSuite.setName(storyClass.getSimpleName());
             startSuite.setStartTime(Calendar.getInstance().getTime());
+            /* Add narrative to description if present */
+            if (NarrativeFinder.forClass(storyClass).isPresent()) {
+                String description = Arrays.stream(NarrativeFinder.forClass(storyClass).get().text())
+                        .collect(Collectors.joining(" "));
+                startSuite.setDescription(description);
+            }
             suiteId = portal.startTestItem(startSuite);
         }
     }
@@ -86,6 +95,7 @@ public class ReportPortalListener implements StepListener {
             Date endDate = Date.from(result.getStartTime().plus(Duration.ofMillis(result.getDuration())).toInstant());
             finishTest.setEndTime(endDate);
             finishTest.setStatus(Status.mapTo(result.getResult()).toString());
+            finishTest.setTags(Utils.refineTags(result));
             portal.finishTestItem(testId, finishTest);
             testId = null;
         }

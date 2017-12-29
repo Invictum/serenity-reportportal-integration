@@ -1,7 +1,7 @@
 Serenity integration with ReportPortal
 ===================
 
-Module allows to report Serenity powered tests to [reportportal.io]((http://reportportal.io)).
+Module allows to report Serenity powered tests to [reportportal.io](http://reportportal.io).
 
 Setup
 -------------
@@ -74,6 +74,67 @@ The order of processors registtration is matters, this order the same as order o
 
 > **Notice**
 Profile configuration should be provided before Serenity facility init (For example on `@BeforeClass` method on the parent test class). Otherwise default profile will be used.
+
+Data mapping
+-------------
+
+Serenity framework and Report Portal facility have a different entities structure. This section explains how data related to each other in mentioned systems.
+
+**Name** relation is straightforward.
+
+ Serenity   | Report portal
+------------|---------------
+Test Class  | Suite
+Test Method | Test
+Scenario    | Test
+Step        | Log
+
+**Description** Each non-log entity in Report Portal may has a description. This field is populated from Serenity narrative section for both jUnit and BDD test sources.
+
+For jBehave there is a special Narrative section in the story
+```
+Story example
+
+Narrative:
+Some simple example text
+
+Scenario: Simple scenario
+Given for simple scenario
+When for simple scenario
+Then for simple scenario
+```
+
+For jUnit there is a `@Narrative` annotation. Each line of narrative text will be concatinated
+```
+@RunWith(SerenityRunner.class)
+@Narrative(text = {"line 1", "line 2"})
+public class SimpleTest {
+    ...
+}
+```
+
+**Tags** supplying depends on test source.
+For jBehave (BDD) tests tags is defined in Meta section with @tag or @tags keyword
+```
+Story example
+
+Meta:
+@tags scope:smoke
+
+Scenario: Simple scenario
+Given for simple scenario
+When for simple scenario
+Then for simple scenario
+```
+
+For jUnit `@WithTagValuesOf` annotation is provided
+```
+@RunWith(SerenityRunner.class)
+@WithTagValuesOf("scope:smoke")
+public class SimpleTest {
+    ...
+}
+```
 
 Limitations
 -------------
