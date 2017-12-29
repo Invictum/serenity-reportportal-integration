@@ -16,4 +16,9 @@ public class StartStepLogger implements StepProcessor {
         Date startDate = Date.from(step.getStartTime().toInstant());
         ReportPortal.emitLog("[STARTED] " + step.getDescription(), Utils.logLevel(step.getResult()), startDate);
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof StartStepLogger;
+    }
 }

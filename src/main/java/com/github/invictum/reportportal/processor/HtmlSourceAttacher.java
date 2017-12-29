@@ -39,4 +39,9 @@ public class HtmlSourceAttacher implements StepProcessor {
             }
         }
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof HtmlSourceAttacher;
+    }
 }

@@ -36,4 +36,9 @@ public class ScreenshotAttacher implements StepProcessor {
             }
         }
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof ScreenshotAttacher;
+    }
 }

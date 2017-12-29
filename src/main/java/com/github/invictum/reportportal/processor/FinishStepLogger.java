@@ -14,4 +14,9 @@ public class FinishStepLogger implements StepProcessor {
         String message = String.format("[%s] %s", step.getResult().name(), step.getDescription());
         ReportPortal.emitLog(message, Utils.logLevel(step.getResult()), Utils.stepEndDate(step));
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof FinishStepLogger;
+    }
 }

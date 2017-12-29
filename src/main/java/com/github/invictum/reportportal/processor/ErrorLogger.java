@@ -32,4 +32,13 @@ public class ErrorLogger implements StepProcessor {
             ReportPortal.emitLog(errorMessage, Utils.logLevel(step.getResult()), Utils.stepEndDate(step));
         }
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof ErrorLogger) {
+            ErrorLogger errorLogger = (ErrorLogger) obj;
+            return errorLogger.full == this.full;
+        }
+        return false;
+    }
 }
