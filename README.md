@@ -13,7 +13,7 @@ To add support of Serenity with Report Portal integration simply add dependencie
 <dependency>
    <groupId>com.github.invictum</groupId>
    <artifactId>serenity-reportportal-integration</artifactId>
-   <version>1.0.4</version>
+   <version>1.0.5</version>
 </dependency>
 ```
 Report Portal core libraries are used, but it uses external repository, so it URL also should be added to your build configuration
