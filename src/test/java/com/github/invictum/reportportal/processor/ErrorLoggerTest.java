@@ -2,6 +2,7 @@ package com.github.invictum.reportportal.processor;
 
 import net.thucydides.core.model.TestStep;
 import net.thucydides.core.model.stacktrace.FailureCause;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -52,5 +53,10 @@ public class ErrorLoggerTest {
         Mockito.verify(stepMock, Mockito.times(2)).getException();
         Mockito.verify(stepMock, Mockito.times(1)).getConciseErrorMessage();
         Mockito.verify(stepMock, Mockito.times(1)).getResult();
+    }
+
+    @Test
+    public void notEqualsTest() {
+        Assert.assertNotEquals("Error loggers are equals", new ErrorLogger(false), new ErrorLogger(true));
     }
 }
