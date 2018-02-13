@@ -11,6 +11,7 @@ Setup
 To add support of integration between Serenity and Report Portal simply add dependencies to your project based on used build tool.
 
 **Maven**
+
 Edit project's `pom.xml` file
 ```
 <dependency>
@@ -34,6 +35,7 @@ Report Portal core libraries are used, but it uses external repository, so it UR
 ```
 
 **Gradle**
+
 Edit `build.gradle` file in the project root
 ```
 compile group: 'com.github.invictum', name: 'serenity-reportportal-integration', version: '1.0.6'
