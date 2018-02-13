@@ -7,7 +7,7 @@ import java.util.List;
 
 /**
  * Describes available items statuses.
- * The same statuses a defined n Report Portal level.
+ * The same statuses a defined in Report Portal level.
  */
 public enum Status {
 

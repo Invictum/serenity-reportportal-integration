@@ -8,12 +8,15 @@ Module allows to report Serenity powered tests to [reportportal.io](http://repor
 
 Setup
 -------------
-To add support of Serenity with Report Portal integration simply add dependencies to your project
+To add support of integration between Serenity and Report Portal simply add dependencies to your project based on used build tool.
+
+**Maven**
+Edit project's `pom.xml` file
 ```
 <dependency>
    <groupId>com.github.invictum</groupId>
    <artifactId>serenity-reportportal-integration</artifactId>
-   <version>1.0.5</version>
+   <version>1.0.6</version>
 </dependency>
 ```
 Report Portal core libraries are used, but it uses external repository, so it URL also should be added to your build configuration
@@ -29,6 +32,21 @@ Report Portal core libraries are used, but it uses external repository, so it UR
     </repository>
 </repositories>
 ```
+
+**Gradle**
+Edit `build.gradle` file in the project root
+```
+compile group: 'com.github.invictum', name: 'serenity-reportportal-integration', version: '1.0.6'
+```
+External Report Portal repository should be defined the same as for Maven
+```
+repositories {
+    maven {
+        url "http://dl.bintray.com/epam/reportportal"
+    }
+}
+```
+
 Actually from this point setup of integration is done. The only thing you should to do is to configure Report Portal itself. In general it means just adding of `reportportal.properties` file to you project tests root. Properties example is described below
 ```
 rp.endpoint = http://report-portal-url
@@ -56,11 +74,12 @@ Each Serenity `TestStep` object is passed through chain of configured `StepProce
 
 `DEFAULT` profile is used by default and contains all usually required reporting details. To change default behavior `CUSTOM` profile should be used.
 ```
-StepsSetProfile config = StepsSetProfile.CUSTOM.registerProcessors(new StartStepLogger(), new FinishStepLogger);
+StepsSetProfile config = StepsSetProfile.CUSTOM;
+config.registerProcessors(new StartStepLogger(), new FinishStepLogger());
 ReportIntegrationConfig.useProfile(config);
 ```
 In example above `CUSTOM` profile with `StartStepLogger` and `FinishStepLogger` processors is configured. All step processors available out of the box may be observed in `com.github.invictum.reportportal.processor` package.
-It is possible to use integrated processors as well as implemented by your own. In custom implementation access to Serenity's `TestStep` object is provided
+It is possible to use integrated processors as well as implemented by your own. To make own processor implement `StepProcessor` interface. In custom implementation access to Serenity's `TestStep` object is provided
 ```
 public class MyCustomLoggerLogger implements StepProcessor {
 
@@ -151,6 +170,6 @@ Report Portal integration uses 3 digit version format - x.y.z
 
 Limitations
 -------------
-Integration does not support concurency for parametrized Serenity tests execution.
+Integration does not support concurrency for parametrized Serenity tests execution.
 
-Report Portal launch finish timestamp is generated before Java VM shutdown. Overall launch duration will also include the time of Serenity report generation.
+Report Portal launch finish timestamp is calculated before Java VM shutdown. Overall launch duration will also include the time of Serenity report generation.

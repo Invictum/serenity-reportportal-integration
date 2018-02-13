@@ -24,6 +24,7 @@ public class ErrorLogger implements StepProcessor {
         if (step.getException() != null) {
             String errorMessage = step.getConciseErrorMessage();
             if (full) {
+                /* Dump stack trace into String */
                 Throwable cause = step.getException().getOriginalCause();
                 StringWriter writer = new StringWriter();
                 cause.printStackTrace(new PrintWriter(writer));
