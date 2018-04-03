@@ -25,7 +25,7 @@ public class HtmlSourceAttacher implements StepProcessor {
         if (!step.getScreenshots().isEmpty()) {
             Date stepStartTime = Date.from(step.getStartTime().toInstant());
             for (ScreenshotAndHtmlSource screenshotAndHtmlSource : step.getScreenshots()) {
-                Optional<File> sourceFile = screenshotAndHtmlSource.getHtmlSource().toJavaUtil();
+                Optional<File> sourceFile = screenshotAndHtmlSource.getHtmlSource();
                 if (sourceFile.isPresent()) {
                     Date timestamp = sourceFile.get().lastModified() < stepStartTime
                             .getTime() ? stepStartTime : new Date(sourceFile.get().lastModified());
