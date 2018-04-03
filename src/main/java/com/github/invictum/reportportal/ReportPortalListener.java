@@ -1,8 +1,9 @@
 package com.github.invictum.reportportal;
 
-import com.epam.reportportal.service.ReportPortal;
+import com.epam.reportportal.service.Launch;
 import com.epam.ta.reportportal.ws.model.FinishTestItemRQ;
 import com.epam.ta.reportportal.ws.model.StartTestItemRQ;
+import com.github.invictum.reportportal.injector.IntegrationInjector;
 import com.google.inject.Inject;
 import io.reactivex.Maybe;
 import net.thucydides.core.model.DataTable;
@@ -23,7 +24,7 @@ import java.util.stream.Collectors;
 public class ReportPortalListener implements StepListener {
 
     @Inject
-    private ReportPortal portal;
+    private Launch launch;
 
     @Inject
     private StepProcessorsHolder holder;
@@ -47,7 +48,7 @@ public class ReportPortalListener implements StepListener {
                         .collect(Collectors.joining(" "));
                 startSuite.setDescription(description);
             }
-            suiteId = portal.startTestItem(startSuite);
+            suiteId = launch.startTestItem(startSuite);
         }
     }
 
@@ -58,7 +59,7 @@ public class ReportPortalListener implements StepListener {
             startSuite.setName(story.getDisplayName());
             startSuite.setStartTime(Calendar.getInstance().getTime());
             startSuite.setDescription(story.getNarrative());
-            suiteId = portal.startTestItem(startSuite);
+            suiteId = launch.startTestItem(startSuite);
         }
     }
 
@@ -67,7 +68,7 @@ public class ReportPortalListener implements StepListener {
             FinishTestItemRQ finishSuite = new FinishTestItemRQ();
             finishSuite.setEndTime(Calendar.getInstance().getTime());
             finishSuite.setStatus(Status.PASSED.toString());
-            portal.finishTestItem(suiteId, finishSuite);
+            launch.finishTestItem(suiteId, finishSuite);
             suiteId = null;
         }
     }
@@ -78,7 +79,7 @@ public class ReportPortalListener implements StepListener {
             startTest.setType(ItemType.TEST.key());
             startTest.setName(description);
             startTest.setStartTime(Calendar.getInstance().getTime());
-            testId = portal.startTestItem(suiteId, startTest);
+            testId = launch.startTestItem(suiteId, startTest);
         }
     }
 
@@ -96,7 +97,7 @@ public class ReportPortalListener implements StepListener {
             finishTest.setEndTime(endDate);
             finishTest.setStatus(Status.mapTo(result.getResult()).toString());
             finishTest.setTags(Utils.refineTags(result));
-            portal.finishTestItem(testId, finishTest);
+            launch.finishTestItem(testId, finishTest);
             testId = null;
         }
     }
