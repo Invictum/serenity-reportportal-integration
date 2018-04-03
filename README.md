@@ -17,7 +17,7 @@ Edit project's `pom.xml` file
 <dependency>
    <groupId>com.github.invictum</groupId>
    <artifactId>serenity-reportportal-integration</artifactId>
-   <version>1.0.6</version>
+   <version>1.1.0</version>
 </dependency>
 ```
 Report Portal core libraries are used, but it uses external repository, so it URL also should be added to your build configuration
@@ -169,6 +169,15 @@ Report Portal integration uses 3 digit version format - x.y.z
 **y** - minor version update. Includes major Serenity and Report portal core modules update. Backward compatibility for Serenity and Report Portal are not guaranteed.
 
 **x** - major version update. Dramatically changed integration architecture. Backward compatibility doesn't guaranteed. Actually increment of major version is not expected at all
+
+Important release notes
+-----------------------
+Consolidated release notes are described below
+
+ Version       | Note
+---------------|---------------------------
+1.0.0 - 1.0.6  | Supports RP v3 and below
+1.1.0          | Minor version update due RP v4 release. Versions older than 1.1.0 are not compatible with RP v4+ and vise versa
 
 Limitations
 -------------
