@@ -1,4 +1,4 @@
-package com.github.invictum.reportportal;
+package com.github.invictum.reportportal.injector;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
