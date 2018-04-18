@@ -15,11 +15,9 @@ import net.thucydides.core.steps.StepFailure;
 import net.thucydides.core.steps.StepListener;
 
 import java.time.Duration;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 public class ReportPortalListener implements StepListener {
 
@@ -28,6 +26,9 @@ public class ReportPortalListener implements StepListener {
 
     @Inject
     private StepProcessorsHolder holder;
+
+    @Inject
+    private NarrativeFormatter narrativeFormatter;
 
     private Maybe<String> suiteId = null;
     private Maybe<String> testId = null;
@@ -44,8 +45,7 @@ public class ReportPortalListener implements StepListener {
             startSuite.setStartTime(Calendar.getInstance().getTime());
             /* Add narrative to description if present */
             if (NarrativeFinder.forClass(storyClass).isPresent()) {
-                String description = Arrays.stream(NarrativeFinder.forClass(storyClass).get().text())
-                        .collect(Collectors.joining(" "));
+                String description = narrativeFormatter.format(NarrativeFinder.forClass(storyClass).get().text());
                 startSuite.setDescription(description);
             }
             suiteId = launch.startTestItem(startSuite);
