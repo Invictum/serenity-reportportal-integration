@@ -5,7 +5,7 @@
 Serenity integration with Report Portal
 =======================================
 
-Module allows to report Serenity powered tests to [reportportal.io](http://reportportal.io).
+Module allows to report Serenity powered tests to [reportportal.io](http://reportportal.io). Supplies additional reporting facility to Serenity based test automation frameworks.
 
 Setup
 -------------
@@ -18,7 +18,7 @@ Edit project's `pom.xml` file
 <dependency>
    <groupId>com.github.invictum</groupId>
    <artifactId>serenity-reportportal-integration</artifactId>
-   <version>1.1.0</version>
+   <version>1.1.1</version>
 </dependency>
 ```
 Report Portal core libraries are used, but it uses external repository, so it URL also should be added to your build configuration
@@ -39,7 +39,7 @@ Report Portal core libraries are used, but it uses external repository, so it UR
 
 Edit `build.gradle` file in the project root
 ```
-compile group: 'com.github.invictum', name: 'serenity-reportportal-integration', version: '1.0.6'
+compile group: 'com.github.invictum', name: 'serenity-reportportal-integration', version: '1.1.1'
 ```
 External Report Portal repository should be defined the same as for Maven
 ```
@@ -66,6 +66,10 @@ ReportPortal.emitLog("My message", "INFO", Calendar.getInstance().getTime());
 Message will appear in the scope of entity it was triggered. I. e. inside related test.
 > **Notice**
 > Actually to add logs to Report Portal, they should be emitted in scope of test method, otherwise they will not be displayed at all
+
+**Native Serenity reporting**
+
+Serenity TAF provides its own reporting facility, but `serenity-reportportal-integration` may be used in parralel with it or independently. Both reporting mechanisms should be configured accordingly and do not depends on each other.
 
 Integration configuration
 -------------
