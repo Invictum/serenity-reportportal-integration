@@ -70,6 +70,10 @@ Message will appear in the scope of entity it was triggered. I. e. inside relate
 Integration configuration
 -------------
 
+Section discribes all available integration configurations.
+
+**Profiles**
+
 Each Serenity `TestStep` object is passed through chain of configured `StepProcessors`. This approach allows to flexible configure reporting behaviour on the step level. All configuration is accessible from the code. By default integration provides two configuration profiles:
 
 - DEFAULT
@@ -79,7 +83,7 @@ Each Serenity `TestStep` object is passed through chain of configured `StepProce
 ```
 StepsSetProfile config = StepsSetProfile.CUSTOM;
 config.registerProcessors(new StartStepLogger(), new FinishStepLogger());
-ReportIntegrationConfig.useProfile(config);
+ReportIntegrationConfig.profile = config;
 ```
 In example above `CUSTOM` profile with `StartStepLogger` and `FinishStepLogger` processors is configured. All step processors available out of the box may be observed in `com.github.invictum.reportportal.processor` package.
 It is possible to use integrated processors as well as implemented by your own. To make own processor implement `StepProcessor` interface. In custom implementation access to Serenity's `TestStep` object is provided
@@ -97,8 +101,39 @@ To emit log to Report Portal time should be specified. If log timestamp is out o
 
 The order of processors registration is matters, this order the same as order of invocation.
 
+**Narrative formatter**
+
+By default, narrative is formatted as a bullet list before storring to the test description field. It is possible to alter this logic in accordance to project needs.
+
+To achieve it implement `NarrativeFormatter` interface and define your own implementation of formatter. For example
+```
+public class NumberedListFormatter implements NarrativeFormatter {
+
+    @Override
+    public String format(String[] strings) {
+        return IntStream.range(0, strings.length).mapToObj(index -> (index + 1) + ". " + strings[index])
+                .collect(Collectors.joining("\n"));
+    }
+}
+```
+
+Code snippet abowe will format narrative lines as a numbered list.
+```
+Initial lines
+line 1, line 2
+
+Result lines
+1. line 1
+2. line 2
+```
+
+Custom `NarrativeFormatter` should be registered via configuration
+```
+ReportIntegrationConfig.narrativeFormatter = new NumberedListFormatter();
+```
+
 > **Notice**
-Profile configuration should be provided before Serenity facility init (For example on `@BeforeClass` method on the parent test class for jUnit style tests). Otherwise default profile will be used.
+All integration configurations should be provided before Serenity facility init (For example on `@BeforeClass` method on the parent test class for jUnit style tests). Otherwise default values will be used.
 
 Data mapping
 -------------
