@@ -1,6 +1,8 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
-ACTIVE_BRANCH=$1
+set -ev
+ACTIVE_BRANCH=${TRAVIS_PULL_REQUEST}
+
 echo "Branch: $ACTIVE_BRANCH"
 
 case "$ACTIVE_BRANCH" in

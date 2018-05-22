@@ -1,8 +1,8 @@
 language: java
 
 script:
-  - sudo chmod +x $HOME./travis/script.sh
-  - bash $HOME./travis/script.sh
+  - sudo chmod ugo+x travis/script.sh
+  - bash travis/script.sh
 
 cache:
   directories:
