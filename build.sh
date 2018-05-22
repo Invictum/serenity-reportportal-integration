@@ -15,7 +15,8 @@ case "$1" in
     echo "Build and publish release"
     ;;
 *)
-    echo "PR will be applied"
-    mvn clean package
+    echo "PR builder will be applied"
+#    mvn clean package
+    mvn --settings custom-settings.xml clean deploy
     ;;
 esac
