@@ -1,8 +1,8 @@
 language: java
 
 script:
-  - sudo chmod ugo+x travis/script.sh
-  - bash travis/script.sh
+  - sudo chmod ugo+x script.sh
+  - bash script.sh ${TRAVIS_BRANCH}
 
 cache:
   directories:
