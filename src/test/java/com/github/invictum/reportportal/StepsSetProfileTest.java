@@ -10,14 +10,25 @@ import org.junit.runners.JUnit4;
 public class StepsSetProfileTest {
 
     @Test
-    public void defaultProfileTest() {
-        StepProcessor[] actual = StepsSetProfile.DEFAULT.processors();
+    public void fullProfileTest() {
+        StepProcessor[] actual = StepsSetProfile.FULL.processors();
         StepProcessor[] expected = new StepProcessor[]{
                 new StartStepLogger(),
                 new ScreenshotAttacher(),
-                new HtmlSourceAttacher(),
+                new FinishStepLogger(),
                 new ErrorLogger(true),
-                new FinishStepLogger()
+                new HtmlSourceAttacher()
+        };
+        Assert.assertArrayEquals(actual, expected);
+    }
+
+    @Test
+    public void defaultProfileTest() {
+        StepProcessor[] actual = StepsSetProfile.DEFAULT.processors();
+        StepProcessor[] expected = new StepProcessor[]{
+                new FinishStepLogger(),
+                new ScreenshotAttacher(),
+                new ErrorLogger(true)
         };
         Assert.assertArrayEquals(actual, expected);
     }

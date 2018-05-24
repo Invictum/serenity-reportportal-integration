@@ -9,23 +9,42 @@ import com.github.invictum.reportportal.processor.*;
 public enum StepsSetProfile {
 
     /**
-     * Default profile with pre-defined set of step processors.
+     * Default profile with pre-defined minimal set of step processors.
      */
     DEFAULT() {
         @Override
         public StepProcessor[] processors() {
             return new StepProcessor[]{
-                    new StartStepLogger(),
+                    new FinishStepLogger(),
                     new ScreenshotAttacher(),
-                    new HtmlSourceAttacher(),
-                    new ErrorLogger(true),
-                    new FinishStepLogger()
+                    new ErrorLogger(true)
             };
         }
 
         @Override
         public StepsSetProfile registerProcessors(StepProcessor... steps) {
             throw new UnsupportedOperationException("Unable to register processors for DEFAULT profile");
+        }
+    },
+
+    /**
+     * Profile configured with all available step processors.
+     */
+    FULL() {
+        @Override
+        public StepProcessor[] processors() {
+            return new StepProcessor[]{
+                    new StartStepLogger(),
+                    new ScreenshotAttacher(),
+                    new FinishStepLogger(),
+                    new ErrorLogger(true),
+                    new HtmlSourceAttacher()
+            };
+        }
+
+        @Override
+        public StepsSetProfile registerProcessors(StepProcessor... steps) {
+            throw new UnsupportedOperationException("Unable to register processors for FULL profile");
         }
     },
 

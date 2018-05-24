@@ -78,12 +78,14 @@ Section discribes all available integration configurations.
 
 **Profiles**
 
-Each Serenity `TestStep` object is passed through chain of configured `StepProcessors`. This approach allows to flexible configure reporting behaviour on the step level. All configuration is accessible from the code. By default integration provides two configuration profiles:
+Each Serenity `TestStep` object is passed through chain of configured `StepProcessors`. This approach allows to flexible configure reporting behaviour on the step level. All configuration is accessible from the code. By default integration provides following configuration profiles:
 
 - DEFAULT
+- FULL
 - CUSTOM
 
-`DEFAULT` profile is used by default and contains all usually required reporting details. To change default behavior `CUSTOM` profile should be used.
+`DEFAULT` profile is used by default and contains all usually required reporting details. It generates in Report Portal a nice log that does not cluttered with extra details.
+`FULL` profile contains all available `StepProcessors` and generates full reporting. To customize what should be logged `CUSTOM` profile should be used.
 ```
 StepsSetProfile config = StepsSetProfile.CUSTOM;
 config.registerProcessors(new StartStepLogger(), new FinishStepLogger());
