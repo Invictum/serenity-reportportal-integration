@@ -1,105 +1,48 @@
 package com.github.invictum.reportportal;
 
-import com.epam.reportportal.service.Launch;
-import com.epam.ta.reportportal.ws.model.FinishTestItemRQ;
-import com.epam.ta.reportportal.ws.model.StartTestItemRQ;
-import com.github.invictum.reportportal.injector.IntegrationInjector;
-import com.google.inject.Inject;
-import io.reactivex.Maybe;
+import com.github.invictum.reportportal.handler.FlatHandler;
+import com.github.invictum.reportportal.handler.Handler;
+import com.github.invictum.reportportal.handler.HandlerType;
+import com.github.invictum.reportportal.handler.TreeHandler;
 import net.thucydides.core.model.DataTable;
 import net.thucydides.core.model.Story;
 import net.thucydides.core.model.TestOutcome;
-import net.thucydides.core.requirements.annotations.NarrativeFinder;
 import net.thucydides.core.steps.ExecutedStepDescription;
 import net.thucydides.core.steps.StepFailure;
 import net.thucydides.core.steps.StepListener;
 
-import java.time.Duration;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.Map;
 
 public class ReportPortalListener implements StepListener {
 
-    @Inject
-    private Launch launch;
-
-    @Inject
-    private StepProcessorsHolder holder;
-
-    @Inject
-    private NarrativeFormatter narrativeFormatter;
-
-    private Maybe<String> suiteId = null;
-    private Maybe<String> testId = null;
+    private Handler handler;
 
     public ReportPortalListener() {
-        IntegrationInjector.getInjector().injectMembers(this);
+        handler = (ReportIntegrationConfig.handlerType == HandlerType.FLAT) ? new FlatHandler() : new TreeHandler();
     }
 
     public void testSuiteStarted(Class<?> storyClass) {
-        if (suiteId == null) {
-            StartTestItemRQ startSuite = new StartTestItemRQ();
-            startSuite.setType(ItemType.SUITE.key());
-            startSuite.setName(storyClass.getSimpleName());
-            startSuite.setStartTime(Calendar.getInstance().getTime());
-            /* Add narrative to description if present */
-            if (NarrativeFinder.forClass(storyClass).isPresent()) {
-                String description = narrativeFormatter.format(NarrativeFinder.forClass(storyClass).get().text());
-                startSuite.setDescription(description);
-            }
-            suiteId = launch.startTestItem(startSuite);
-        }
+        handler.startSuite(storyClass);
     }
 
     public void testSuiteStarted(Story story) {
-        if (suiteId == null) {
-            StartTestItemRQ startSuite = new StartTestItemRQ();
-            startSuite.setType(ItemType.SUITE.key());
-            startSuite.setName(story.getDisplayName());
-            startSuite.setStartTime(Calendar.getInstance().getTime());
-            startSuite.setDescription(story.getNarrative());
-            suiteId = launch.startTestItem(startSuite);
-        }
+        handler.startSuite(story);
     }
 
     public void testSuiteFinished() {
-        if (suiteId != null) {
-            FinishTestItemRQ finishSuite = new FinishTestItemRQ();
-            finishSuite.setEndTime(Calendar.getInstance().getTime());
-            finishSuite.setStatus(Status.PASSED.toString());
-            launch.finishTestItem(suiteId, finishSuite);
-            suiteId = null;
-        }
+        handler.finishSuite();
     }
 
     public void testStarted(String description) {
-        if (testId == null) {
-            StartTestItemRQ startTest = new StartTestItemRQ();
-            startTest.setType(ItemType.TEST.key());
-            startTest.setName(description);
-            startTest.setStartTime(Calendar.getInstance().getTime());
-            testId = launch.startTestItem(suiteId, startTest);
-        }
+        handler.startTest(description);
     }
 
     public void testStarted(String description, String id) {
-        testStarted(description);
+        handler.startTest(description);
     }
 
     public void testFinished(TestOutcome result) {
-        if (testId != null) {
-            /* Proceed all steps */
-            result.getFlattenedTestSteps().forEach(step -> holder.proceed(step));
-            /* Finish active test */
-            FinishTestItemRQ finishTest = new FinishTestItemRQ();
-            Date endDate = Date.from(result.getStartTime().plus(Duration.ofMillis(result.getDuration())).toInstant());
-            finishTest.setEndTime(endDate);
-            finishTest.setStatus(Status.mapTo(result.getResult()).toString());
-            finishTest.setTags(Utils.refineTags(result));
-            launch.finishTestItem(testId, finishTest);
-            testId = null;
-        }
+        handler.finishTest(result);
     }
 
     public void testRetried() {

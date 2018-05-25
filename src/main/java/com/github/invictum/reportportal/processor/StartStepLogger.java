@@ -13,7 +13,7 @@ public class StartStepLogger implements StepProcessor {
 
     @Override
     public void proceed(final TestStep step) {
-        Date startDate = Date.from(step.getStartTime().toInstant());
+        Date startDate = Utils.stepStartDate(step);
         ReportPortal.emitLog("[STARTED] " + step.getDescription(), Utils.logLevel(step.getResult()), startDate);
     }
 
