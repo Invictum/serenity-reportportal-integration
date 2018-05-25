@@ -43,4 +43,12 @@ public class UtilsTest {
         Date expected = Date.from(startTime.plus(Duration.ofMillis(60000)).toInstant());
         Assert.assertEquals("End date is wrong.", Utils.stepEndDate(step), expected);
     }
+
+    @Test
+    public void stepStartDateTest() {
+        ZonedDateTime startTime = ZonedDateTime.now();
+        TestStep step = new TestStep(startTime, "Step description");
+        Date expected = Date.from(step.getStartTime().toInstant());
+        Assert.assertEquals("Start date is wrong.", Utils.stepStartDate(step), expected);
+    }
 }

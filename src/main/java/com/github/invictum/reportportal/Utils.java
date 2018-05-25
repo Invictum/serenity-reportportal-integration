@@ -33,6 +33,16 @@ public class Utils {
     }
 
     /**
+     * Calculates step's start time
+     *
+     * @param step to calculate time for
+     * @return step start time in {@link Date} format
+     */
+    public static Date stepStartDate(TestStep step) {
+        return Date.from(step.getStartTime().toInstant());
+    }
+
+    /**
      * Refines a set of tags represented with strings.
      * Tags with story type is skipped.
      *
