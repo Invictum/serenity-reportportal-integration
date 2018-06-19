@@ -4,21 +4,26 @@ import com.github.invictum.reportportal.handler.FlatHandler;
 import com.github.invictum.reportportal.handler.Handler;
 import com.github.invictum.reportportal.handler.HandlerType;
 import com.github.invictum.reportportal.handler.TreeHandler;
+import com.github.invictum.reportportal.injector.IntegrationInjector;
 import net.thucydides.core.model.DataTable;
 import net.thucydides.core.model.Story;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.steps.ExecutedStepDescription;
 import net.thucydides.core.steps.StepFailure;
 import net.thucydides.core.steps.StepListener;
+import net.thucydides.core.webdriver.ThucydidesWebDriverSupport;
+import org.openqa.selenium.logging.Logs;
 
 import java.util.Map;
 
 public class ReportPortalListener implements StepListener {
 
     private Handler handler;
+    private LogStorage logStorage;
 
     public ReportPortalListener() {
         handler = (ReportIntegrationConfig.handlerType == HandlerType.FLAT) ? new FlatHandler() : new TreeHandler();
+        logStorage = IntegrationInjector.getInjector().getInstance(LogStorage.class);
     }
 
     public void testSuiteStarted(Class<?> storyClass) {
@@ -38,11 +43,12 @@ public class ReportPortalListener implements StepListener {
     }
 
     public void testStarted(String description, String id) {
-        handler.startTest(description);
+        testStarted(description);
     }
 
     public void testFinished(TestOutcome result) {
         handler.finishTest(result);
+        logStorage.clean();
     }
 
     public void testRetried() {
@@ -59,26 +65,32 @@ public class ReportPortalListener implements StepListener {
 
     public void stepFailed(StepFailure failure) {
         /* Not used by listener */
+        collectDriverLogs();
     }
 
     public void lastStepFailed(StepFailure failure) {
         /* Not used by listener */
+        collectDriverLogs();
     }
 
     public void stepIgnored() {
         /* Not used by listener */
+        collectDriverLogs();
     }
 
     public void stepPending() {
         /* Not used by listener */
+        collectDriverLogs();
     }
 
     public void stepPending(String message) {
         /* Not used by listener */
+        collectDriverLogs();
     }
 
     public void stepFinished() {
         /* Not used by listener */
+        collectDriverLogs();
     }
 
     public void testFailed(TestOutcome testOutcome, Throwable cause) {
@@ -127,5 +139,12 @@ public class ReportPortalListener implements StepListener {
 
     public void testRunFinished() {
         /* Not used by listener */
+    }
+
+    private void collectDriverLogs() {
+        if (ThucydidesWebDriverSupport.isInitialised()) {
+            Logs logs = ThucydidesWebDriverSupport.getDriver().manage().logs();
+            logStorage.collect(logs);
+        }
     }
 }
