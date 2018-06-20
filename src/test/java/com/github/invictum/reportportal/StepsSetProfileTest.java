@@ -17,7 +17,8 @@ public class StepsSetProfileTest {
                 new ScreenshotAttacher(),
                 new FinishStepLogger(),
                 new ErrorLogger(true),
-                new HtmlSourceAttacher()
+                new HtmlSourceAttacher(),
+                new SeleniumLogsAttacher()
         };
         Assert.assertArrayEquals(actual, expected);
     }

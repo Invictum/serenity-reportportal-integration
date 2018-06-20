@@ -38,7 +38,8 @@ public enum StepsSetProfile {
                     new ScreenshotAttacher(),
                     new FinishStepLogger(),
                     new ErrorLogger(true),
-                    new HtmlSourceAttacher()
+                    new HtmlSourceAttacher(),
+                    new SeleniumLogsAttacher()
             };
         }
 
