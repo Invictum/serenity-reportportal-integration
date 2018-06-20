@@ -11,6 +11,9 @@ Setup
 -------------
 To add support of integration between Serenity and Report Portal simply add dependencies to your project based on used build tool.
 
+> **Warning**
+> Don't add any extra Report Portal listeners or agents. Integration is provided by single module for all availavle Serenity approaches
+
 **Maven**
 
 Edit project's `pom.xml` file
@@ -18,10 +21,10 @@ Edit project's `pom.xml` file
 <dependency>
    <groupId>com.github.invictum</groupId>
    <artifactId>serenity-reportportal-integration</artifactId>
-   <version>1.1.1</version>
+   <version>1.1.3</version>
 </dependency>
 ```
-Report Portal core libraries are used, but it uses external repository, so it URL also should be added to your build configuration
+Report Portal core libraries are used, but they placed in repository, so its URL also should be added to your build configuration
 ```
 <repositories>
     <repository>
@@ -39,7 +42,7 @@ Report Portal core libraries are used, but it uses external repository, so it UR
 
 Edit `build.gradle` file in the project root
 ```
-compile group: 'com.github.invictum', name: 'serenity-reportportal-integration', version: '1.1.1'
+compile group: 'com.github.invictum', name: 'serenity-reportportal-integration', version: '1.1.3'
 ```
 External Report Portal repository should be defined the same as for Maven
 ```
@@ -85,13 +88,28 @@ Each Serenity `TestStep` object is passed through chain of configured `StepProce
 - CUSTOM
 
 `DEFAULT` profile is used by default and contains all usually required reporting details. It generates in Report Portal a nice log that does not cluttered with extra details.
-`FULL` profile contains all available `StepProcessors` and generates full reporting. To customize what should be logged `CUSTOM` profile should be used.
+
+`FULL` profile contains all available `StepProcessors` and generates full reporting.
+
+To customize what should be logged `CUSTOM` profile should be used.
 ```
 StepsSetProfile config = StepsSetProfile.CUSTOM;
 config.registerProcessors(new StartStepLogger(), new FinishStepLogger());
 ReportIntegrationConfig.profile = config;
 ```
-In example above `CUSTOM` profile with `StartStepLogger` and `FinishStepLogger` processors is configured. All step processors available out of the box may be observed in `com.github.invictum.reportportal.processor` package.
+In example above `CUSTOM` profile with `StartStepLogger` and `FinishStepLogger` processors is configured.
+
+**Processors**
+
+All step processors available out of the box may be observed in `com.github.invictum.reportportal.processor` package.
+For now following processors are available:
+- `StartStepLogger` logs all started steps.
+- `FinishStepLogger` logs all finished steps. Log level depends on step results.
+- `ErrorLogger` reports error if present. Includes regular errors as well as assertion fails. It is possible to pass a boolean flag to the constructor in order to have short or long error reporting format.
+- `ScreenshotAttacher` emits screenshots to RP if present. It simply attaches all available step's screenshots, so screenshot strategy is configured on Serenity level.
+- `HtmlSourceAttacher` logs page source if available.
+- `SeleniumLogsAttacher` reports logs supplied by Selenium. It is possible to pass predicate to constructor in order to push particular logs. By default emits all available logs.
+
 It is possible to use integrated processors as well as implemented by your own. To make own processor implement `StepProcessor` interface. In custom implementation access to Serenity's `TestStep` object is provided
 ```
 public class MyCustomLoggerLogger implements StepProcessor {
@@ -103,7 +121,7 @@ public class MyCustomLoggerLogger implements StepProcessor {
 }
 ```
 > **Warning**
-To emit log to Report Portal time should be specified. If log timestamp is out of range of step it won't be emitted at all. `TestStep` object contains all data to calculate start, end dates and duration
+> To emit log to Report Portal time should be specified. If log timestamp is out of range of step it won't be emitted at all. `TestStep` object contains all data to calculate start, end dates and duration
 
 The order of processors registration is matters, this order the same as order of invocation.
 
@@ -147,7 +165,7 @@ Integration provides two strategies of storing Serenity's test data to Report Po
 Report Portal has a few limitations regurding to flexible nested structures support for now. As a result test report may contain some inaccuracate data.
 E. g. test count for launch will show total number of tests + total number of steps.
 
-Nevertheless `TREE` configuration allows to get additional features with RP. E. g. integrated RP test analisys facility will be changed from test to step.
+Nevertheless `TREE` configuration allows to get additional features with RP. E. g. integrated RP test analisys facility scope will be changed from test to step.
 
 Handler type may be changed with following configuration
 ```
@@ -230,12 +248,12 @@ Report Portal integration uses 3 digit version format - x.y.z
 
 Important release notes
 -----------------------
-Consolidated release notes are described below
+Important release notes are described below. Use [releases](https://github.com/Invictum/serenity-reportportal-integration/releases) section for details regarding regular release notes.
 
  Version       | Note
 ---------------|---------------------------
 1.0.0 - 1.0.6  | Supports RP v3 and below
-1.1.0          | Minor version update due RP v4 release. Versions older than 1.1.0 are not compatible with RP v4+ and vise versa
+1.1.0+         | Minor version update due RP v4 release. Versions older than 1.1.0 are not compatible with RP v4+ and vise versa
 
 Limitations
 -------------
