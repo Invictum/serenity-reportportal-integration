@@ -57,4 +57,11 @@ public class LogStorageTest {
         storage.collect(logsMock);
         Mockito.verify(logsMock, Mockito.times(1)).getAvailableLogTypes();
     }
+
+    @Test
+    public void skipCollectionIfNull() {
+        Mockito.when(logsMock.get("data")).thenReturn(null);
+        storage.collect(logsMock);
+        Assert.assertTrue(storage.query(item -> true).isEmpty());
+    }
 }

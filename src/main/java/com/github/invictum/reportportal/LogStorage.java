@@ -1,5 +1,6 @@
 package com.github.invictum.reportportal;
 
+import org.openqa.selenium.logging.LogEntries;
 import org.openqa.selenium.logging.Logs;
 
 import java.util.ArrayList;
@@ -30,10 +31,13 @@ public class LogStorage {
         }
         // Collect all available logs
         types.get().ifPresent(types -> types.forEach(type -> {
-            List<EnhancedLogEntry> typedLogs = seleniumLogs.get(type).getAll().stream()
-                    .map(log -> new EnhancedLogEntry(type, log.getLevel(), log.getTimestamp(), log.getMessage()))
-                    .collect(Collectors.toList());
-            logs.get().addAll(typedLogs);
+            LogEntries logEntries = seleniumLogs.get(type);
+            if (logEntries != null) {
+                List<EnhancedLogEntry> typedLogs = logEntries.getAll().stream()
+                        .map(log -> new EnhancedLogEntry(type, log.getLevel(), log.getTimestamp(), log.getMessage()))
+                        .collect(Collectors.toList());
+                logs.get().addAll(typedLogs);
+            }
         }));
     }
 
