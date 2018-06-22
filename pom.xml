@@ -54,17 +54,17 @@
         <dependency>
             <groupId>net.serenity-bdd</groupId>
             <artifactId>serenity-core</artifactId>
-            <version>1.9.19</version>
+            <version>1.9.23</version>
         </dependency>
         <dependency>
             <groupId>com.epam.reportportal</groupId>
             <artifactId>client-java</artifactId>
-            <version>4.0.7</version>
+            <version>4.0.8</version>
         </dependency>
         <dependency>
             <groupId>com.epam.reportportal</groupId>
             <artifactId>commons-model</artifactId>
-            <version>4.0.4</version>
+            <version>4.2.0</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
