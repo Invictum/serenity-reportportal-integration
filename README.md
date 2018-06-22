@@ -85,11 +85,14 @@ Each Serenity `TestStep` object is passed through chain of configured `StepProce
 
 - DEFAULT
 - FULL
+- TREE_OPTIMIZED
 - CUSTOM
 
 `DEFAULT` profile is used by default and contains all usually required reporting details. It generates in Report Portal a nice log that does not cluttered with extra details.
 
 `FULL` profile contains all available `StepProcessors` and generates full reporting.
+
+`TREE_OPTIMIZED` profile is sutable to use with `TREE` handler type. Reffer to Handler Type section for more details.
 
 To customize what should be logged `CUSTOM` profile should be used.
 ```
@@ -125,6 +128,22 @@ public class MyCustomLoggerLogger implements StepProcessor {
 
 The order of processors registration is matters, this order the same as order of invocation.
 
+**Handler type (expiremental feature)**
+
+Integration provides two strategies of storing Serenity's test data to Report Portal facility:
+- *FLAT* (default behaviour) - Represents steps data as plain logs emmited to the test scope
+- *TREE* - Reconstructs steps structure as a tree representation in RP
+
+Report Portal has a few limitations regurding to flexible nested structures support for now. As a result test report may contain some inaccuracate data.
+E. g. test count for launch will show total number of tests + total number of steps.
+
+Nevertheless `TREE` configuration allows to get additional features with RP. E. g. integrated RP test analisys facility scope will be changed from test to step.
+
+Handler type may be changed with following configuration
+```
+ReportIntegrationConfig.handlerType = HandlerType.TREE;
+```
+
 **Narrative formatter**
 
 By default, narrative is formatted as a bullet list before storring to the test description field. It is possible to alter this logic in accordance to project needs.
@@ -141,7 +160,7 @@ public class NumberedListFormatter implements NarrativeFormatter {
 }
 ```
 
-Code snippet abowe will format narrative lines as a numbered list.
+Code snippet above will format narrative lines as a numbered list.
 ```
 Initial lines
 line 1, line 2
@@ -154,22 +173,6 @@ Result lines
 Custom `NarrativeFormatter` should be registered via configuration
 ```
 ReportIntegrationConfig.narrativeFormatter = new NumberedListFormatter();
-```
-
-**Handler type (expiremental feature)**
-
-Integration provides two strategies of storing Serenity's test data to Report Portal facility:
- - FLAT (default behaviour) - Represents steps data as plain logs emmited to the test scope
- - TREE - Reconstructs steps structure as a tree representation in RP
-
-Report Portal has a few limitations regurding to flexible nested structures support for now. As a result test report may contain some inaccuracate data.
-E. g. test count for launch will show total number of tests + total number of steps.
-
-Nevertheless `TREE` configuration allows to get additional features with RP. E. g. integrated RP test analisys facility scope will be changed from test to step.
-
-Handler type may be changed with following configuration
-```
-ReportIntegrationConfig.handlerType = HandlerType.TREE;
 ```
 
 > **Notice**
