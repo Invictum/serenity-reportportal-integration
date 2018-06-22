@@ -27,7 +27,7 @@ public class FlatHandler implements Handler {
     private NarrativeFormatter narrativeFormatter;
 
     @Inject
-    private StepProcessorsHolder holder;
+    StepProcessorsHolder holder;
 
     Maybe<String> suiteId;
     Maybe<String> testId;
