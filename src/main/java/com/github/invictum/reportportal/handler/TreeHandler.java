@@ -43,6 +43,8 @@ public class TreeHandler extends FlatHandler {
             startTest.setType(ItemType.TEST.key());
             startTest.setStartTime(Utils.stepStartDate(testStep));
             Maybe<String> current = launch.startTestItem(parent, startTest);
+            /* Proceed current step through processors */
+            holder.proceed(testStep);
             /* Proceed children if present */
             if (testStep.hasChildren()) {
                 push(current, testStep.getChildren());
