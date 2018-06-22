@@ -66,6 +66,24 @@ public enum StepsSetProfile {
             this.steps = steps;
             return this;
         }
+    },
+
+    /**
+     * Processors set designed to use in TREE handler mode.
+     */
+    TREE_OPTIMIZED() {
+        @Override
+        StepProcessor[] processors() {
+            return new StepProcessor[]{
+                    new ScreenshotAttacher(),
+                    new ErrorLogger(true)
+            };
+        }
+
+        @Override
+        public StepsSetProfile registerProcessors(StepProcessor... steps) {
+            throw new UnsupportedOperationException("Unable to register processors for TREE_OPTIMIZED profile");
+        }
     };
 
     /**

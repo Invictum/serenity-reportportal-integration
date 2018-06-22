@@ -10,7 +10,7 @@ import org.junit.runners.JUnit4;
 public class StepsSetProfileTest {
 
     @Test
-    public void fullProfileTest() {
+    public void fullProfile() {
         StepProcessor[] actual = StepsSetProfile.FULL.processors();
         StepProcessor[] expected = new StepProcessor[]{
                 new StartStepLogger(),
@@ -23,8 +23,13 @@ public class StepsSetProfileTest {
         Assert.assertArrayEquals(actual, expected);
     }
 
+    @Test(expected = UnsupportedOperationException.class)
+    public void fullProfileCustomization() {
+        StepsSetProfile.FULL.registerProcessors(new ScreenshotAttacher());
+    }
+
     @Test
-    public void defaultProfileTest() {
+    public void defaultProfile() {
         StepProcessor[] actual = StepsSetProfile.DEFAULT.processors();
         StepProcessor[] expected = new StepProcessor[]{
                 new FinishStepLogger(),
@@ -35,14 +40,29 @@ public class StepsSetProfileTest {
     }
 
     @Test(expected = UnsupportedOperationException.class)
-    public void defaultProfileCustomizationTest() {
+    public void defaultProfileCustomization() {
         StepsSetProfile.DEFAULT.registerProcessors(new ScreenshotAttacher());
     }
 
     @Test
-    public void customProfileTest() {
+    public void customProfileCustomization() {
         StepsSetProfile profile = StepsSetProfile.CUSTOM.registerProcessors(new ScreenshotAttacher());
         StepProcessor[] expected = new StepProcessor[]{new ScreenshotAttacher()};
         Assert.assertArrayEquals(profile.processors(), expected);
+    }
+
+    @Test
+    public void treeOptimizedProfile() {
+        StepProcessor[] actual = StepsSetProfile.TREE_OPTIMIZED.processors();
+        StepProcessor[] expected = new StepProcessor[]{
+                new ScreenshotAttacher(),
+                new ErrorLogger(true)
+        };
+        Assert.assertArrayEquals(actual, expected);
+    }
+
+    @Test(expected = UnsupportedOperationException.class)
+    public void treeOptimizedProfileCustomization() {
+        StepsSetProfile.TREE_OPTIMIZED.registerProcessors(new HtmlSourceAttacher());
     }
 }
