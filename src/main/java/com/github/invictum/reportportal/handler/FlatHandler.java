@@ -24,9 +24,6 @@ public class FlatHandler implements Handler {
     Launch launch;
 
     @Inject
-    private NarrativeFormatter narrativeFormatter;
-
-    @Inject
     StepProcessorsHolder holder;
 
     Maybe<String> suiteId;
@@ -45,6 +42,7 @@ public class FlatHandler implements Handler {
             startSuite.setStartTime(Calendar.getInstance().getTime());
             /* Add narrative to description if present */
             if (NarrativeFinder.forClass(storyClass).isPresent()) {
+                NarrativeFormatter narrativeFormatter = ReportIntegrationConfig.get().narrativeFormatter();
                 String description = narrativeFormatter.format(NarrativeFinder.forClass(storyClass).get().text());
                 startSuite.setDescription(description);
             }

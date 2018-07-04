@@ -22,7 +22,8 @@ public class ReportPortalListener implements StepListener {
     private LogStorage logStorage;
 
     public ReportPortalListener() {
-        handler = (ReportIntegrationConfig.handlerType == HandlerType.FLAT) ? new FlatHandler() : new TreeHandler();
+        HandlerType handlerType = ReportIntegrationConfig.get().handlerType();
+        handler = handlerType == HandlerType.FLAT ? new FlatHandler() : new TreeHandler();
         logStorage = IntegrationInjector.getInjector().getInstance(LogStorage.class);
     }
 
@@ -64,32 +65,26 @@ public class ReportPortalListener implements StepListener {
     }
 
     public void stepFailed(StepFailure failure) {
-        /* Not used by listener */
         collectDriverLogs();
     }
 
     public void lastStepFailed(StepFailure failure) {
-        /* Not used by listener */
         collectDriverLogs();
     }
 
     public void stepIgnored() {
-        /* Not used by listener */
         collectDriverLogs();
     }
 
     public void stepPending() {
-        /* Not used by listener */
         collectDriverLogs();
     }
 
     public void stepPending(String message) {
-        /* Not used by listener */
         collectDriverLogs();
     }
 
     public void stepFinished() {
-        /* Not used by listener */
         collectDriverLogs();
     }
 

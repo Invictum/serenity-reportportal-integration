@@ -7,7 +7,7 @@ public class StepProcessorsHolderProvider implements Provider<StepProcessorsHold
     @Override
     public StepProcessorsHolder get() {
         StepProcessorsHolder holder = new StepProcessorsHolder();
-        holder.register(ReportIntegrationConfig.profile.processors());
+        holder.register(ReportIntegrationConfig.get().profile().processors());
         return holder;
     }
 }
