@@ -21,7 +21,7 @@ Edit project's `pom.xml` file
 <dependency>
    <groupId>com.github.invictum</groupId>
    <artifactId>serenity-reportportal-integration</artifactId>
-   <version>1.1.3</version>
+   <version>1.2.0</version>
 </dependency>
 ```
 Report Portal core libraries are used, but they placed in a separate repository, so its URL also should be added to your build configuration
@@ -42,7 +42,7 @@ Report Portal core libraries are used, but they placed in a separate repository,
 
 Edit `build.gradle` file in the project root
 ```
-compile group: 'com.github.invictum', name: 'serenity-reportportal-integration', version: '1.1.3'
+compile group: 'com.github.invictum', name: 'serenity-reportportal-integration', version: '1.2.0'
 ```
 External Report Portal repository should be defined the same as for Maven
 ```
@@ -67,7 +67,7 @@ Now run your tests normally and report should appear on Report Portal in accorda
 ReportPortal.emitLog("My message", "INFO", Calendar.getInstance().getTime());
 ```
 Message will appear in the scope of entity it was triggered. I. e. inside related test.
-It is also possible to use Report portal integration with log frameworks in order to push messages to RP server. Please reffer to [Report Portal loggin integtation](http://reportportal.io/docs/Logging-Integration) for more details related to it.
+It is also possible to use Report portal integration with log frameworks in order to push messages to RP server. Please refer to [Report Portal loggin integtation](http://reportportal.io/docs/Logging-Integration) for more details related to it.
 
 > **Notice**
 > Actually to add logs to Report Portal, they should be emitted in scope of test method, otherwise they will not be displayed at all
@@ -79,7 +79,7 @@ Serenity TAF provides its own reporting facility, but `serenity-reportportal-int
 Integration configuration
 -------------
 
-All available configurations are provided via `ReportIntegrationConfig` object. All set methods return object itself, so chain of configuration is posssible:
+All available configurations are provided via `ReportIntegrationConfig` object. Each set method returns object itself, so chain of configuration is posssible:
 ```
 ReportIntegrationConfig configuration = ReportIntegrationConfig.get();
 configuration.useHandler(HandlerType.TREE).useProfile(StepsSetProfile.TREE_OPTIMIZED);
@@ -101,7 +101,7 @@ Each Serenity `TestStep` object is passed through chain of configured `StepProce
 
 `FULL` profile contains all available `StepProcessors` and generates full reporting. Sutable for demo purposes in order to choose a set of processors.
 
-`TREE_OPTIMIZED` profile is sutable to use with `TREE` handler type. Reffer to Handler Type section for more details.
+`TREE_OPTIMIZED` profile is sutable to use with `TREE` handler type. Refer to Handler Type section for more details.
 
 To customize what should be logged `CUSTOM` profile should be used. In following example `CUSTOM` profile with `StartStepLogger` and `FinishStepLogger` processors is configured.
 ```
@@ -118,19 +118,21 @@ For now following processors are available:
 - `FinishStepLogger` logs all finished steps. Log level depends on step results.
 - `ErrorLogger` reports error if present. Includes regular errors as well as assertion fails. By default full stack strace will be reported. But it is possible to pass a function to the constructor in order to implement any logic for message formatting.
 ```
-StepsSetProfile config = StepsSetProfile.CUSTOM;
+StepsSetProfile profile = StepsSetProfile.CUSTOM;
 // Report full stack stace supplied by Serenity
 ErrorLogger errorLogger = new ErrorLogger();
 // Report a short error description provided by Serenity
 ErrorLogger errorLogger = new ErrorLogger(TestStep::getConciseErrorMessage);
-config.registerProcessors(errorLogger);
+profile.registerProcessors(errorLogger);
 ```
 - `ScreenshotAttacher` emits screenshots to RP if present. It simply attaches all available step's screenshots, so screenshot strategy is configured on Serenity level.
 - `HtmlSourceAttacher` logs page source if available.
 - `SeleniumLogsAttacher` reports logs supplied by Selenium. By default emits all available logs. It is possible to pass predicate to constructor in order to push particular logs.
 ```
+StepsSetProfile profile = StepsSetProfile.CUSTOM;
 // Collect only browser related logs
 SeleniumLogsAttacher logsAttacher = new SeleniumLogsAttacher(log -> log.getType().contentEquals("browser"));
+profile.registerProcessors(errorLogger);
 ```
 
 It is possible to use integrated processors as well as implemented by your own. To make own processor implement `StepProcessor` interface. In custom implementation access to Serenity's `TestStep` object is provided
@@ -273,7 +275,8 @@ Important release notes are described below. Use [releases](https://github.com/I
  Version       | Note
 ---------------|---------------------------
 1.0.0 - 1.0.6  | Supports RP v3 and below
-1.1.0+         | Minor version update due RP v4 release. Versions older than 1.1.0 are not compatible with RP v4+ and vise versa
+1.1.0 - 1.1.3  | Minor version update due RP v4 release. Versions older than 1.1.0 are not compatible with RP v4+ and vise versa
+1.2.0+         | Minor version updated due Configuration approach refactoring. New configuratiion approach is not compatible with versions under 1.2.0
 
 Limitations
 -------------
