@@ -1,32 +1,59 @@
 package com.github.invictum.reportportal;
 
-import com.github.invictum.reportportal.processor.ScreenshotAttacher;
+import com.github.invictum.reportportal.handler.HandlerType;
 import org.junit.Assert;
-import org.junit.FixMethodOrder;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
-import org.junit.runners.MethodSorters;
 
 @RunWith(JUnit4.class)
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class ReportIntegrationConfigTest {
 
-    @Test
-    public void defaultStepsSetProfileTest() {
-        Assert.assertEquals(StepsSetProfile.DEFAULT, ReportIntegrationConfig.profile);
+    private ReportIntegrationConfig config;
+
+    @Before
+    public void beforeTest() {
+        config = ReportIntegrationConfig.get();
+        config.resetToDefaults();
     }
 
     @Test
-    public void stepsSetProfileCustomizationTest() {
-        StepsSetProfile profile = StepsSetProfile.CUSTOM.registerProcessors(new ScreenshotAttacher());
-        ReportIntegrationConfig.profile = profile;
-        Assert.assertEquals(ReportIntegrationConfig.profile, profile);
+    public void defaultStepsSetProfileTest() {
+        Assert.assertEquals(config.profile(), StepsSetProfile.DEFAULT);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void nullStepsSetProfileTest() {
+        config.useProfile(null);
+    }
+
+    @Test
+    public void defaultHandlerTypeTest() {
+        Assert.assertEquals(config.handlerType(), HandlerType.FLAT);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void nullHandlerTypeTest() {
+        config.useHandler(null);
     }
 
     @Test
     public void defaultNarrativeFormatterTest() {
-        Class expected = ReportIntegrationConfig.narrativeFormatter.getClass();
-        Assert.assertEquals("Default narrative formatter is wrong", expected, NarrativeBulletListFormatter.class);
+        Class actual = config.narrativeFormatter().getClass();
+        Assert.assertEquals(NarrativeBulletListFormatter.class, actual);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void nullNarrativeFormatterTest() {
+        config.useNarrativeFormatter(null);
+    }
+
+    @Test
+    public void resetToDefaultsTest() {
+        config.useHandler(HandlerType.TREE).useProfile(StepsSetProfile.CUSTOM);
+        config.resetToDefaults();
+        Assert.assertEquals(config.handlerType(), HandlerType.FLAT);
+        Assert.assertEquals(config.profile(), StepsSetProfile.DEFAULT);
     }
 }

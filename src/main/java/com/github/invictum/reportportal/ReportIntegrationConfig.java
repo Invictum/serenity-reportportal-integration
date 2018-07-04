@@ -11,9 +11,9 @@ import java.util.Objects;
  */
 public class ReportIntegrationConfig {
 
-    private StepsSetProfile profile = StepsSetProfile.DEFAULT;
-    private NarrativeFormatter narrativeFormatter = new NarrativeBulletListFormatter();
-    private HandlerType handlerType = HandlerType.FLAT;
+    private StepsSetProfile profile;
+    private NarrativeFormatter narrativeFormatter;
+    private HandlerType handlerType;
 
     /**
      * Provides injected {@link ReportIntegrationConfig} configuration object
@@ -22,8 +22,8 @@ public class ReportIntegrationConfig {
         return IntegrationInjector.getInjector().getInstance(ReportIntegrationConfig.class);
     }
 
-    private ReportIntegrationConfig() {
-        // Disabled constructor
+    public ReportIntegrationConfig() {
+        resetToDefaults();
     }
 
     /**
@@ -59,8 +59,15 @@ public class ReportIntegrationConfig {
     }
 
     public HandlerType handlerType() {
-        ReportIntegrationConfig configuration = ReportIntegrationConfig.get();
-        configuration.useHandler(HandlerType.TREE).useProfile(StepsSetProfile.TREE_OPTIMIZED);
         return handlerType;
+    }
+
+    /**
+     * Sets default values for configuration
+     */
+    public void resetToDefaults() {
+        this.profile = StepsSetProfile.DEFAULT;
+        this.narrativeFormatter = new NarrativeBulletListFormatter();
+        this.handlerType = HandlerType.FLAT;
     }
 }
