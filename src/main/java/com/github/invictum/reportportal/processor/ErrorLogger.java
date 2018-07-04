@@ -6,40 +6,54 @@ import net.thucydides.core.model.TestStep;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.function.Function;
 
 /**
- * Emits log with error message if present.
- * If fullLog option is set to true stack trace will be reported, otherwise short exception message provided by Serenity.
+ * Emits log with error message if present
  */
 public class ErrorLogger implements StepProcessor {
 
-    private boolean full;
+    private Function<TestStep, String> messageFormatter = step -> {
+        Throwable cause = step.getException().getOriginalCause();
+        StringWriter writer = new StringWriter();
+        cause.printStackTrace(new PrintWriter(writer));
+        return writer.toString();
+    };
 
+    @Deprecated
+    // Use constructor with function instead
     public ErrorLogger(boolean fullLog) {
-        this.full = fullLog;
+        if (!fullLog) {
+            messageFormatter = TestStep::getConciseErrorMessage;
+        }
+    }
+
+    /**
+     * Default constructor collects full stack trace
+     */
+    public ErrorLogger() {
+
+    }
+
+    /**
+     * Constructor allows to pass custom function to format error message
+     *
+     * @param messageFormatter to use for message formatting
+     */
+    public ErrorLogger(Function<TestStep, String> messageFormatter) {
+        this.messageFormatter = messageFormatter;
     }
 
     @Override
     public void proceed(final TestStep step) {
         if (step.getException() != null) {
-            String errorMessage = step.getConciseErrorMessage();
-            if (full) {
-                /* Dump stack trace into String */
-                Throwable cause = step.getException().getOriginalCause();
-                StringWriter writer = new StringWriter();
-                cause.printStackTrace(new PrintWriter(writer));
-                errorMessage = writer.toString();
-            }
+            String errorMessage = messageFormatter.apply(step);
             ReportPortal.emitLog(errorMessage, Utils.logLevel(step.getResult()), Utils.stepEndDate(step));
         }
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof ErrorLogger) {
-            ErrorLogger errorLogger = (ErrorLogger) obj;
-            return errorLogger.full == this.full;
-        }
-        return false;
+        return obj instanceof ErrorLogger;
     }
 }

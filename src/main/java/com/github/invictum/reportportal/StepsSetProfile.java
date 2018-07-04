@@ -17,7 +17,7 @@ public enum StepsSetProfile {
             return new StepProcessor[]{
                     new FinishStepLogger(),
                     new ScreenshotAttacher(),
-                    new ErrorLogger(true)
+                    new ErrorLogger()
             };
         }
 
@@ -37,7 +37,7 @@ public enum StepsSetProfile {
                     new StartStepLogger(),
                     new ScreenshotAttacher(),
                     new FinishStepLogger(),
-                    new ErrorLogger(true),
+                    new ErrorLogger(),
                     new HtmlSourceAttacher(),
                     new SeleniumLogsAttacher()
             };
@@ -76,7 +76,7 @@ public enum StepsSetProfile {
         StepProcessor[] processors() {
             return new StepProcessor[]{
                     new ScreenshotAttacher(),
-                    new ErrorLogger(true)
+                    new ErrorLogger()
             };
         }
 
