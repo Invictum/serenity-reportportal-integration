@@ -2,7 +2,6 @@ package com.github.invictum.reportportal.processor;
 
 import net.thucydides.core.model.TestStep;
 import net.thucydides.core.model.stacktrace.FailureCause;
-import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -22,15 +21,15 @@ public class ErrorLoggerTest {
 
     @Test
     public void noExceptionTest() {
-        ErrorLogger errorLogger = new ErrorLogger(false);
+        ErrorLogger errorLogger = new ErrorLogger();
         errorLogger.proceed(stepMock);
         Mockito.verify(stepMock, Mockito.times(1)).getException();
         Mockito.verify(stepMock, Mockito.never()).getConciseErrorMessage();
     }
 
     @Test
-    public void shortExceptionLogTest() {
-        ErrorLogger errorLogger = new ErrorLogger(false);
+    public void customFormatExceptionLogTest() {
+        ErrorLogger errorLogger = new ErrorLogger(TestStep::getConciseErrorMessage);
         /* Setup mock */
         Mockito.when(stepMock.getStartTime()).thenReturn(ZonedDateTime.now());
         Mockito.when(stepMock.getException()).thenReturn(failureCauseMock);
@@ -43,7 +42,7 @@ public class ErrorLoggerTest {
 
     @Test
     public void fullExceptionLogTest() {
-        ErrorLogger errorLogger = new ErrorLogger(true);
+        ErrorLogger errorLogger = new ErrorLogger();
         /* Setup mock */
         Mockito.when(stepMock.getStartTime()).thenReturn(ZonedDateTime.now());
         Mockito.when(stepMock.getException()).thenReturn(failureCauseMock);
@@ -51,12 +50,6 @@ public class ErrorLoggerTest {
         errorLogger.proceed(stepMock);
         /* Verification */
         Mockito.verify(stepMock, Mockito.times(2)).getException();
-        Mockito.verify(stepMock, Mockito.times(1)).getConciseErrorMessage();
         Mockito.verify(stepMock, Mockito.times(1)).getResult();
-    }
-
-    @Test
-    public void notEqualsTest() {
-        Assert.assertNotEquals("Error loggers are equals", new ErrorLogger(false), new ErrorLogger(true));
     }
 }

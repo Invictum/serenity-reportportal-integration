@@ -116,7 +116,15 @@ All step processors available out of the box may be observed in `com.github.invi
 For now following processors are available:
 - `StartStepLogger` logs all started steps.
 - `FinishStepLogger` logs all finished steps. Log level depends on step results.
-- `ErrorLogger` reports error if present. Includes regular errors as well as assertion fails. It is possible to pass a boolean flag to the constructor in order to have short or long error reporting format.
+- `ErrorLogger` reports error if present. Includes regular errors as well as assertion fails. By default full stack strace will be reported. But it is possible to pass a function to the constructor in order to implement any logic for message formatting.
+```
+StepsSetProfile config = StepsSetProfile.CUSTOM;
+// Report full stack stace supplied by Serenity
+ErrorLogger errorLogger = new ErrorLogger();
+// Report a short error description provided by Serenity
+ErrorLogger errorLogger = new ErrorLogger(TestStep::getConciseErrorMessage);
+config.registerProcessors(errorLogger);
+```
 - `ScreenshotAttacher` emits screenshots to RP if present. It simply attaches all available step's screenshots, so screenshot strategy is configured on Serenity level.
 - `HtmlSourceAttacher` logs page source if available.
 - `SeleniumLogsAttacher` reports logs supplied by Selenium. By default emits all available logs. It is possible to pass predicate to constructor in order to push particular logs.
