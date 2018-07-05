@@ -7,9 +7,11 @@ import net.thucydides.core.model.TestStep;
 import net.thucydides.core.screenshots.ScreenshotAndHtmlSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import rp.com.google.common.io.ByteSource;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.Date;
 import java.util.Optional;
 
@@ -18,6 +20,7 @@ import java.util.Optional;
  */
 public class HtmlSourceAttacher implements StepProcessor {
 
+    private final static String MIME = "test/plain";
     private final static Logger LOG = LoggerFactory.getLogger(HtmlSourceAttacher.class);
 
     @Override
@@ -30,7 +33,8 @@ public class HtmlSourceAttacher implements StepProcessor {
                     Date timestamp = sourceFile.get().lastModified() < stepStartTime
                             .getTime() ? stepStartTime : new Date(sourceFile.get().lastModified());
                     try {
-                        ReportPortalMessage message = new ReportPortalMessage(sourceFile.get(), "HTML Source");
+                        byte[] data = Files.readAllBytes(sourceFile.get().toPath());
+                        ReportPortalMessage message = new ReportPortalMessage(ByteSource.wrap(data), MIME, "HTML Source");
                         ReportPortal.emitLog(message, Utils.logLevel(step.getResult()), timestamp);
                     } catch (IOException e) {
                         LOG.error("Failed to attach sources");
