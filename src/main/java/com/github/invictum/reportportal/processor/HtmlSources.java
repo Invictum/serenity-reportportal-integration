@@ -1,14 +1,12 @@
 package com.github.invictum.reportportal.processor;
 
-import com.epam.reportportal.message.ReportPortalMessage;
-import com.epam.reportportal.service.ReportPortal;
 import com.github.invictum.reportportal.EnhancedMessage;
 import com.github.invictum.reportportal.Utils;
-import com.google.common.io.ByteSource;
 import net.thucydides.core.model.TestStep;
 import net.thucydides.core.screenshots.ScreenshotAndHtmlSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import rp.com.google.common.io.ByteSource;
 
 import java.io.File;
 import java.io.IOException;
@@ -20,7 +18,7 @@ import java.util.*;
  */
 public class HtmlSources implements StepDataExtractor {
 
-    private final static String MIME = "test/plain";
+    private final static String MIME = "text/plain";
     private final static Logger LOG = LoggerFactory.getLogger(HtmlSources.class);
 
     @Override
@@ -36,8 +34,6 @@ public class HtmlSources implements StepDataExtractor {
                     try {
                         byte[] data = Files.readAllBytes(sourceFile.get().toPath());
                         EnhancedMessage message = new EnhancedMessage(ByteSource.wrap(data), MIME, "HTML Source");
-                        ReportPortal.emitLog(message, Utils.logLevel(step.getResult()), timestamp);
-                        EnhancedMessage message = new EnhancedMessage(sourceFile.get(), "Screenshot");
                         message.withDate(timestamp).withLevel(Utils.logLevel(step.getResult()));
                         sources.add(message);
                     } catch (IOException e) {
@@ -46,6 +42,7 @@ public class HtmlSources implements StepDataExtractor {
                 }
             }
         }
+        return sources;
     }
 
     @Override
