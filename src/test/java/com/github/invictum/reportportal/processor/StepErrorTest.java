@@ -11,7 +11,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import java.time.ZonedDateTime;
 
 @RunWith(MockitoJUnitRunner.StrictStubs.class)
-public class ErrorLoggerTest {
+public class StepErrorTest {
 
     @Mock
     private TestStep stepMock;
@@ -21,19 +21,19 @@ public class ErrorLoggerTest {
 
     @Test
     public void noExceptionTest() {
-        ErrorLogger errorLogger = new ErrorLogger();
-        errorLogger.proceed(stepMock);
+        StepError stepError = new StepError();
+        stepError.extract(stepMock);
         Mockito.verify(stepMock, Mockito.times(1)).getException();
         Mockito.verify(stepMock, Mockito.never()).getConciseErrorMessage();
     }
 
     @Test
     public void customFormatExceptionLogTest() {
-        ErrorLogger errorLogger = new ErrorLogger(TestStep::getConciseErrorMessage);
+        StepError stepError = new StepError(TestStep::getConciseErrorMessage);
         /* Setup mock */
         Mockito.when(stepMock.getStartTime()).thenReturn(ZonedDateTime.now());
         Mockito.when(stepMock.getException()).thenReturn(failureCauseMock);
-        errorLogger.proceed(stepMock);
+        stepError.extract(stepMock);
         /* Verification */
         Mockito.verify(stepMock, Mockito.times(1)).getException();
         Mockito.verify(stepMock, Mockito.times(1)).getConciseErrorMessage();
@@ -42,12 +42,12 @@ public class ErrorLoggerTest {
 
     @Test
     public void fullExceptionLogTest() {
-        ErrorLogger errorLogger = new ErrorLogger();
+        StepError stepError = new StepError();
         /* Setup mock */
         Mockito.when(stepMock.getStartTime()).thenReturn(ZonedDateTime.now());
         Mockito.when(stepMock.getException()).thenReturn(failureCauseMock);
         Mockito.when(failureCauseMock.getOriginalCause()).thenReturn(new IllegalStateException("Details"));
-        errorLogger.proceed(stepMock);
+        stepError.extract(stepMock);
         /* Verification */
         Mockito.verify(stepMock, Mockito.times(2)).getException();
         Mockito.verify(stepMock, Mockito.times(1)).getResult();

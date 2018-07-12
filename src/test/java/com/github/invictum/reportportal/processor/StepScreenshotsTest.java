@@ -8,15 +8,15 @@ import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.StrictStubs.class)
-public class HtmlSourceAttacherTest {
+public class StepScreenshotsTest {
 
     @Mock
     private TestStep stepMock;
 
     @Test
     public void noScreenshotsTest() {
-        HtmlSourceAttacher htmlSourceAttacher = new HtmlSourceAttacher();
-        htmlSourceAttacher.proceed(stepMock);
+        StepScreenshots stepScreenshots = new StepScreenshots();
+        stepScreenshots.extract(stepMock);
         Mockito.verify(stepMock, Mockito.never()).getResult();
     }
 }

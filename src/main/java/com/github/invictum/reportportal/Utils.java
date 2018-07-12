@@ -15,10 +15,10 @@ public class Utils {
      * Defines log level based on step result status.
      *
      * @param testResult used to define log level
-     * @return log level as a {@link String} representation
+     * @return discovered log level
      */
-    public static String logLevel(TestResult testResult) {
-        return Status.mapTo(testResult).logLevel().toString();
+    public static LogLevel logLevel(TestResult testResult) {
+        return Status.mapTo(testResult).logLevel();
     }
 
     /**

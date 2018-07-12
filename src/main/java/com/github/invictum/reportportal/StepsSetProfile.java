@@ -3,8 +3,8 @@ package com.github.invictum.reportportal;
 import com.github.invictum.reportportal.processor.*;
 
 /**
- * Describes @{@link StepProcessor} sets as a unions.
- * It is possible to specify CUSTOM profile and register to it any @{@link StepProcessor}. Order of processor is matters.
+ * Describes @{@link StepDataExtractor} sets as a unions.
+ * It is possible to specify CUSTOM profile and register to it any @{@link StepDataExtractor}. Order of processor is matters.
  */
 public enum StepsSetProfile {
 
@@ -13,16 +13,16 @@ public enum StepsSetProfile {
      */
     DEFAULT() {
         @Override
-        public StepProcessor[] processors() {
-            return new StepProcessor[]{
-                    new FinishStepLogger(),
-                    new ScreenshotAttacher(),
-                    new ErrorLogger()
+        public StepDataExtractor[] processors() {
+            return new StepDataExtractor[]{
+                    new FinishStep(),
+                    new StepScreenshots(),
+                    new StepError()
             };
         }
 
         @Override
-        public StepsSetProfile registerProcessors(StepProcessor... steps) {
+        public StepsSetProfile registerProcessors(StepDataExtractor... steps) {
             throw new UnsupportedOperationException("Unable to register processors for DEFAULT profile");
         }
     },
@@ -32,19 +32,19 @@ public enum StepsSetProfile {
      */
     FULL() {
         @Override
-        public StepProcessor[] processors() {
-            return new StepProcessor[]{
-                    new StartStepLogger(),
-                    new ScreenshotAttacher(),
-                    new FinishStepLogger(),
-                    new ErrorLogger(),
-                    new HtmlSourceAttacher(),
-                    new SeleniumLogsAttacher()
+        public StepDataExtractor[] processors() {
+            return new StepDataExtractor[]{
+                    new StartStep(),
+                    new StepScreenshots(),
+                    new FinishStep(),
+                    new StepError(),
+                    new HtmlSources(),
+                    new SeleniumLogs()
             };
         }
 
         @Override
-        public StepsSetProfile registerProcessors(StepProcessor... steps) {
+        public StepsSetProfile registerProcessors(StepDataExtractor... steps) {
             throw new UnsupportedOperationException("Unable to register processors for FULL profile");
         }
     },
@@ -54,15 +54,15 @@ public enum StepsSetProfile {
      */
     CUSTOM() {
 
-        private StepProcessor[] steps;
+        private StepDataExtractor[] steps;
 
         @Override
-        public StepProcessor[] processors() {
+        public StepDataExtractor[] processors() {
             return this.steps;
         }
 
         @Override
-        public StepsSetProfile registerProcessors(StepProcessor... steps) {
+        public StepsSetProfile registerProcessors(StepDataExtractor... steps) {
             this.steps = steps;
             return this;
         }
@@ -73,15 +73,15 @@ public enum StepsSetProfile {
      */
     TREE_OPTIMIZED() {
         @Override
-        StepProcessor[] processors() {
-            return new StepProcessor[]{
-                    new ScreenshotAttacher(),
-                    new ErrorLogger()
+        StepDataExtractor[] processors() {
+            return new StepDataExtractor[]{
+                    new StepScreenshots(),
+                    new StepError()
             };
         }
 
         @Override
-        public StepsSetProfile registerProcessors(StepProcessor... steps) {
+        public StepsSetProfile registerProcessors(StepDataExtractor... steps) {
             throw new UnsupportedOperationException("Unable to register processors for TREE_OPTIMIZED profile");
         }
     };
@@ -91,7 +91,7 @@ public enum StepsSetProfile {
      *
      * @return array of processors
      */
-    abstract StepProcessor[] processors();
+    abstract StepDataExtractor[] processors();
 
-    public abstract StepsSetProfile registerProcessors(StepProcessor... steps);
+    public abstract StepsSetProfile registerProcessors(StepDataExtractor... steps);
 }

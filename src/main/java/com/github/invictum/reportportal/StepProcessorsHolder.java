@@ -1,25 +1,30 @@
 package com.github.invictum.reportportal;
 
-import com.github.invictum.reportportal.processor.StepProcessor;
+import com.epam.reportportal.service.ReportPortal;
+import com.github.invictum.reportportal.processor.StepDataExtractor;
 import net.thucydides.core.model.TestStep;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
- * Abstraction used to hold all registered step processors.
- * Entry point to pass {@link TestStep} through sequence of ordered {@link StepProcessor}
+ * Hold all registered step extractors and proceed all passed {@link TestStep}
+ * Entry point to pass {@link TestStep} through sequence of {@link StepDataExtractor}
  */
 public class StepProcessorsHolder {
 
-    private List<StepProcessor> processors = new ArrayList<>();
+    private Set<StepDataExtractor> processors = new HashSet<>();
 
-    public void register(StepProcessor... processors) {
-        this.processors = Arrays.asList(processors);
+    public void register(StepDataExtractor... processors) {
+        this.processors = new HashSet<>(Arrays.asList(processors));
     }
 
     public void proceed(TestStep step) {
-        processors.forEach(processor -> processor.proceed(step));
+        processors.forEach(processor -> {
+            Collection<EnhancedMessage> logs = processor.extract(step);
+            logs.forEach(item -> ReportPortal.emitLog(item, item.getLevel().toString(), item.getDate()));
+        });
     }
 }
