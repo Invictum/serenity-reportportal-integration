@@ -112,7 +112,7 @@ ReportIntegrationConfig.get().useProfile(profile);
 
 **Processors**
 
-All step processors available out of the box may be observed in `com.github.invictum.reportportal.processor` package.
+All step processors available out of the box may be observed in `com.github.invictum.reportportal.extractor` package.
 For now following processors are available:
 - `StartStepLogger` logs all started steps.
 - `FinishStepLogger` logs all finished steps. Log level depends on step results.
@@ -135,7 +135,7 @@ SeleniumLogsAttacher logsAttacher = new SeleniumLogsAttacher(log -> log.getType(
 profile.registerProcessors(errorLogger);
 ```
 
-It is possible to use integrated processors as well as implemented by your own. To make own processor implement `StepProcessor` interface. In custom implementation access to Serenity's `TestStep` object is provided
+It is possible to use integrated processors as well as implemented by your own. To make own extractor implement `StepProcessor` interface. In custom implementation access to Serenity's `TestStep` object is provided
 ```
 public class MyCustomLoggerLogger implements StepProcessor {
 

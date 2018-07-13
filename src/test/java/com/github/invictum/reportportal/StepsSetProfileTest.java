@@ -1,6 +1,6 @@
 package com.github.invictum.reportportal;
 
-import com.github.invictum.reportportal.processor.*;
+import com.github.invictum.reportportal.extractor.*;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;

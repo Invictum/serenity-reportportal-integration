@@ -2,11 +2,11 @@ package com.github.invictum.reportportal;
 
 import com.google.inject.Provider;
 
-public class StepProcessorsHolderProvider implements Provider<StepProcessorsHolder> {
+public class StepProcessorsHolderProvider implements Provider<StepDataExtractorsHolder> {
 
     @Override
-    public StepProcessorsHolder get() {
-        StepProcessorsHolder holder = new StepProcessorsHolder();
+    public StepDataExtractorsHolder get() {
+        StepDataExtractorsHolder holder = new StepDataExtractorsHolder();
         holder.register(ReportIntegrationConfig.get().profile().processors());
         return holder;
     }

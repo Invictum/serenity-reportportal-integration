@@ -1,10 +1,10 @@
 package com.github.invictum.reportportal;
 
-import com.github.invictum.reportportal.processor.*;
+import com.github.invictum.reportportal.extractor.*;
 
 /**
  * Describes @{@link StepDataExtractor} sets as a unions.
- * It is possible to specify CUSTOM profile and register to it any @{@link StepDataExtractor}. Order of processor is matters.
+ * It is possible to specify CUSTOM profile and register to it any @{@link StepDataExtractor}. Order of extractor is matters.
  */
 public enum StepsSetProfile {
 
