@@ -15,7 +15,7 @@ Table of Contents
     3. [Native Serenity reporting](#native-serenity-reporting)
 2. [Integration configuration](#integration-configuration)
     1. [Profiles](#profiles)
-    2. [Executors](#executirs)
+    2. [Executors](#executors)
     3. [Handler type (experimental feature)](#handler-type-experimental-feature)
     4. [Narrative formatter](#narrative-formatter)
 3. [Data mapping](#data-mapping)
