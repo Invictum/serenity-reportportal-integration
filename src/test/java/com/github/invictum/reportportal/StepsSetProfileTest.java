@@ -1,6 +1,8 @@
 package com.github.invictum.reportportal;
 
-import com.github.invictum.reportportal.processor.*;
+import com.github.invictum.reportportal.extractor.HtmlSources;
+import com.github.invictum.reportportal.extractor.StepDataExtractor;
+import com.github.invictum.reportportal.extractor.StepScreenshots;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -11,58 +13,40 @@ public class StepsSetProfileTest {
 
     @Test
     public void fullProfile() {
-        StepProcessor[] actual = StepsSetProfile.FULL.processors();
-        StepProcessor[] expected = new StepProcessor[]{
-                new StartStepLogger(),
-                new ScreenshotAttacher(),
-                new FinishStepLogger(),
-                new ErrorLogger(true),
-                new HtmlSourceAttacher(),
-                new SeleniumLogsAttacher()
-        };
-        Assert.assertArrayEquals(actual, expected);
+        StepDataExtractor[] actual = StepsSetProfile.FULL.extractors();
+        Assert.assertEquals(6, actual.length);
     }
 
     @Test(expected = UnsupportedOperationException.class)
     public void fullProfileCustomization() {
-        StepsSetProfile.FULL.registerProcessors(new ScreenshotAttacher());
+        StepsSetProfile.FULL.registerExtractors(new StepScreenshots());
     }
 
     @Test
     public void defaultProfile() {
-        StepProcessor[] actual = StepsSetProfile.DEFAULT.processors();
-        StepProcessor[] expected = new StepProcessor[]{
-                new FinishStepLogger(),
-                new ScreenshotAttacher(),
-                new ErrorLogger(true)
-        };
-        Assert.assertArrayEquals(actual, expected);
+        StepDataExtractor[] actual = StepsSetProfile.DEFAULT.extractors();
+        Assert.assertEquals(3, actual.length);
     }
 
     @Test(expected = UnsupportedOperationException.class)
     public void defaultProfileCustomization() {
-        StepsSetProfile.DEFAULT.registerProcessors(new ScreenshotAttacher());
+        StepsSetProfile.DEFAULT.registerExtractors(new StepScreenshots());
     }
 
     @Test
     public void customProfileCustomization() {
-        StepsSetProfile profile = StepsSetProfile.CUSTOM.registerProcessors(new ScreenshotAttacher());
-        StepProcessor[] expected = new StepProcessor[]{new ScreenshotAttacher()};
-        Assert.assertArrayEquals(profile.processors(), expected);
+        StepsSetProfile profile = StepsSetProfile.CUSTOM.registerExtractors(new StepScreenshots());
+        Assert.assertEquals(profile.extractors().length, 1);
     }
 
     @Test
     public void treeOptimizedProfile() {
-        StepProcessor[] actual = StepsSetProfile.TREE_OPTIMIZED.processors();
-        StepProcessor[] expected = new StepProcessor[]{
-                new ScreenshotAttacher(),
-                new ErrorLogger(true)
-        };
-        Assert.assertArrayEquals(actual, expected);
+        StepDataExtractor[] actual = StepsSetProfile.TREE_OPTIMIZED.extractors();
+        Assert.assertEquals(2, actual.length);
     }
 
     @Test(expected = UnsupportedOperationException.class)
     public void treeOptimizedProfileCustomization() {
-        StepsSetProfile.TREE_OPTIMIZED.registerProcessors(new HtmlSourceAttacher());
+        StepsSetProfile.TREE_OPTIMIZED.registerExtractors(new HtmlSources());
     }
 }
