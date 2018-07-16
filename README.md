@@ -12,7 +12,7 @@ Setup
 To add support of integration between Serenity and Report Portal simply add dependencies to your project based on used build tool.
 
 > **Warning**
-> Don't add any extra Report Portal listeners or agents. Integration is provided by single module for all availavle Serenity approaches
+> Don't add any extra Report Portal listeners or agents. Integration is provided by single module for all available Serenity approaches
 
 **Maven**
 
@@ -42,9 +42,9 @@ Report Portal core libraries are used, but they placed in a separate repository,
 
 Edit `build.gradle` file in the project root
 ```
-compile group: 'com.github.invictum', name: 'serenity-reportportal-integration', version: '1.2.0'
+compile: 'com.github.invictum:serenity-reportportal-integration:1.2.0'
 ```
-External Report Portal repository should be defined the same as for Maven
+External Report Portal repository should be defined as the same as for Maven
 ```
 repositories {
     maven {
@@ -74,12 +74,12 @@ It is also possible to use Report portal integration with log frameworks in orde
 
 **Native Serenity reporting**
 
-Serenity TAF provides its own reporting facility, but `serenity-reportportal-integration` may be used in parralel with it or independently. Both reporting mechanisms should be configured accordingly and do not depends on each other.
+Serenity TAF may produce its own reporting facility via separate plugins. But `serenity-reportportal-integration` may be used in parallel with it or independently. Both reporting mechanisms should be configured accordingly and do not depends on each other.
 
 Integration configuration
 -------------
 
-All available configurations are provided via `ReportIntegrationConfig` object. Each set method returns object itself, so chain of configuration is posssible:
+All available configurations are provided via `ReportIntegrationConfig` object. Each set method returns object itself, so chain of configuration is possible:
 ```
 ReportIntegrationConfig configuration = ReportIntegrationConfig.get();
 configuration.useHandler(HandlerType.TREE).useProfile(StepsSetProfile.TREE_OPTIMIZED);
@@ -90,7 +90,7 @@ All integration configurations should be provided before Serenity facility init 
 
 **Profiles**
 
-Each Serenity `TestStep` object is passed through chain of configured `StepProcessors`. This approach allows to flexible configure reporting behaviour on a step level. By default integration provides following configuration profiles:
+Each Serenity `TestStep` object is passed through chain of configured `StepDataExtractors`. This approach allows to flexible configure reporting behaviour on a step level. By default integration provides following configuration profiles:
 
 - DEFAULT
 - FULL
@@ -99,67 +99,74 @@ Each Serenity `TestStep` object is passed through chain of configured `StepProce
 
 `DEFAULT` profile is used by default and contains all usually required reporting details. It generates in Report Portal a nice log that does not cluttered with extra details.
 
-`FULL` profile contains all available `StepProcessors` and generates full reporting. Sutable for demo purposes in order to choose a set of processors.
+`FULL` profile contains all available `StepDataExtractors` and generates full reporting. It suitable for demo purposes in order to choose a set of processors.
 
-`TREE_OPTIMIZED` profile is sutable to use with `TREE` handler type. Refer to Handler Type section for more details.
+`TREE_OPTIMIZED` profile is suitable to use with `TREE` handler type. Refer to Handler Type section for more details.
 
-To customize what should be logged `CUSTOM` profile should be used. In following example `CUSTOM` profile with `StartStepLogger` and `FinishStepLogger` processors is configured.
+To configure what should be logged manually `CUSTOM` profile should be used. In following example `CUSTOM` profile with `StartStep` and `FinishStep` executors is configured.
 ```
 StepsSetProfile profile = StepsSetProfile.CUSTOM;
-profile.registerProcessors(new StartStepLogger(), new FinishStepLogger());
+profile.registerProcessors(new StartStep(), new FinishStep());
 ReportIntegrationConfig.get().useProfile(profile);
 ```
 
-**Processors**
+**Executors**
 
-All step processors available out of the box may be observed in `com.github.invictum.reportportal.extractor` package.
+All step executors are available out of the box may be observed in `com.github.invictum.reportportal.extractor` package.
 For now following processors are available:
-- `StartStepLogger` logs all started steps.
-- `FinishStepLogger` logs all finished steps. Log level depends on step results.
-- `ErrorLogger` reports error if present. Includes regular errors as well as assertion fails. By default full stack strace will be reported. But it is possible to pass a function to the constructor in order to implement any logic for message formatting.
+- `StartStep` retrieves step's data relevant to its start.
+- `FinishStep` extracts step's data related to its finish. Log level depends on step result.
+- `StepError` extracts step's error if present. Includes regular errors as well as assertion fails. By default full stack trace will be reported. But it is possible to pass a function to the constructor in order to implement any logic for message formatting.
 ```
 StepsSetProfile profile = StepsSetProfile.CUSTOM;
-// Report full stack stace supplied by Serenity
-ErrorLogger errorLogger = new ErrorLogger();
-// Report a short error description provided by Serenity
-ErrorLogger errorLogger = new ErrorLogger(TestStep::getConciseErrorMessage);
-profile.registerProcessors(errorLogger);
+// Extract a full stack stace supplied by Serenity
+StepError error = new StepError();
+// Extract only a short error description provided by Serenity
+StepError error = new StepError(TestStep::getConciseErrorMessage);
+profile.registerProcessors(error);
 ```
-- `ScreenshotAttacher` emits screenshots to RP if present. It simply attaches all available step's screenshots, so screenshot strategy is configured on Serenity level.
-- `HtmlSourceAttacher` logs page source if available.
-- `SeleniumLogsAttacher` reports logs supplied by Selenium. By default emits all available logs. It is possible to pass predicate to constructor in order to push particular logs.
+- `StepScreenshots` extracts screenshots if present. It simply retrieves all available step's screenshots, so screenshot strategy is configured on Serenity level.
+- `StepHtmlSources` extracts page source if available.
+- `SeleniumLogs` retrieves logs supplied by Selenium. By default extracts all available logs. It is possible to pass predicate to constructor in order to push particular logs.
 ```
 StepsSetProfile profile = StepsSetProfile.CUSTOM;
 // Collect only browser related logs
-SeleniumLogsAttacher logsAttacher = new SeleniumLogsAttacher(log -> log.getType().contentEquals("browser"));
-profile.registerProcessors(errorLogger);
+SeleniumLogs logs = new SeleniumLogs(log -> log.getType().contentEquals("browser"));
+profile.registerProcessors(logs);
 ```
 
-It is possible to use integrated processors as well as implemented by your own. To make own extractor implement `StepProcessor` interface. In custom implementation access to Serenity's `TestStep` object is provided
+It is possible to use integrated extractors as well as implemented by your own. To make own extractor implement `StepDataExtractor` interface. In custom implementation access to Serenity's `TestStep` object is provided.
+For example let's implement extractor that generates a log message before each step start (yeap it is pretty useful)
 ```
-public class MyCustomLoggerLogger implements StepProcessor {
+public class GreetingExtractor implements StepDataExtractor {
 
     @Override
-    public void proceed(final TestStep step) {
-        // You logic here to emit logs
+    public Collection<EnhancedMessage> extract(final TestStep step) {
+        Date startDate = Utils.stepStartDate(step);
+        // Create an istance of EnhancedMessage that is able to hold a log message
+        EnhancedMessage message = new EnhancedMessage("Hello from started step " + step.getDescription());
+        // Do not forget to set propper log level and timestamp
+        message.withDate(startDate).withLevel(Utils.logLevel(step.getResult());
+        // Extractor may produce several logs for emit, but this example supplyies only one
+        return Collections.singleton(message);
     }
 }
 ```
 > **Warning**
-> To emit log to Report Portal time should be specified. If log timestamp is out of range of step it won't be emitted at all. `TestStep` object contains all data to calculate start, end dates and duration
+> To emit log to Report Portal date should be specified. If log timestamp is out of range of step it won't be emitted at all. `TestStep` object contains all data to calculate start, end dates and duration
 
-The order of processors registration is matters, this order the same as order of invocation. Nevertheless, log entities pushed to Report Portal will be sorted based on timestamp.
+Extracted collection of `EnhancedMessage` will be used to push logs to to Report Portal and their order will be based on timestamp.
 
-**Handler type (expiremental feature)**
+**Handler type (experimental feature)**
 
 Integration provides two strategies of storing Serenity's test data to Report Portal facility:
-- *FLAT* (default behaviour) - Represents steps data as plain logs emmited to the test scope
+- *FLAT* (default behaviour) - Represents steps data as plain logs emitted to the test scope
 - *TREE* - Reconstructs steps structure as a tree representation in RP
 
-Report Portal has a few limitations regurding to flexible nested structures support for now. As a result test report may contain some inaccuracate data.
+Report Portal has a few limitations regarding to flexible nested structures support for now. As a result test report may contain some inaccurate data.
 E. g. test count for launch will show total number of tests + total number of steps.
 
-Nevertheless `TREE` configuration allows to get additional features with RP. E. g. integrated RP test analisys facility scope will be changed from test to step.
+Nevertheless `TREE` configuration allows to get additional features with RP. E. g. integrated RP test analysis facility scope will be changed from test to step.
 
 Handler type may be changed with following configuration
 ```
@@ -168,7 +175,7 @@ ReportIntegrationConfig.get().useHandler(HandlerType.TREE);
 
 **Narrative formatter**
 
-By default, narrative is formatted as a bullet list before storring to the test description field. It is possible to alter this logic in accordance to project needs.
+By default, narrative is formatted as a bullet list before storing to the test description field. It is possible to alter this logic in accordance to project needs.
 
 To achieve it implement `NarrativeFormatter` interface and define your own implementation of formatter. For example
 ```
