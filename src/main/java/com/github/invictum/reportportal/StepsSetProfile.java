@@ -4,16 +4,16 @@ import com.github.invictum.reportportal.extractor.*;
 
 /**
  * Describes @{@link StepDataExtractor} sets as a unions.
- * It is possible to specify CUSTOM profile and register to it any @{@link StepDataExtractor}. Order of extractor is matters.
+ * It is possible to specify CUSTOM profile and register to it any @{@link StepDataExtractor}.
  */
 public enum StepsSetProfile {
 
     /**
-     * Default profile with pre-defined minimal set of step processors.
+     * Default profile with pre-defined minimal set of step extractors.
      */
     DEFAULT() {
         @Override
-        public StepDataExtractor[] processors() {
+        public StepDataExtractor[] extractors() {
             return new StepDataExtractor[]{
                     new FinishStep(),
                     new StepScreenshots(),
@@ -22,17 +22,17 @@ public enum StepsSetProfile {
         }
 
         @Override
-        public StepsSetProfile registerProcessors(StepDataExtractor... steps) {
-            throw new UnsupportedOperationException("Unable to register processors for DEFAULT profile");
+        public StepsSetProfile registerExtractors(StepDataExtractor... steps) {
+            throw new UnsupportedOperationException("Unable to register extractors for DEFAULT profile");
         }
     },
 
     /**
-     * Profile configured with all available step processors.
+     * Profile configured with all available step extractors.
      */
     FULL() {
         @Override
-        public StepDataExtractor[] processors() {
+        public StepDataExtractor[] extractors() {
             return new StepDataExtractor[]{
                     new StartStep(),
                     new StepScreenshots(),
@@ -44,25 +44,25 @@ public enum StepsSetProfile {
         }
 
         @Override
-        public StepsSetProfile registerProcessors(StepDataExtractor... steps) {
-            throw new UnsupportedOperationException("Unable to register processors for FULL profile");
+        public StepsSetProfile registerExtractors(StepDataExtractor... steps) {
+            throw new UnsupportedOperationException("Unable to register extractors for FULL profile");
         }
     },
 
     /**
-     * Custom profile for custom steps set. By default returns an empty array of step processors.
+     * Custom profile for custom steps set. By default returns an empty array of step extractors.
      */
     CUSTOM() {
 
         private StepDataExtractor[] steps;
 
         @Override
-        public StepDataExtractor[] processors() {
+        public StepDataExtractor[] extractors() {
             return this.steps;
         }
 
         @Override
-        public StepsSetProfile registerProcessors(StepDataExtractor... steps) {
+        public StepsSetProfile registerExtractors(StepDataExtractor... steps) {
             this.steps = steps;
             return this;
         }
@@ -73,7 +73,7 @@ public enum StepsSetProfile {
      */
     TREE_OPTIMIZED() {
         @Override
-        StepDataExtractor[] processors() {
+        StepDataExtractor[] extractors() {
             return new StepDataExtractor[]{
                     new StepScreenshots(),
                     new StepError()
@@ -81,17 +81,17 @@ public enum StepsSetProfile {
         }
 
         @Override
-        public StepsSetProfile registerProcessors(StepDataExtractor... steps) {
-            throw new UnsupportedOperationException("Unable to register processors for TREE_OPTIMIZED profile");
+        public StepsSetProfile registerExtractors(StepDataExtractor... steps) {
+            throw new UnsupportedOperationException("Unable to register extractors for TREE_OPTIMIZED profile");
         }
     };
 
     /**
-     * Returns an array of associated processors.
+     * Returns an array of associated extractors.
      *
-     * @return array of processors
+     * @return array of extractors
      */
-    abstract StepDataExtractor[] processors();
+    abstract StepDataExtractor[] extractors();
 
-    public abstract StepsSetProfile registerProcessors(StepDataExtractor... steps);
+    public abstract StepsSetProfile registerExtractors(StepDataExtractor... steps);
 }

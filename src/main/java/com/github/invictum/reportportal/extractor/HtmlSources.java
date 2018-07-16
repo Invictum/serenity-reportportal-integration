@@ -14,7 +14,7 @@ import java.nio.file.Files;
 import java.util.*;
 
 /**
- * Attaches HTML sources to Report Portal log if present
+ * Extracts details about HTML sources from {@link TestStep} if present
  */
 public class HtmlSources implements StepDataExtractor {
 
@@ -43,10 +43,5 @@ public class HtmlSources implements StepDataExtractor {
             }
         }
         return sources;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        return obj instanceof HtmlSources;
     }
 }

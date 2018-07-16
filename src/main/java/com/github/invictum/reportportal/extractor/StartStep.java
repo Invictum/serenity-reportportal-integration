@@ -19,9 +19,4 @@ public class StartStep implements StepDataExtractor {
         EnhancedMessage message = new EnhancedMessage("[STARTED] " + step.getDescription());
         return Collections.singleton(message.withDate(startDate).withLevel(Utils.logLevel(step.getResult())));
     }
-
-    @Override
-    public boolean equals(Object obj) {
-        return obj instanceof StartStep;
-    }
 }

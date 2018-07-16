@@ -19,9 +19,4 @@ public class FinishStep implements StepDataExtractor {
         message.withDate(Utils.stepEndDate(step)).withLevel(Utils.logLevel(step.getResult()));
         return Collections.singleton(message);
     }
-
-    @Override
-    public boolean equals(Object obj) {
-        return obj instanceof FinishStep;
-    }
 }

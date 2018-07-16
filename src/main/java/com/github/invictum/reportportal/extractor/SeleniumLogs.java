@@ -33,21 +33,16 @@ public class SeleniumLogs implements StepDataExtractor {
 
     @Override
     public Collection<EnhancedMessage> extract(final TestStep step) {
-        long start = Utils.stepEndDate(step).getTime();
+        long start = Utils.stepStartDate(step).getTime();
         long end = Utils.stepEndDate(step).getTime();
         LogStorage storage = IntegrationInjector.getInjector().getInstance(LogStorage.class);
         Set<EnhancedMessage> logs = new HashSet<>();
-        storage.query(filter.and(entry -> start <= entry.getTimestamp() && entry.getTimestamp() >= end))
+        storage.query(filter.and(entry -> start >= entry.getTimestamp() && entry.getTimestamp() <= end))
                 .forEach(log -> {
                     String message = String.format("[Selenium-%s] [%s] %s", log.getType(), log.getLevel(), log.getMessage());
                     EnhancedMessage entry = new EnhancedMessage(message).withLevel(LogLevel.DEBUG).withDate(new Date(log.getTimestamp()));
                     logs.add(entry);
                 });
         return logs;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        return obj instanceof SeleniumLogs;
     }
 }

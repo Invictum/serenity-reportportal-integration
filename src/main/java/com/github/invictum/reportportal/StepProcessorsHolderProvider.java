@@ -7,7 +7,7 @@ public class StepProcessorsHolderProvider implements Provider<StepDataExtractors
     @Override
     public StepDataExtractorsHolder get() {
         StepDataExtractorsHolder holder = new StepDataExtractorsHolder();
-        holder.register(ReportIntegrationConfig.get().profile().processors());
+        holder.register(ReportIntegrationConfig.get().profile().extractors());
         return holder;
     }
 }

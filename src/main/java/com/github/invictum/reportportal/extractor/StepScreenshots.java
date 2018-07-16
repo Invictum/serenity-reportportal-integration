@@ -41,9 +41,4 @@ public class StepScreenshots implements StepDataExtractor {
         }
         return messages;
     }
-
-    @Override
-    public boolean equals(Object obj) {
-        return obj instanceof StepScreenshots;
-    }
 }

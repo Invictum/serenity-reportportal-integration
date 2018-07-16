@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Objects;
 
 /**
  * Improved version of {@link ReportPortalMessage} that extended with details related to log level and date.
@@ -35,12 +36,12 @@ public class EnhancedMessage extends ReportPortalMessage {
     }
 
     public EnhancedMessage withLevel(LogLevel level) {
-        this.level = level;
+        this.level = Objects.requireNonNull(level, "Log level must not be null");
         return this;
     }
 
     public EnhancedMessage withDate(Date date) {
-        this.date = date;
+        this.date = Objects.requireNonNull(date, "Message date must not be null");
         return this;
     }
 

@@ -47,9 +47,4 @@ public class StepError implements StepDataExtractor {
         }
         return Collections.emptySet();
     }
-
-    @Override
-    public boolean equals(Object obj) {
-        return obj instanceof StepError;
-    }
 }
