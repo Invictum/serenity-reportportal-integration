@@ -2,8 +2,12 @@ package com.github.invictum.reportportal;
 
 import com.github.invictum.reportportal.handler.HandlerType;
 import com.github.invictum.reportportal.injector.IntegrationInjector;
+import net.thucydides.core.annotations.Narrative;
 
 import java.util.Objects;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Configuration entry point for integration.
@@ -12,7 +16,7 @@ import java.util.Objects;
 public class ReportIntegrationConfig {
 
     private StepsSetProfile profile;
-    private NarrativeFormatter narrativeFormatter;
+    private Function<Narrative, String> narrativeFormatter;
     private HandlerType handlerType;
 
     /**
@@ -39,14 +43,14 @@ public class ReportIntegrationConfig {
     }
 
     /**
-     * Defines {@link NarrativeFormatter} configuration
+     * Defines narrative format {@link Function}
      */
-    public ReportIntegrationConfig useNarrativeFormatter(NarrativeFormatter narrativeFormatter) {
+    public ReportIntegrationConfig useNarrativeFormatter(Function<Narrative, String> narrativeFormatter) {
         this.narrativeFormatter = Objects.requireNonNull(narrativeFormatter, "Narrative formatter could not be null");
         return this;
     }
 
-    public NarrativeFormatter narrativeFormatter() {
+    public Function<Narrative, String> narrativeFormatter() {
         return narrativeFormatter;
     }
 
@@ -67,7 +71,11 @@ public class ReportIntegrationConfig {
      */
     public void resetToDefaults() {
         this.profile = StepsSetProfile.DEFAULT;
-        this.narrativeFormatter = new NarrativeBulletListFormatter();
+        // Returned text is treated by RP as markdown
+        this.narrativeFormatter = narrative -> {
+            String text = Stream.of(narrative.text()).map(item -> "* " + item).collect(Collectors.joining("\n"));
+            return narrative.title().isEmpty() ? text : String.format("**%s**\n", narrative.title()) + text;
+        };
         this.handlerType = HandlerType.FLAT;
     }
 }

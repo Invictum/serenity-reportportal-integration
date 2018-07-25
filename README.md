@@ -7,14 +7,30 @@ Serenity integration with Report Portal
 
 Module allows to report Serenity powered tests to [reportportal.io](http://reportportal.io). Supplies additional reporting facility to Serenity based test automation frameworks.
 
-Setup
--------------
+Table of Contents
+-----------------
+1. [Setup](#setup)
+    1. [Maven](#maven)
+    2. [Gradle](#gradle)
+    3. [Native Serenity reporting](#native-serenity-reporting)
+2. [Integration configuration](#integration-configuration)
+    1. [Profiles](#profiles)
+    2. [Executors](#executors)
+    3. [Handler type (experimental feature)](#handler-type-experimental-feature)
+    4. [Narrative formatter](#narrative-formatter)
+3. [Data mapping](#data-mapping)
+4. [Versioning](#versioning)
+5. [Important release notes](#important-release-notes)
+6. [Limitations](#limitations)
+
+## Setup
+
 To add support of integration between Serenity and Report Portal simply add dependencies to your project based on used build tool.
 
 > **Warning**
 > Don't add any extra Report Portal listeners or agents. Integration is provided by single module for all available Serenity approaches
 
-**Maven**
+#### Maven
 
 Edit project's `pom.xml` file
 ```
@@ -38,7 +54,7 @@ Report Portal core libraries are used, but they placed in a separate repository,
 </repositories>
 ```
 
-**Gradle**
+#### Gradle
 
 Edit `build.gradle` file in the project root
 ```
@@ -72,12 +88,11 @@ It is also possible to use Report portal integration with log frameworks in orde
 > **Notice**
 > Actually to add logs to Report Portal, they should be emitted in scope of test method, otherwise they will not be displayed at all
 
-**Native Serenity reporting**
+#### Native Serenity reporting
 
 Serenity TAF may produce its own reporting facility via separate plugins. But `serenity-reportportal-integration` may be used in parallel with it or independently. Both reporting mechanisms should be configured accordingly and do not depends on each other.
 
-Integration configuration
--------------
+## Integration configuration
 
 All available configurations are provided via `ReportIntegrationConfig` object. Each set method returns object itself, so chain of configuration is possible:
 ```
@@ -88,7 +103,7 @@ configuration.useHandler(HandlerType.TREE).useProfile(StepsSetProfile.TREE_OPTIM
 > **Notice**
 All integration configurations should be provided before Serenity facility init (For example on `@BeforeClass` method on the parent test class for jUnit style tests). Otherwise default values will be used.
 
-**Profiles**
+#### Profiles
 
 Each Serenity `TestStep` object is passed through chain of configured `StepDataExtractors`. This approach allows to flexible configure reporting behaviour on a step level. By default integration provides following configuration profiles:
 
@@ -110,7 +125,7 @@ profile.registerProcessors(new StartStep(), new FinishStep());
 ReportIntegrationConfig.get().useProfile(profile);
 ```
 
-**Executors**
+#### Executors
 
 All step executors are available out of the box may be observed in `com.github.invictum.reportportal.extractor` package.
 For now following processors are available:
@@ -157,7 +172,7 @@ public class GreetingExtractor implements StepDataExtractor {
 
 Extracted collection of `EnhancedMessage` will be used to push logs to to Report Portal and their order will be based on timestamp.
 
-**Handler type (experimental feature)**
+#### Handler type (experimental feature)
 
 Integration provides two strategies of storing Serenity's test data to Report Portal facility:
 - *FLAT* (default behaviour) - Represents steps data as plain logs emitted to the test scope
@@ -173,23 +188,23 @@ Handler type may be changed with following configuration
 ReportIntegrationConfig.get().useHandler(HandlerType.TREE);
 ```
 
-**Narrative formatter**
+#### Narrative formatter
 
-By default, narrative is formatted as a bullet list before storing to the test description field. It is possible to alter this logic in accordance to project needs.
+By default, narrative is formatted as a card with title and bullet list before storing to the test description field. It is possible to alter this logic in accordance to project needs.
 
-To achieve it implement `NarrativeFormatter` interface and define your own implementation of formatter. For example
+To achieve it supply `Function<Narrative, String>` function to configuration and define your own implementation logic
 ```
-public class NumberedListFormatter implements NarrativeFormatter {
-
-    @Override
-    public String format(String[] strings) {
-        return IntStream.range(0, strings.length).mapToObj(index -> (index + 1) + ". " + strings[index])
-                .collect(Collectors.joining("\n"));
-    }
-}
+// Define Function<Narrative, String> that will format narrative as a numbered list
+Function<Narrative, String> narrativeFormatter = narrative -> {
+    String[] strings = narrative.text();
+    return IntStream.range(0, strings.length).mapToObj(index -> (index + 1) + ". " + strings[index])
+        .collect(Collectors.joining("\n"));
+};
+// Add defined function to the configuration
+ReportIntegrationConfig.get().useNarrativeFormatter(narrativeFormatter);
 ```
 
-Code snippet above will format narrative lines as a numbered list.
+Code snippet above will format narrative lines as a numbered list
 ```
 Initial lines
 line 1, line 2
@@ -199,15 +214,12 @@ Result lines
 2. line 2
 ```
 
-Custom `NarrativeFormatter` should be registered via configuration
-```
-ReportIntegrationConfig.get().useNarrativeFormatter(new NumberedListFormatter());
-```
+> **Info**
+> Text returned by `Function<Narrative, String>` function is treated as markdown, so markdown syntax could be used
 
-Data mapping
--------------
+## Data mapping
 
-Serenity framework and Report Portal facility have a different entities structure. This section explains how data related to each other in mentioned systems.
+Serenity framework and Report Portal facility have a different entities structure. This section explains how data relates to each other.
 
 **Name** relation is straightforward.
 
@@ -233,7 +245,7 @@ When for simple scenario
 Then for simple scenario
 ```
 
-For jUnit there is a `@Narrative` annotation. Each line of narrative text will be concatinated
+For jUnit there is a `@Narrative` annotation
 ```
 @RunWith(SerenityRunner.class)
 @Narrative(text = {"line 1", "line 2"})
@@ -241,6 +253,7 @@ public class SimpleTest {
     ...
 }
 ```
+Narrative is transformed with function that may be passed to integration configuration
 
 **Tags** supplying depends on test source.
 For jBehave (BDD) tests tags is defined in Meta section with `@tag` or `@tags` keyword
@@ -265,8 +278,8 @@ public class SimpleTest {
 }
 ```
 
-Versioning
-----------
+## Versioning
+
 Report Portal integration uses 3 digit version format - x.y.z
 
 **z** - regular release increment version. Includes bugfix and extending with minor features. Also includes Serenity and Report Portal modules versions update. Backward compatibility is guaranteed.
@@ -275,18 +288,18 @@ Report Portal integration uses 3 digit version format - x.y.z
 
 **x** - major version update. Dramatically changed integration architecture. Backward compatibility doesn't guaranteed. Actually increment of major version is not expected at all
 
-Important release notes
------------------------
+## Important release notes
+
 Important release notes are described below. Use [releases](https://github.com/Invictum/serenity-reportportal-integration/releases) section for details regarding regular release notes.
 
  Version       | Note
 ---------------|---------------------------
 1.0.0 - 1.0.6  | Supports RP v3 and below
 1.1.0 - 1.1.3  | Minor version update due RP v4 release. Versions older than 1.1.0 are not compatible with RP v4+ and vise versa
-1.2.0+         | Minor version updated due Configuration approach refactoring. New configuratiion approach is not compatible with versions under 1.2.0
+1.2.0+         | Minor version updated due internal mechanisms approach major refactoring
 
-Limitations
--------------
+## Limitations
+
 Integration does not support concurrency for parametrized Serenity tests execution.
 
-Report Portal launch finish timestamp is calculated before Java VM shutdown. Overall launch duration will also include the time of Serenity report generation.
+Report Portal launch finish timestamp is calculated before Java VM shutdown. Overall launch duration will also include the time of Serenity report generation (only in case if both RP and Serenity reporting are used).

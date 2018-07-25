@@ -7,6 +7,7 @@ import com.github.invictum.reportportal.*;
 import com.github.invictum.reportportal.injector.IntegrationInjector;
 import com.google.inject.Inject;
 import io.reactivex.Maybe;
+import net.thucydides.core.annotations.Narrative;
 import net.thucydides.core.model.Story;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.requirements.annotations.NarrativeFinder;
@@ -14,6 +15,7 @@ import net.thucydides.core.requirements.annotations.NarrativeFinder;
 import java.time.Duration;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.function.Function;
 
 /**
  * Handler builds Serenity's {@link TestOutcome} in Report Portal as flat sequence of logs
@@ -41,11 +43,10 @@ public class FlatHandler implements Handler {
             startSuite.setName(storyClass.getSimpleName());
             startSuite.setStartTime(Calendar.getInstance().getTime());
             /* Add narrative to description if present */
-            if (NarrativeFinder.forClass(storyClass).isPresent()) {
-                NarrativeFormatter narrativeFormatter = ReportIntegrationConfig.get().narrativeFormatter();
-                String description = narrativeFormatter.format(NarrativeFinder.forClass(storyClass).get().text());
-                startSuite.setDescription(description);
-            }
+            NarrativeFinder.forClass(storyClass).ifPresent(narrative -> {
+                Function<Narrative, String> narrativeFormatter = ReportIntegrationConfig.get().narrativeFormatter();
+                startSuite.setDescription(narrativeFormatter.apply(narrative));
+            });
             suiteId = launch.startTestItem(startSuite);
         }
     }
