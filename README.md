@@ -15,7 +15,7 @@ Table of Contents
     3. [Native Serenity reporting](#native-serenity-reporting)
 2. [Integration configuration](#integration-configuration)
     1. [Profiles](#profiles)
-    2. [Executors](#executors)
+    2. [Extractors](#extractors)
     3. [Handler type (experimental feature)](#handler-type-experimental-feature)
     4. [Narrative formatter](#narrative-formatter)
 3. [Data mapping](#data-mapping)
@@ -105,7 +105,7 @@ All integration configurations should be provided before Serenity facility init 
 
 #### Profiles
 
-Each Serenity `TestStep` object is passed through chain of configured `StepDataExtractors`. This approach allows to flexible configure reporting behaviour on a step level. By default integration provides following configuration profiles:
+Each Serenity `TestStep` object is passed through chain of configured `StepDataExtractors`. This approach allows to flexible configure reporting behaviour on a step level. By default integration provides a few preconfigured extractors profiles:
 
 - DEFAULT
 - FULL
@@ -125,10 +125,10 @@ profile.registerProcessors(new StartStep(), new FinishStep());
 ReportIntegrationConfig.get().useProfile(profile);
 ```
 
-#### Executors
+#### Extractors
 
-All step executors are available out of the box may be observed in `com.github.invictum.reportportal.extractor` package.
-For now following processors are available:
+All step extractors are available out of the box may be observed in `com.github.invictum.reportportal.extractor` package.
+For now following extractors are available:
 - `StartStep` retrieves step's data relevant to its start.
 - `FinishStep` extracts step's data related to its finish. Log level depends on step result.
 - `StepError` extracts step's error if present. Includes regular errors as well as assertion fails. By default full stack trace will be reported. But it is possible to pass a function to the constructor in order to implement any logic for message formatting.
@@ -151,7 +151,7 @@ profile.registerProcessors(logs);
 ```
 
 It is possible to use integrated extractors as well as implemented by your own. To make own extractor implement `StepDataExtractor` interface. In custom implementation access to Serenity's `TestStep` object is provided.
-For example let's implement extractor that generates a log message before each step start (yeap it is pretty useful)
+For example, let's implement extractor that generates greetings message for each started step
 ```
 public class GreetingExtractor implements StepDataExtractor {
 
@@ -162,7 +162,7 @@ public class GreetingExtractor implements StepDataExtractor {
         EnhancedMessage message = new EnhancedMessage("Hello from started step " + step.getDescription());
         // Do not forget to set propper log level and timestamp
         message.withDate(startDate).withLevel(Utils.logLevel(step.getResult());
-        // Extractor may produce several logs for emit, but this example supplyies only one
+        // Extractor may produce several logs for future push to RP, but this example supplyies only one
         return Collections.singleton(message);
     }
 }
