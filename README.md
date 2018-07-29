@@ -54,6 +54,9 @@ Report Portal core libraries are used, but they placed in a separate repository,
 </repositories>
 ```
 
+> **Warning**
+> There is an issue with old version of `maven-failsafe-plugin` that causes wrong launch management on Report Portal. To avoid it you have to use plugin of version `2.19.1` or newer
+
 #### Gradle
 
 Edit `build.gradle` file in the project root
