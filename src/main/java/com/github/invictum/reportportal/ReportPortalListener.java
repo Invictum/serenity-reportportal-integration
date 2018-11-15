@@ -69,7 +69,7 @@ public class ReportPortalListener implements StepListener {
     }
 
     public void lastStepFailed(StepFailure failure) {
-        collectDriverLogs();
+        /* Not used by listener */
     }
 
     public void stepIgnored() {
@@ -137,7 +137,7 @@ public class ReportPortalListener implements StepListener {
     }
 
     private void collectDriverLogs() {
-        if (ThucydidesWebDriverSupport.isInitialised()) {
+        if (ThucydidesWebDriverSupport.isDriverInstantiated()) {
             Logs logs = ThucydidesWebDriverSupport.getDriver().manage().logs();
             logStorage.collect(logs);
         }
