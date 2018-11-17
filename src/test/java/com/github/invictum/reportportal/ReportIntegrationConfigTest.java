@@ -22,12 +22,12 @@ public class ReportIntegrationConfigTest {
 
     @Test
     public void defaultStepsSetProfileTest() {
-        Assert.assertEquals(config.profile(), StepsSetProfile.DEFAULT);
+        Assert.assertEquals(config.preset(), LogsPreset.DEFAULT);
     }
 
     @Test(expected = NullPointerException.class)
     public void nullStepsSetProfileTest() {
-        config.useProfile(null);
+        config.usePreset(null);
     }
 
     @Test
@@ -57,9 +57,9 @@ public class ReportIntegrationConfigTest {
 
     @Test
     public void resetToDefaultsTest() {
-        config.useHandler(HandlerType.TREE).useProfile(StepsSetProfile.CUSTOM);
+        config.useHandler(HandlerType.TREE).usePreset(LogsPreset.CUSTOM);
         config.resetToDefaults();
         Assert.assertEquals(config.handlerType(), HandlerType.FLAT);
-        Assert.assertEquals(config.profile(), StepsSetProfile.DEFAULT);
+        Assert.assertEquals(config.preset(), LogsPreset.DEFAULT);
     }
 }

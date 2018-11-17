@@ -15,7 +15,7 @@ import java.util.stream.Stream;
  */
 public class ReportIntegrationConfig {
 
-    private StepsSetProfile profile;
+    private LogsPreset preset;
     private Function<Narrative, String> narrativeFormatter;
     private HandlerType handlerType;
 
@@ -31,15 +31,15 @@ public class ReportIntegrationConfig {
     }
 
     /**
-     * Defines {@link StepsSetProfile} configuration
+     * Defines {@link LogsPreset} configuration
      */
-    public ReportIntegrationConfig useProfile(StepsSetProfile profile) {
-        this.profile = Objects.requireNonNull(profile, "Profile could not be null");
+    public ReportIntegrationConfig usePreset(LogsPreset preset) {
+        this.preset = Objects.requireNonNull(preset, "Profile could not be null");
         return this;
     }
 
-    public StepsSetProfile profile() {
-        return profile;
+    public LogsPreset preset() {
+        return preset;
     }
 
     /**
@@ -70,7 +70,7 @@ public class ReportIntegrationConfig {
      * Sets default values for configuration
      */
     public void resetToDefaults() {
-        this.profile = StepsSetProfile.DEFAULT;
+        this.preset = LogsPreset.DEFAULT;
         // Returned text is treated by RP as markdown
         this.narrativeFormatter = narrative -> {
             String text = Stream.of(narrative.text()).map(item -> "* " + item).collect(Collectors.joining("\n"));

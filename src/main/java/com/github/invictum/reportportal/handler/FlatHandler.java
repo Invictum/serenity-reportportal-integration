@@ -26,7 +26,7 @@ public class FlatHandler implements Handler {
     Launch launch;
 
     @Inject
-    StepDataExtractorsHolder holder;
+    LogUnitsHolder holder;
 
     Maybe<String> suiteId;
     Maybe<String> testId;

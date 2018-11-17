@@ -1,6 +1,6 @@
-package com.github.invictum.reportportal.extractor;
+package com.github.invictum.reportportal.log.unit;
 
-import com.github.invictum.reportportal.EnhancedMessage;
+import com.epam.ta.reportportal.ws.model.log.SaveLogRQ;
 import com.github.invictum.reportportal.LogLevel;
 import com.github.invictum.reportportal.LogStorage;
 import com.github.invictum.reportportal.injector.IntegrationInjector;
@@ -20,7 +20,7 @@ import java.util.Collections;
 import java.util.logging.Level;
 
 @RunWith(MockitoJUnitRunner.StrictStubs.class)
-public class SeleniumLogsTest {
+public class SeleniumTest {
 
     @Mock
     private TestStep stepMock;
@@ -28,7 +28,7 @@ public class SeleniumLogsTest {
     private LogStorage storage = IntegrationInjector.getInjector().getInstance(LogStorage.class);
 
     @Test
-    public void seleniumLog() {
+    public void allLogs() {
         // Setup mock
         Logs logsMock = Mockito.mock(Logs.class);
         Mockito.when(logsMock.getAvailableLogTypes()).thenReturn(Collections.singleton("browser"));
@@ -41,9 +41,8 @@ public class SeleniumLogsTest {
         Mockito.when(stepMock.getStartTime()).thenReturn(start);
         Mockito.when(stepMock.getDuration()).thenReturn(1000L);
         // Verify
-        SeleniumLogs seleniumLogs = new SeleniumLogs();
-        EnhancedMessage actual = seleniumLogs.extract(stepMock).iterator().next();
+        SaveLogRQ actual = Selenium.allLogs().apply(stepMock).iterator().next();
         Assert.assertEquals("[Selenium-browser] [INFO] Message", actual.getMessage());
-        Assert.assertEquals(LogLevel.DEBUG, actual.getLevel());
+        Assert.assertEquals(LogLevel.DEBUG.toString(), actual.getLevel());
     }
 }
