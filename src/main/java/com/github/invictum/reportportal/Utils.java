@@ -17,8 +17,8 @@ public class Utils {
      * @param testResult used to define log level
      * @return discovered log level
      */
-    public static LogLevel logLevel(TestResult testResult) {
-        return Status.mapTo(testResult).logLevel();
+    public static String logLevel(TestResult testResult) {
+        return Status.mapTo(testResult).logLevel().toString();
     }
 
     /**

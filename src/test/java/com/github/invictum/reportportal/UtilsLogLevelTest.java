@@ -17,7 +17,7 @@ public class UtilsLogLevelTest {
 
     @Test
     public void logLevelTest() {
-        Assert.assertEquals("Log level is wrong.", Utils.logLevel(testResult), status);
+        Assert.assertEquals("Log level is wrong.", Utils.logLevel(testResult), status.toString());
     }
 
     @Parameterized.Parameters(name = "{index}: {0} - {1}")
