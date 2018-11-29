@@ -1,10 +1,8 @@
 package com.github.invictum.reportportal;
 
-import com.github.invictum.reportportal.handler.FlatHandler;
 import com.github.invictum.reportportal.handler.Handler;
-import com.github.invictum.reportportal.handler.HandlerType;
-import com.github.invictum.reportportal.handler.TreeHandler;
 import com.github.invictum.reportportal.injector.IntegrationInjector;
+import com.google.inject.Inject;
 import net.thucydides.core.model.DataTable;
 import net.thucydides.core.model.Story;
 import net.thucydides.core.model.TestOutcome;
@@ -18,13 +16,14 @@ import java.util.Map;
 
 public class ReportPortalListener implements StepListener {
 
+    @Inject
     private Handler handler;
+
+    @Inject
     private LogStorage logStorage;
 
     public ReportPortalListener() {
-        HandlerType handlerType = ReportIntegrationConfig.get().handlerType();
-        handler = handlerType == HandlerType.FLAT ? new FlatHandler() : new TreeHandler();
-        logStorage = IntegrationInjector.getInjector().getInstance(LogStorage.class);
+        IntegrationInjector.getInjector().injectMembers(this);
     }
 
     public void testSuiteStarted(Class<?> storyClass) {
