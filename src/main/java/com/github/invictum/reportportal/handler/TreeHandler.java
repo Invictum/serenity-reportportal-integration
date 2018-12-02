@@ -50,10 +50,10 @@ public class TreeHandler extends FlatHandler {
                 push(current, testStep.getChildren());
             }
             /* Finish step */
-            FinishTestItemRQ finishTest = new FinishTestItemRQ();
-            finishTest.setEndTime(Utils.stepEndDate(testStep));
-            finishTest.setStatus(Status.mapTo(testStep.getResult()).toString());
-            launch.finishTestItem(current, finishTest);
+            FinishTestItemRQ finishStep = new FinishTestItemRQ();
+            finishStep.setEndTime(Utils.stepEndDate(testStep));
+            finishStep.setStatus(Status.mapTo(testStep.getResult()).toString());
+            launch.finishTestItem(current, finishStep);
         });
     }
 }

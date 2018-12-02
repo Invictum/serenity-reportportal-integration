@@ -4,7 +4,7 @@ import com.epam.reportportal.service.Launch;
 import com.epam.ta.reportportal.ws.model.FinishTestItemRQ;
 import com.epam.ta.reportportal.ws.model.StartTestItemRQ;
 import com.github.invictum.reportportal.*;
-import com.github.invictum.reportportal.injector.IntegrationInjector;
+import com.google.common.base.Suppliers;
 import com.google.inject.Inject;
 import io.reactivex.Maybe;
 import net.thucydides.core.annotations.Narrative;
@@ -16,6 +16,7 @@ import java.time.Duration;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 /**
  * Handler builds Serenity's {@link TestOutcome} in Report Portal as flat sequence of logs
@@ -28,50 +29,45 @@ public class FlatHandler implements Handler {
     @Inject
     LogUnitsHolder holder;
 
-    Maybe<String> suiteId;
     Maybe<String> testId;
-
-    public FlatHandler() {
-        IntegrationInjector.getInjector().injectMembers(this);
-    }
+    private Supplier<Maybe<String>> suite;
 
     @Override
     public void startSuite(Class<?> storyClass) {
-        if (suiteId == null) {
+        Date date = Calendar.getInstance().getTime();
+        suite = Suppliers.memoize(() -> {
             StartTestItemRQ startSuite = new StartTestItemRQ();
             startSuite.setType(ItemType.SUITE.key());
             startSuite.setName(storyClass.getSimpleName());
-            startSuite.setStartTime(Calendar.getInstance().getTime());
+            startSuite.setStartTime(date);
             /* Add narrative to description if present */
             NarrativeFinder.forClass(storyClass).ifPresent(narrative -> {
                 Function<Narrative, String> narrativeFormatter = ReportIntegrationConfig.get().narrativeFormatter();
                 startSuite.setDescription(narrativeFormatter.apply(narrative));
             });
-            suiteId = launch.startTestItem(startSuite);
-        }
+            return launch.startTestItem(startSuite);
+        });
     }
 
     @Override
     public void startSuite(Story story) {
-        if (suiteId == null) {
+        Date date = Calendar.getInstance().getTime();
+        suite = Suppliers.memoize(() -> {
             StartTestItemRQ startSuite = new StartTestItemRQ();
             startSuite.setType(ItemType.SUITE.key());
             startSuite.setName(story.getDisplayName());
-            startSuite.setStartTime(Calendar.getInstance().getTime());
+            startSuite.setStartTime(date);
             startSuite.setDescription(story.getNarrative());
-            suiteId = launch.startTestItem(startSuite);
-        }
+            return launch.startTestItem(startSuite);
+        });
     }
 
     @Override
     public void finishSuite() {
-        if (suiteId != null) {
-            FinishTestItemRQ finishSuite = new FinishTestItemRQ();
-            finishSuite.setEndTime(Calendar.getInstance().getTime());
-            finishSuite.setStatus(Status.PASSED.toString());
-            launch.finishTestItem(suiteId, finishSuite);
-            suiteId = null;
-        }
+        FinishTestItemRQ finishSuite = new FinishTestItemRQ();
+        finishSuite.setEndTime(Calendar.getInstance().getTime());
+        finishSuite.setStatus(Status.PASSED.toString());
+        launch.finishTestItem(suite.get(), finishSuite);
     }
 
     @Override
@@ -81,7 +77,7 @@ public class FlatHandler implements Handler {
             startTest.setType(ItemType.TEST.key());
             startTest.setName(description);
             startTest.setStartTime(Calendar.getInstance().getTime());
-            testId = launch.startTestItem(suiteId, startTest);
+            testId = launch.startTestItem(suite.get(), startTest);
         }
     }
 
