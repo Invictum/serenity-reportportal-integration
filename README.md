@@ -14,8 +14,8 @@ Table of Contents
     2. [Gradle](#gradle)
     3. [Native Serenity reporting](#native-serenity-reporting)
 2. [Integration configuration](#integration-configuration)
-    1. [Profiles](#profiles)
-    2. [Extractors](#extractors)
+    1. [Presets](#presets)
+    2. [Log units](#log-units)
     3. [Handler type (experimental feature)](#handler-type-experimental-feature)
     4. [Narrative formatter](#narrative-formatter)
 3. [Data mapping](#data-mapping)
@@ -37,7 +37,7 @@ Edit project's `pom.xml` file
 <dependency>
    <groupId>com.github.invictum</groupId>
    <artifactId>serenity-reportportal-integration</artifactId>
-   <version>1.2.0</version>
+   <version>1.3.0</version>
 </dependency>
 ```
 Report Portal core libraries are used, but they placed in a separate repository, so its URL also should be added to your build configuration
@@ -61,7 +61,7 @@ Report Portal core libraries are used, but they placed in a separate repository,
 
 Edit `build.gradle` file in the project root
 ```
-compile: 'com.github.invictum:serenity-reportportal-integration:1.2.0'
+compile: 'com.github.invictum:serenity-reportportal-integration:1.3.0'
 ```
 External Report Portal repository should be defined as the same as for Maven
 ```
@@ -100,80 +100,82 @@ Serenity TAF may produce its own reporting facility via separate plugins. But `s
 All available configurations are provided via `ReportIntegrationConfig` object. Each set method returns object itself, so chain of configuration is possible:
 ```
 ReportIntegrationConfig configuration = ReportIntegrationConfig.get();
-configuration.useHandler(HandlerType.TREE).useProfile(StepsSetProfile.TREE_OPTIMIZED);
+configuration.useHandler(HandlerType.TREE).usePreset(StepsSetProfile.TREE_OPTIMIZED);
 ```
 
 > **Notice**
 All integration configurations should be provided before Serenity facility init (For example on `@BeforeClass` method on the parent test class for jUnit style tests). Otherwise default values will be used.
 
-#### Profiles
+#### Presets
 
-Each Serenity `TestStep` object is passed through chain of configured `StepDataExtractors`. This approach allows to flexible configure reporting behaviour on a step level. By default integration provides a few preconfigured extractors profiles:
+Each Serenity `TestStep` object is passed through chain of configured log units. This approach allows to flexible configure reporting behaviour on a step level. By default integration provides a few log presets:
 
 - DEFAULT
 - FULL
 - TREE_OPTIMIZED
 - CUSTOM
 
-`DEFAULT` profile is used by default and contains all usually required reporting details. It generates in Report Portal a nice log that does not cluttered with extra details.
+`DEFAULT` preset is used by default and contains all usually required log units. It generates in Report Portal a nice log that does not cluttered with extra details.
 
-`FULL` profile contains all available `StepDataExtractors` and generates full reporting. It suitable for demo purposes in order to choose a set of processors.
+`FULL` preset contains all available log units and generates full reporting. It suitable for demo purposes in order to choose a set of units.
 
-`TREE_OPTIMIZED` profile is suitable to use with `TREE` handler type. Refer to Handler Type section for more details.
+`TREE_OPTIMIZED` preset is suitable to use with `TREE` handler type. Refer to Handler Type section for more details.
 
-To configure what should be logged manually `CUSTOM` profile should be used. In following example `CUSTOM` profile with `StartStep` and `FinishStep` executors is configured.
+To configure what should be logged manually `CUSTOM` preset should be used. In following example `CUSTOM` preset with `startStep` and `finishStep` log units is configured.
 ```
-StepsSetProfile profile = StepsSetProfile.CUSTOM;
-profile.registerProcessors(new StartStep(), new FinishStep());
-ReportIntegrationConfig.get().useProfile(profile);
+LogsPreset preset = LogsPreset.CUSTOM;
+preset.register(Essentials.startStep(), Essentials.finishStep());
+ReportIntegrationConfig.get().usePreset(preset);
 ```
 
-#### Extractors
+#### Log units
 
-All step extractors are available out of the box may be observed in `com.github.invictum.reportportal.extractor` package.
+All log units that are available out of the box may be observed in `com.github.invictum.reportportal.log.unit` package.
 For now following extractors are available:
-- `StartStep` retrieves step's data relevant to its start.
-- `FinishStep` extracts step's data related to its finish. Log level depends on step result.
-- `StepError` extracts step's error if present. Includes regular errors as well as assertion fails. By default full stack trace will be reported. But it is possible to pass a function to the constructor in order to implement any logic for message formatting.
+- `Essentials.startStep()` retrieves step's data relevant to its start.
+- `Essentials.finishStep()` extracts step's data related to its finish. Log level depends on step result.
+- `Error.basic()` extracts step's error if present. Includes regular errors as well as assertion fails. By default full stack trace will be reported.
+- `Error.configuredError()` extract step's error using passed function in order to implement custom error logic message formatting.
 ```
-StepsSetProfile profile = StepsSetProfile.CUSTOM;
-// Extract a full stack stace supplied by Serenity
-StepError error = new StepError();
+LogsPreset preset = LogsPreset.CUSTOM;
 // Extract only a short error description provided by Serenity
-StepError error = new StepError(TestStep::getConciseErrorMessage);
-profile.registerProcessors(error);
+preset.register(Error.configuredError(TestStep::getConciseErrorMessage));
+ReportIntegrationConfig.get().usePreset(preset);
 ```
-- `StepScreenshots` extracts screenshots if present. It simply retrieves all available step's screenshots, so screenshot strategy is configured on Serenity level.
-- `StepHtmlSources` extracts page source if available.
-- `SeleniumLogs` retrieves logs supplied by Selenium. By default extracts all available logs. It is possible to pass predicate to constructor in order to push particular logs.
+- `Attachment.screenshots()` extracts screenshots if present. It simply retrieves all available step's screenshots, so screenshot strategy is configured on Serenity level.
+- `Attachment.htmlSources()` extracts page source if available. Work in the same way as screenshots attachment.
+- `Selenium.allLogs()` retrieves all logs supplied by Selenium.
+- `Selenium.filteredLogs()` retrieves logs supplied by Selenium, but filtered by passed predicate.
 ```
-StepsSetProfile profile = StepsSetProfile.CUSTOM;
-// Collect only browser related logs
-SeleniumLogs logs = new SeleniumLogs(log -> log.getType().contentEquals("browser"));
-profile.registerProcessors(logs);
+LogsPreset preset = LogsPreset.CUSTOM;
+preset.register(Selenium.filteredLogs(log -> log.getType().contentEquals("browser")));
+ReportIntegrationConfig.get().usePreset(preset);
 ```
 
-It is possible to use integrated extractors as well as implemented by your own. To make own extractor implement `StepDataExtractor` interface. In custom implementation access to Serenity's `TestStep` object is provided.
-For example, let's implement extractor that generates greetings message for each started step
+It is possible to use integrated log units as well as implemented them by your own. To make own log unit just implement a `Function<TestStep, Collection<SaveLogRQ>>`.
+For example, let's implement log unit that generates greetings message for each started step
 ```
-public class GreetingExtractor implements StepDataExtractor {
+Function<TestStep, Collection<SaveLogRQ>> myUnit = step -> {
+    Date startDate = Utils.stepStartDate(step);
+    // Create an instance of SaveLogRQ that is able to hold a log message
+    SaveLogRQ log = new SaveLogRQ();
+    log.setMessage("Hello from started step " + step.getDescription());
+    // Do not forget to set proper log level and timestamp
+    log.setLogTime(startDate);
+    log.setLevel(Utils.logLevel(step.getResult()));
+    // Unit may produce several logs for future push to RP, but this example supply only one
+    return Collections.singleton(log);
+};
 
-    @Override
-    public Collection<EnhancedMessage> extract(final TestStep step) {
-        Date startDate = Utils.stepStartDate(step);
-        // Create an istance of EnhancedMessage that is able to hold a log message
-        EnhancedMessage message = new EnhancedMessage("Hello from started step " + step.getDescription());
-        // Do not forget to set propper log level and timestamp
-        message.withDate(startDate).withLevel(Utils.logLevel(step.getResult());
-        // Extractor may produce several logs for future push to RP, but this example supplyies only one
-        return Collections.singleton(message);
-    }
-}
+// Add custom log unit to the configuration
+LogsPreset preset = LogsPreset.CUSTOM;
+preset.register(myUnit);
+ReportIntegrationConfig.get().usePreset(preset);
 ```
 > **Warning**
-> To emit log to Report Portal date should be specified. If log timestamp is out of range of step it won't be emitted at all. `TestStep` object contains all data to calculate start, end dates and duration
+> To emit log to Report Portal proper date should be specified. If log timestamp is out of range of step it won't be emitted at all. `TestStep` object contains all the data required to determinate start, end dates and duration
 
-Extracted collection of `EnhancedMessage` will be used to push logs to to Report Portal and their order will be based on timestamp.
+Provided collection of `SaveLogRQ` will be used to push logs to to Report Portal and their order will be based on timestamp.
 
 #### Handler type (experimental feature)
 
@@ -299,7 +301,8 @@ Important release notes are described below. Use [releases](https://github.com/I
 ---------------|---------------------------
 1.0.0 - 1.0.6  | Supports RP v3 and below
 1.1.0 - 1.1.3  | Minor version update due RP v4 release. Versions older than 1.1.0 are not compatible with RP v4+ and vise versa
-1.2.0+         | Minor version updated due internal mechanisms approach major refactoring
+1.2.0 - 1.2.1  | Minor version updated due internal mechanisms approach major refactoring
+1.3.0+         | Minor version updated due to log units approach rework
 
 ## Limitations
 
