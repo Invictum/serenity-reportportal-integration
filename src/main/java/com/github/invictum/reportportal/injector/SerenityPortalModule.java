@@ -1,10 +1,7 @@
 package com.github.invictum.reportportal.injector;
 
 import com.epam.reportportal.service.Launch;
-import com.github.invictum.reportportal.LogStorage;
-import com.github.invictum.reportportal.LogUnitsHolder;
-import com.github.invictum.reportportal.LogUnitsHolderProvider;
-import com.github.invictum.reportportal.ReportIntegrationConfig;
+import com.github.invictum.reportportal.*;
 import com.github.invictum.reportportal.handler.FlatHandler;
 import com.github.invictum.reportportal.handler.Handler;
 import com.github.invictum.reportportal.handler.HandlerType;
@@ -21,6 +18,7 @@ public class SerenityPortalModule extends AbstractModule {
         bind(LogUnitsHolder.class).toProvider(LogUnitsHolderProvider.class).in(Scopes.SINGLETON);
         bind(LogStorage.class).in(Scopes.SINGLETON);
         bind(ReportIntegrationConfig.class).in(Scopes.SINGLETON);
+        bind(SuiteStorage.class).in(Scopes.SINGLETON);
     }
 
     @Provides

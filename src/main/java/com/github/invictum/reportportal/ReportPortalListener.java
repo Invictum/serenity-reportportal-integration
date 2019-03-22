@@ -1,6 +1,5 @@
 package com.github.invictum.reportportal;
 
-import com.github.invictum.reportportal.handler.Handler;
 import com.github.invictum.reportportal.injector.IntegrationInjector;
 import com.google.inject.Inject;
 import net.thucydides.core.model.DataTable;
@@ -17,37 +16,38 @@ import java.util.Map;
 public class ReportPortalListener implements StepListener {
 
     @Inject
-    private Handler handler;
+    private LogStorage logStorage;
 
     @Inject
-    private LogStorage logStorage;
+    private SuiteStorage suiteStorage;
 
     public ReportPortalListener() {
         IntegrationInjector.getInjector().injectMembers(this);
     }
 
     public void testSuiteStarted(Class<?> storyClass) {
-        handler.startSuite(storyClass);
+        // Not used by listener
     }
 
     public void testSuiteStarted(Story story) {
-        handler.startSuite(story);
+        // Not used by listener
     }
 
     public void testSuiteFinished() {
-        handler.finishSuite();
+        suiteStorage.finalizeActive();
     }
 
     public void testStarted(String description) {
-        handler.startTest(description);
+        // Not used by listener
     }
 
     public void testStarted(String description, String id) {
-        testStarted(description);
+        // Not used by listener
     }
 
     public void testFinished(TestOutcome result) {
-        handler.finishTest(result);
+        TestRecorder recorder = TestRecorder.forTest(result);
+        recorder.record(result);
         logStorage.clean();
     }
 
