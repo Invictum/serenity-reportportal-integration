@@ -32,7 +32,7 @@ public class Regular implements TestRecorder {
                 .build();
         Maybe<String> id = suiteStorage.start(out.getUserStory().getId(), () -> launch.startTestItem(startSuite));
         StartEventBuilder builder = new StartEventBuilder(ItemType.TEST);
-        builder.withName(out.getName()).withStartTime(out.getStartTime());
+        builder.withName(out.getName()).withStartTime(out.getStartTime()).withTags(out.getTags());
         if (out.isDataDriven()) {
             builder.withParameters(out.getDataTable().row(0));
         }

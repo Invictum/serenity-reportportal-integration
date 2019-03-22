@@ -39,6 +39,7 @@ public class BddDataDriven implements TestRecorder {
                 .withName(out.getName())
                 .withStartTime(test.getStartTime())
                 .withParameters(out.getDataTable().row(last))
+                .withTags(out.getTags())
                 .build();
         Maybe<String> testId = launch.startTestItem(id, startTest);
         // Steps
