@@ -8,7 +8,7 @@ import com.google.inject.Scopes;
 public class SerenityPortalModule extends AbstractModule {
 
     protected void configure() {
-        bind(Launch.class).toProvider(ReportLaunchProvider.class).in(Scopes.SINGLETON);
+        bind(Launch.class).toProvider(ReportLaunchProvider.class).asEagerSingleton();
         bind(LogUnitsHolder.class).toProvider(LogUnitsHolderProvider.class).in(Scopes.SINGLETON);
         bind(LogStorage.class).in(Scopes.SINGLETON);
         bind(ReportIntegrationConfig.class).in(Scopes.SINGLETON);
