@@ -1,14 +1,11 @@
 package com.github.invictum.reportportal;
 
-import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestResult;
 import net.thucydides.core.model.TestStep;
 
 import java.time.Duration;
 import java.time.ZonedDateTime;
 import java.util.Date;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 public class Utils {
     /**
@@ -40,17 +37,5 @@ public class Utils {
      */
     public static Date stepStartDate(TestStep step) {
         return Date.from(step.getStartTime().toInstant());
-    }
-
-    /**
-     * Refines a set of tags represented with strings.
-     * Tags with story type is skipped.
-     *
-     * @param testOutcome to extract tags from
-     * @return a set of strings represents tags
-     */
-    public static Set<String> refineTags(TestOutcome testOutcome) {
-        return testOutcome.getTags().stream().filter(t -> !t.getType().contentEquals("story"))
-                .map(tag -> tag.getType() + ":" + tag.getName()).collect(Collectors.toSet());
     }
 }
