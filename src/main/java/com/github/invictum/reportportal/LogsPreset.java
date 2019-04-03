@@ -1,10 +1,8 @@
 package com.github.invictum.reportportal;
 
 import com.epam.ta.reportportal.ws.model.log.SaveLogRQ;
-import com.github.invictum.reportportal.log.unit.Attachment;
+import com.github.invictum.reportportal.log.unit.*;
 import com.github.invictum.reportportal.log.unit.Error;
-import com.github.invictum.reportportal.log.unit.Essentials;
-import com.github.invictum.reportportal.log.unit.Selenium;
 import com.google.common.base.Preconditions;
 import net.thucydides.core.model.TestStep;
 
@@ -26,6 +24,7 @@ public enum LogsPreset {
             return new Function[]{
                     Essentials.finishStep(),
                     Attachment.screenshots(),
+                    Rest.restQuery(),
                     Error.basic()
             };
         }
@@ -40,6 +39,7 @@ public enum LogsPreset {
             return new Function[]{
                     Essentials.startStep(),
                     Attachment.screenshots(),
+                    Rest.restQuery(),
                     Essentials.finishStep(),
                     Error.basic(),
                     Attachment.htmlSources(),
