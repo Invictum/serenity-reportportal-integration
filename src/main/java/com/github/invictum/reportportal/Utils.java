@@ -8,8 +8,9 @@ import java.time.ZonedDateTime;
 import java.util.Date;
 
 public class Utils {
+
     /**
-     * Defines log level based on step result status.
+     * Finds log level based on step result status.
      *
      * @param testResult used to define log level
      * @return discovered log level
