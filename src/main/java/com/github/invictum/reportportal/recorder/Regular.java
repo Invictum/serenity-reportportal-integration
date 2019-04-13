@@ -1,8 +1,9 @@
-package com.github.invictum.reportportal;
+package com.github.invictum.reportportal.recorder;
 
 import com.epam.reportportal.service.Launch;
 import com.epam.ta.reportportal.ws.model.FinishTestItemRQ;
 import com.epam.ta.reportportal.ws.model.StartTestItemRQ;
+import com.github.invictum.reportportal.*;
 import com.google.inject.Inject;
 import io.reactivex.Maybe;
 import net.thucydides.core.model.TestOutcome;

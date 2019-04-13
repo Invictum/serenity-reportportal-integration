@@ -20,7 +20,7 @@ public enum LogsPreset {
      */
     DEFAULT {
         @Override
-        Function<TestStep, Collection<SaveLogRQ>>[] logUnits() {
+        public Function<TestStep, Collection<SaveLogRQ>>[] logUnits() {
             return new Function[]{
                     Essentials.finishStep(),
                     Attachment.screenshots(),
@@ -35,7 +35,7 @@ public enum LogsPreset {
      */
     FULL {
         @Override
-        Function<TestStep, Collection<SaveLogRQ>>[] logUnits() {
+        public Function<TestStep, Collection<SaveLogRQ>>[] logUnits() {
             return new Function[]{
                     Essentials.startStep(),
                     Attachment.screenshots(),
@@ -56,7 +56,7 @@ public enum LogsPreset {
         private Function<TestStep, Collection<SaveLogRQ>>[] units;
 
         @Override
-        Function<TestStep, Collection<SaveLogRQ>>[] logUnits() {
+        public Function<TestStep, Collection<SaveLogRQ>>[] logUnits() {
             return units == null ? new Function[0] : units;
         }
 
@@ -67,25 +67,12 @@ public enum LogsPreset {
             this.units = units;
             return this;
         }
-    },
-
-    /**
-     * Preset designed to use in TREE handler mode.
-     */
-    TREE_OPTIMIZED {
-        @Override
-        Function<TestStep, Collection<SaveLogRQ>>[] logUnits() {
-            return new Function[]{
-                    Attachment.screenshots(),
-                    Error.basic()
-            };
-        }
     };
 
     /**
      * Returns an array of log units associated with current preset
      */
-    abstract Function<TestStep, Collection<SaveLogRQ>>[] logUnits();
+    public abstract Function<TestStep, Collection<SaveLogRQ>>[] logUnits();
 
     /**
      * Configures a preset to use a list of passed log units. Registration is allowed only for CUSTOM preset

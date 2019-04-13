@@ -1,4 +1,4 @@
-package com.github.invictum.reportportal;
+package com.github.invictum.reportportal.recorder;
 
 import com.github.invictum.reportportal.injector.IntegrationInjector;
 import com.google.inject.Injector;
