@@ -8,7 +8,7 @@ import com.google.inject.Injector;
  */
 public class IntegrationInjector {
 
-    private static Injector injector;
+    private static volatile Injector injector;
 
     public static Injector getInjector() {
         if (injector == null) {

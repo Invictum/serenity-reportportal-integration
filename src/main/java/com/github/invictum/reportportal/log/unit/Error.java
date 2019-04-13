@@ -12,6 +12,13 @@ import java.util.function.Function;
 
 public class Error {
 
+    private static final Function<TestStep, String> DEFAULT_FORMATTER = step -> {
+        Throwable cause = step.getException().getOriginalCause();
+        StringWriter writer = new StringWriter();
+        cause.printStackTrace(new PrintWriter(writer));
+        return writer.toString();
+    };
+
     /**
      * Logs error using preconfigured {@link Function} representation of formatter
      */
@@ -32,12 +39,6 @@ public class Error {
      * Logs error using default error formatter - print error with full stack trace
      */
     public static Function<TestStep, Collection<SaveLogRQ>> basic() {
-        Function<TestStep, String> errorFormatter = step -> {
-            Throwable cause = step.getException().getOriginalCause();
-            StringWriter writer = new StringWriter();
-            cause.printStackTrace(new PrintWriter(writer));
-            return writer.toString();
-        };
-        return configuredError(errorFormatter);
+        return configuredError(DEFAULT_FORMATTER);
     }
 }

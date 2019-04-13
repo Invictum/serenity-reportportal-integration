@@ -1,7 +1,7 @@
 package com.github.invictum.reportportal;
 
-import com.github.invictum.reportportal.handler.Handler;
 import com.github.invictum.reportportal.injector.IntegrationInjector;
+import com.github.invictum.reportportal.recorder.TestRecorder;
 import com.google.inject.Inject;
 import net.thucydides.core.model.DataTable;
 import net.thucydides.core.model.Story;
@@ -17,125 +17,126 @@ import java.util.Map;
 public class ReportPortalListener implements StepListener {
 
     @Inject
-    private Handler handler;
+    private LogStorage logStorage;
 
     @Inject
-    private LogStorage logStorage;
+    private SuiteStorage suiteStorage;
 
     public ReportPortalListener() {
         IntegrationInjector.getInjector().injectMembers(this);
     }
 
     public void testSuiteStarted(Class<?> storyClass) {
-        handler.startSuite(storyClass);
+        // Not used by listener
     }
 
     public void testSuiteStarted(Story story) {
-        handler.startSuite(story);
+        // Not used by listener
     }
 
     public void testSuiteFinished() {
-        handler.finishSuite();
+        suiteStorage.finalizeActive();
     }
 
     public void testStarted(String description) {
-        handler.startTest(description);
+        // Not used by listener
     }
 
     public void testStarted(String description, String id) {
-        testStarted(description);
+        // Not used by listener
     }
 
     public void testFinished(TestOutcome result) {
-        handler.finishTest(result);
+        TestRecorder recorder = TestRecorder.forTest(result);
+        recorder.record(result);
         logStorage.clean();
     }
 
     public void testRetried() {
-        /* Not used by listener */
+        // Not used by listener
     }
 
     public void stepStarted(ExecutedStepDescription description) {
-        /* Not used by listener */
+        // Not used by listener
     }
 
     public void skippedStepStarted(ExecutedStepDescription description) {
-        /* Not used by listener */
+        // Not used by listener
     }
 
     public void stepFailed(StepFailure failure) {
-        collectDriverLogs();
+        harvestDriverLogs();
     }
 
     public void lastStepFailed(StepFailure failure) {
-        /* Not used by listener */
+        // Not used by listener
     }
 
     public void stepIgnored() {
-        collectDriverLogs();
+        harvestDriverLogs();
     }
 
     public void stepPending() {
-        collectDriverLogs();
+        harvestDriverLogs();
     }
 
     public void stepPending(String message) {
-        collectDriverLogs();
+        harvestDriverLogs();
     }
 
     public void stepFinished() {
-        collectDriverLogs();
+        harvestDriverLogs();
     }
 
     public void testFailed(TestOutcome testOutcome, Throwable cause) {
-        /* Not used by listener */
+        // Not used by listener
     }
 
     public void testIgnored() {
-        /* Not used by listener */
+        // Not used by listener
     }
 
     public void testSkipped() {
-        /* Not used by listener */
+        // Not used by listener
     }
 
     public void testPending() {
-        /* Not used by listener */
+        // Not used by listener
     }
 
     public void testIsManual() {
-        /* Not used by listener */
+        // Not used by listener
     }
 
     public void notifyScreenChange() {
-        /* Not used by listener */
+        // Not used by listener
     }
 
     public void useExamplesFrom(DataTable table) {
-        /* Not used by listener */
+        // Not used by listener
     }
 
     public void addNewExamplesFrom(DataTable table) {
-        /* Not used by listener */
+        // Not used by listener
     }
 
     public void exampleStarted(Map<String, String> data) {
-        /* Not used by listener */
+        // Not used by listener
     }
 
     public void exampleFinished() {
-        /* Not used by listener */
+        // Not used by listener
     }
 
     public void assumptionViolated(String message) {
-        /* Not used by listener */
+        // Not used by listener
     }
 
     public void testRunFinished() {
-        /* Not used by listener */
+        // Not used by listener
     }
 
-    private void collectDriverLogs() {
+    private void harvestDriverLogs() {
         if (ThucydidesWebDriverSupport.isDriverInstantiated()) {
             Logs logs = ThucydidesWebDriverSupport.getDriver().manage().logs();
             logStorage.collect(logs);

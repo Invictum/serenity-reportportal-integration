@@ -1,10 +1,8 @@
 package com.github.invictum.reportportal;
 
 import com.epam.ta.reportportal.ws.model.log.SaveLogRQ;
-import com.github.invictum.reportportal.log.unit.Attachment;
+import com.github.invictum.reportportal.log.unit.*;
 import com.github.invictum.reportportal.log.unit.Error;
-import com.github.invictum.reportportal.log.unit.Essentials;
-import com.github.invictum.reportportal.log.unit.Selenium;
 import com.google.common.base.Preconditions;
 import net.thucydides.core.model.TestStep;
 
@@ -22,10 +20,11 @@ public enum LogsPreset {
      */
     DEFAULT {
         @Override
-        Function<TestStep, Collection<SaveLogRQ>>[] logUnits() {
+        public Function<TestStep, Collection<SaveLogRQ>>[] logUnits() {
             return new Function[]{
                     Essentials.finishStep(),
                     Attachment.screenshots(),
+                    Rest.restQuery(),
                     Error.basic()
             };
         }
@@ -36,10 +35,11 @@ public enum LogsPreset {
      */
     FULL {
         @Override
-        Function<TestStep, Collection<SaveLogRQ>>[] logUnits() {
+        public Function<TestStep, Collection<SaveLogRQ>>[] logUnits() {
             return new Function[]{
                     Essentials.startStep(),
                     Attachment.screenshots(),
+                    Rest.restQuery(),
                     Essentials.finishStep(),
                     Error.basic(),
                     Attachment.htmlSources(),
@@ -56,7 +56,7 @@ public enum LogsPreset {
         private Function<TestStep, Collection<SaveLogRQ>>[] units;
 
         @Override
-        Function<TestStep, Collection<SaveLogRQ>>[] logUnits() {
+        public Function<TestStep, Collection<SaveLogRQ>>[] logUnits() {
             return units == null ? new Function[0] : units;
         }
 
@@ -67,25 +67,12 @@ public enum LogsPreset {
             this.units = units;
             return this;
         }
-    },
-
-    /**
-     * Preset designed to use in TREE handler mode.
-     */
-    TREE_OPTIMIZED {
-        @Override
-        Function<TestStep, Collection<SaveLogRQ>>[] logUnits() {
-            return new Function[]{
-                    Attachment.screenshots(),
-                    Error.basic()
-            };
-        }
     };
 
     /**
      * Returns an array of log units associated with current preset
      */
-    abstract Function<TestStep, Collection<SaveLogRQ>>[] logUnits();
+    public abstract Function<TestStep, Collection<SaveLogRQ>>[] logUnits();
 
     /**
      * Configures a preset to use a list of passed log units. Registration is allowed only for CUSTOM preset

@@ -12,7 +12,7 @@ public class LogsPresetTest {
     @Test
     public void fullPreset() {
         int actual = LogsPreset.FULL.logUnits().length;
-        Assert.assertEquals(6, actual);
+        Assert.assertEquals(7, actual);
     }
 
     @Test(expected = UnsupportedOperationException.class)
@@ -23,18 +23,12 @@ public class LogsPresetTest {
     @Test
     public void defaultPreset() {
         int actual = LogsPreset.DEFAULT.logUnits().length;
-        Assert.assertEquals(3, actual);
+        Assert.assertEquals(4, actual);
     }
 
     @Test
     public void customProfileCustomization() {
         LogsPreset preset = LogsPreset.CUSTOM.register(Essentials.startStep());
         Assert.assertEquals(1, preset.logUnits().length);
-    }
-
-    @Test
-    public void treeOptimizedProfile() {
-        int actual = LogsPreset.TREE_OPTIMIZED.logUnits().length;
-        Assert.assertEquals(2, actual);
     }
 }

@@ -5,7 +5,7 @@
 Serenity integration with Report Portal
 =======================================
 
-Module allows to report Serenity powered tests to [reportportal.io](http://reportportal.io). Supplies additional reporting facility to Serenity based test automation frameworks.
+Module allows to report Serenity powered tests to [reportportal.io](http://reportportal.io) server. Adds additional reporting to Serenity based test automation frameworks.
 
 Table of Contents
 -----------------
@@ -16,8 +16,6 @@ Table of Contents
 2. [Integration configuration](#integration-configuration)
     1. [Presets](#presets)
     2. [Log units](#log-units)
-    3. [Handler type (experimental feature)](#handler-type-experimental-feature)
-    4. [Narrative formatter](#narrative-formatter)
 3. [Data mapping](#data-mapping)
 4. [Versioning](#versioning)
 5. [Important release notes](#important-release-notes)
@@ -37,7 +35,7 @@ Edit project's `pom.xml` file
 <dependency>
    <groupId>com.github.invictum</groupId>
    <artifactId>serenity-reportportal-integration</artifactId>
-   <version>1.3.0</version>
+   <version>1.4.0</version>
 </dependency>
 ```
 Report Portal core libraries are used, but they placed in a separate repository, so its URL also should be added to your build configuration
@@ -59,9 +57,9 @@ Report Portal core libraries are used, but they placed in a separate repository,
 
 #### Gradle
 
-Edit `build.gradle` file in the project root
+Edit your project `build.gradle` file
 ```
-compile: 'com.github.invictum:serenity-reportportal-integration:1.3.0'
+compile: 'com.github.invictum:serenity-reportportal-integration:1.4.0'
 ```
 External Report Portal repository should be defined as the same as for Maven
 ```
@@ -81,30 +79,30 @@ rp.project = My_Cool_Project
 ```
 For more details related to Report Portal configuration please refer to [Report Portal Documentation](http://reportportal.io/docs/JVM-based-clients-configuration).
 
-Now run your tests normally and report should appear on Report Portal in accordance to provided configuration. To add custom messages to Report Portal, you may emit logs in any place in your test
+Now run tests normally and report should appear on Report Portal in accordance to configuration. To add custom messages to Report Portal, you may emit logs in any place in your test
 ```
 ReportPortal.emitLog("My message", "INFO", Calendar.getInstance().getTime());
 ```
 Message will appear in the scope of entity it was triggered. I. e. inside related test.
-It is also possible to use Report portal integration with log frameworks in order to push messages to RP server. Please refer to [Report Portal loggin integtation](http://reportportal.io/docs/Logging-Integration) for more details related to it.
+It is also possible to use Report portal integration with log frameworks in order to push messages to RP server. Please refer to [Report Portal logging integration](http://reportportal.io/docs/Logging-Integration) for more details.
 
 > **Notice**
-> Actually to add logs to Report Portal, they should be emitted in scope of test method, otherwise they will not be displayed at all
+> Actually to add logs to Report Portal, they should be emitted in its start and finish range, otherwise they will not be displayed at all
 
 #### Native Serenity reporting
 
-Serenity TAF may produce its own reporting facility via separate plugins. But `serenity-reportportal-integration` may be used in parallel with it or independently. Both reporting mechanisms should be configured accordingly and do not depends on each other.
+Serenity TAF may produce its own reporting via separate plugins. But `serenity-reportportal-integration` may be used in parallel with it or independently. Both reporting mechanisms should be configured independently and don't depends on each other.
 
 ## Integration configuration
 
-All available configurations are provided via `ReportIntegrationConfig` object. Each set method returns object itself, so chain of configuration is possible:
+All available configurations are provided via `ReportIntegrationConfig` object:
 ```
 ReportIntegrationConfig configuration = ReportIntegrationConfig.get();
-configuration.useHandler(HandlerType.TREE).usePreset(StepsSetProfile.TREE_OPTIMIZED);
+configuration.usePreset(LogsPreset.FULL);
 ```
 
 > **Notice**
-All integration configurations should be provided before Serenity facility init (For example on `@BeforeClass` method on the parent test class for jUnit style tests). Otherwise default values will be used.
+All integration configurations should be done before Serenity facility (For example on `@BeforeClass` method on the parent test class for jUnit style tests). Otherwise default values will be used.
 
 #### Presets
 
@@ -112,16 +110,13 @@ Each Serenity `TestStep` object is passed through chain of configured log units.
 
 - DEFAULT
 - FULL
-- TREE_OPTIMIZED
 - CUSTOM
 
 `DEFAULT` preset is used by default and contains all usually required log units. It generates in Report Portal a nice log that does not cluttered with extra details.
 
 `FULL` preset contains all available log units and generates full reporting. It suitable for demo purposes in order to choose a set of units.
 
-`TREE_OPTIMIZED` preset is suitable to use with `TREE` handler type. Refer to Handler Type section for more details.
-
-To configure what should be logged manually `CUSTOM` preset should be used. In following example `CUSTOM` preset with `startStep` and `finishStep` log units is configured.
+To configure what should be logged manually `CUSTOM` preset is used. In following example `CUSTOM` preset with `startStep` and `finishStep` log units is configured.
 ```
 LogsPreset preset = LogsPreset.CUSTOM;
 preset.register(Essentials.startStep(), Essentials.finishStep());
@@ -131,7 +126,7 @@ ReportIntegrationConfig.get().usePreset(preset);
 #### Log units
 
 All log units that are available out of the box may be observed in `com.github.invictum.reportportal.log.unit` package.
-For now following extractors are available:
+For now following units are available:
 - `Essentials.startStep()` retrieves step's data relevant to its start.
 - `Essentials.finishStep()` extracts step's data related to its finish. Log level depends on step result.
 - `Error.basic()` extracts step's error if present. Includes regular errors as well as assertion fails. By default full stack trace will be reported.
@@ -144,15 +139,16 @@ ReportIntegrationConfig.get().usePreset(preset);
 ```
 - `Attachment.screenshots()` extracts screenshots if present. It simply retrieves all available step's screenshots, so screenshot strategy is configured on Serenity level.
 - `Attachment.htmlSources()` extracts page source if available. Work in the same way as screenshots attachment.
-- `Selenium.allLogs()` retrieves all logs supplied by Selenium.
+- `Selenium.allLogs()` retrieves all logs supplied by Selenium. Suitable only for UI tests, when web driver supply some logs. 
 - `Selenium.filteredLogs()` retrieves logs supplied by Selenium, but filtered by passed predicate.
+- `Rest.restQuery()` records API call details, if present 
 ```
 LogsPreset preset = LogsPreset.CUSTOM;
 preset.register(Selenium.filteredLogs(log -> log.getType().contentEquals("browser")));
 ReportIntegrationConfig.get().usePreset(preset);
 ```
 
-It is possible to use integrated log units as well as implemented them by your own. To make own log unit just implement a `Function<TestStep, Collection<SaveLogRQ>>`.
+It is possible to use integrated log units as well as custom implemented. To make own log unit just create a `Function<TestStep, Collection<SaveLogRQ>>`.
 For example, let's implement log unit that generates greetings message for each started step
 ```
 Function<TestStep, Collection<SaveLogRQ>> myUnit = step -> {
@@ -167,60 +163,19 @@ Function<TestStep, Collection<SaveLogRQ>> myUnit = step -> {
     return Collections.singleton(log);
 };
 
-// Add custom log unit to the configuration
+```
+
+Now custom log unit could be added to configuration
+```
 LogsPreset preset = LogsPreset.CUSTOM;
 preset.register(myUnit);
 ReportIntegrationConfig.get().usePreset(preset);
 ```
+ 
 > **Warning**
-> To emit log to Report Portal proper date should be specified. If log timestamp is out of range of step it won't be emitted at all. `TestStep` object contains all the data required to determinate start, end dates and duration
+> To emit log to Report Portal proper time should be specified. If log timestamp is out of range of active test it won't be emitted at all. `TestStep` object contains all the data required to determinate start, end and duration
 
 Provided collection of `SaveLogRQ` will be used to push logs to to Report Portal and their order will be based on timestamp.
-
-#### Handler type (experimental feature)
-
-Integration provides two strategies of storing Serenity's test data to Report Portal facility:
-- *FLAT* (default behaviour) - Represents steps data as plain logs emitted to the test scope
-- *TREE* - Reconstructs steps structure as a tree representation in RP
-
-Report Portal has a few limitations regarding to flexible nested structures support for now. As a result test report may contain some inaccurate data.
-E. g. test count for launch will show total number of tests + total number of steps.
-
-Nevertheless `TREE` configuration allows to get additional features with RP. E. g. integrated RP test analysis facility scope will be changed from test to step.
-
-Handler type may be changed with following configuration
-```
-ReportIntegrationConfig.get().useHandler(HandlerType.TREE);
-```
-
-#### Narrative formatter
-
-By default, narrative is formatted as a card with title and bullet list before storing to the test description field. It is possible to alter this logic in accordance to project needs.
-
-To achieve it supply `Function<Narrative, String>` function to configuration and define your own implementation logic
-```
-// Define Function<Narrative, String> that will format narrative as a numbered list
-Function<Narrative, String> narrativeFormatter = narrative -> {
-    String[] strings = narrative.text();
-    return IntStream.range(0, strings.length).mapToObj(index -> (index + 1) + ". " + strings[index])
-        .collect(Collectors.joining("\n"));
-};
-// Add defined function to the configuration
-ReportIntegrationConfig.get().useNarrativeFormatter(narrativeFormatter);
-```
-
-Code snippet above will format narrative lines as a numbered list
-```
-Initial lines
-line 1, line 2
-
-Result lines
-1. line 1
-2. line 2
-```
-
-> **Info**
-> Text returned by `Function<Narrative, String>` function is treated as markdown, so markdown syntax could be used
 
 ## Data mapping
 
@@ -233,7 +188,7 @@ Serenity framework and Report Portal facility have a different entities structur
 Test Class  | Suite
 Test Method | Test
 Scenario    | Test
-Step        | Log
+Step        | Log entry
 
 **Description** Each non-log entity in Report Portal may has a description. This field is populated from Serenity narrative section for both jUnit and BDD test sources.
 
@@ -258,7 +213,6 @@ public class SimpleTest {
     ...
 }
 ```
-Narrative is transformed with function that may be passed to integration configuration
 
 **Tags** supplying depends on test source.
 For jBehave (BDD) tests tags is defined in Meta section with `@tag` or `@tags` keyword
@@ -302,7 +256,8 @@ Important release notes are described below. Use [releases](https://github.com/I
 1.0.0 - 1.0.6  | Supports RP v3 and below
 1.1.0 - 1.1.3  | Minor version update due RP v4 release. Versions older than 1.1.0 are not compatible with RP v4+ and vise versa
 1.2.0 - 1.2.1  | Minor version updated due internal mechanisms approach major refactoring
-1.3.0+         | Minor version updated due to log units approach rework
+1.3.0          | Minor version updated due to log units approach rework
+1.4.0+         | Minor version update: removed tree handler, refactored to support DDT for BDD
 
 ## Limitations
 
