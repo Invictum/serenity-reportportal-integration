@@ -73,15 +73,15 @@ public class ReportPortalListener implements StepListener {
     }
 
     public void stepIgnored() {
-        harvestDriverLogs();
+        // Not used by listener
     }
 
     public void stepPending() {
-        harvestDriverLogs();
+        // Not used by listener
     }
 
     public void stepPending(String message) {
-        harvestDriverLogs();
+        // Not used by listener
     }
 
     public void stepFinished() {

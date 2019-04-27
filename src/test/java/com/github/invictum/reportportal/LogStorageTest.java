@@ -6,6 +6,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 import org.mockito.Mockito;
+import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.logging.LogEntries;
 import org.openqa.selenium.logging.LogEntry;
 import org.openqa.selenium.logging.Logs;
@@ -25,7 +26,8 @@ public class LogStorageTest {
         storage = new LogStorage();
         logsMock = Mockito.mock(Logs.class);
         Mockito.when(logsMock.getAvailableLogTypes()).thenReturn(Collections.singleton("data"));
-        LogEntry entry = new EnhancedLogEntry("data", Level.INFO, 42, "Message");
+        LogEntry logEntry = new LogEntry(Level.INFO, 42, "Message");
+        LogEntry entry = new EnhancedLogEntry("data", logEntry);
         LogEntries entries = new LogEntries(Collections.singleton(entry));
         Mockito.when(logsMock.get("data")).thenReturn(entries);
     }
@@ -63,5 +65,13 @@ public class LogStorageTest {
         Mockito.when(logsMock.get("data")).thenReturn(null);
         storage.collect(logsMock);
         Assert.assertTrue(storage.query(item -> true).isEmpty());
+    }
+
+    @Test
+    public void disabledOnError() {
+        Mockito.when(logsMock.getAvailableLogTypes()).thenThrow(WebDriverException.class);
+        storage.collect(logsMock);
+        storage.collect(logsMock);
+        Mockito.verify(logsMock, Mockito.times(1)).getAvailableLogTypes();
     }
 }
