@@ -4,6 +4,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
+import org.openqa.selenium.logging.LogEntry;
 
 import java.util.logging.Level;
 
@@ -12,7 +13,8 @@ public class EnhancedLogEntityTest {
 
     @Test
     public void toJsonTest() {
-        EnhancedLogEntry entry = new EnhancedLogEntry("type", Level.INFO, 0, "Message");
+        LogEntry logEntry = new LogEntry(Level.INFO, 42, "Message");
+        EnhancedLogEntry entry = new EnhancedLogEntry("type", logEntry);
         Assert.assertTrue(entry.toJson().containsKey("type"));
     }
 }

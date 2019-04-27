@@ -1,7 +1,10 @@
 package com.github.invictum.reportportal;
 
+import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.logging.LogEntries;
 import org.openqa.selenium.logging.Logs;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,30 +18,43 @@ import java.util.stream.Collectors;
  */
 public class LogStorage {
 
+    private static final Logger LOG = LoggerFactory.getLogger(LogStorage.class);
+
     private ThreadLocal<List<EnhancedLogEntry>> logs = ThreadLocal.withInitial(ArrayList::new);
     private ThreadLocal<Optional<Set<String>>> types = ThreadLocal.withInitial(Optional::empty);
+    private boolean enabled = true;
 
     /**
      * Collects {@link org.openqa.selenium.WebDriver} logs if available and stores its to internal storage
+     * If error is occurred during log collection all future calls will be cancelled
      *
      * @param seleniumLogs to collect from
      */
     public void collect(Logs seleniumLogs) {
-        // Discover available log types
-        if (!types.get().isPresent()) {
-            Set<String> discoveredTypes = seleniumLogs.getAvailableLogTypes();
-            types.set(Optional.of(discoveredTypes));
+        // Skip log collection if previous attempt is failed
+        if (!enabled) {
+            return;
         }
-        // Collect all available logs
-        types.get().ifPresent(types -> types.forEach(type -> {
-            LogEntries logEntries = seleniumLogs.get(type);
-            if (logEntries != null) {
-                List<EnhancedLogEntry> typedLogs = logEntries.getAll().stream()
-                        .map(log -> new EnhancedLogEntry(type, log.getLevel(), log.getTimestamp(), log.getMessage()))
-                        .collect(Collectors.toList());
-                logs.get().addAll(typedLogs);
+        // Try to collect some logs
+        try {
+            if (!types.get().isPresent()) {
+                Set<String> discoveredTypes = seleniumLogs.getAvailableLogTypes();
+                types.set(Optional.of(discoveredTypes));
             }
-        }));
+            types.get().ifPresent(types -> types.forEach(type -> {
+                LogEntries logEntries = seleniumLogs.get(type);
+                if (logEntries != null) {
+                    List<EnhancedLogEntry> typedLogs = logEntries.getAll().stream()
+                            .map(log -> new EnhancedLogEntry(type, log))
+                            .collect(Collectors.toList());
+                    logs.get().addAll(typedLogs);
+                }
+            }));
+        } catch (WebDriverException e) {
+            enabled = false;
+            LOG.warn("Attempt to collect Selenium logs has been failed. Logs won't be collected");
+            LOG.debug("Root cause", e);
+        }
     }
 
     /**
