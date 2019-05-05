@@ -3,7 +3,6 @@ package com.github.invictum.reportportal;
 import org.openqa.selenium.logging.LogEntry;
 
 import java.util.Map;
-import java.util.logging.Level;
 
 /**
  * Enhanced version of {@link LogEntry} with added type field
@@ -12,8 +11,8 @@ public class EnhancedLogEntry extends LogEntry {
 
     private String type;
 
-    public EnhancedLogEntry(String type, Level level, long timestamp, String message) {
-        super(level, timestamp, message);
+    public EnhancedLogEntry(String type, LogEntry logEntry) {
+        super(logEntry.getLevel(), logEntry.getTimestamp(), logEntry.getMessage());
         this.type = type;
     }
 
