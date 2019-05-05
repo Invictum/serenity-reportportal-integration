@@ -141,12 +141,12 @@ ReportIntegrationConfig.get().usePreset(preset);
 - `Attachment.htmlSources()` extracts page source if available. Work in the same way as screenshots attachment.
 - `Selenium.allLogs()` retrieves all logs supplied by Selenium. Suitable only for UI tests, when web driver supply some logs. 
 - `Selenium.filteredLogs()` retrieves logs supplied by Selenium, but filtered by passed predicate.
-- `Rest.restQuery()` records API call details, if present 
 ```
 LogsPreset preset = LogsPreset.CUSTOM;
 preset.register(Selenium.filteredLogs(log -> log.getType().contentEquals("browser")));
 ReportIntegrationConfig.get().usePreset(preset);
 ```
+- `Rest.restQuery()` records API call details, if present 
 
 It is possible to use integrated log units as well as custom implemented. To make own log unit just create a `Function<TestStep, Collection<SaveLogRQ>>`.
 For example, let's implement log unit that generates greetings message for each started step
