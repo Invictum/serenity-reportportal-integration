@@ -16,7 +16,6 @@ Table of Contents
 2. [Integration configuration](#integration-configuration)
     1. [Presets](#presets)
     2. [Log units](#log-units)
-    3. [Merge launches](#merge-launches)
 3. [Data mapping](#data-mapping)
 4. [Versioning](#versioning)
 5. [Important release notes](#important-release-notes)
@@ -36,7 +35,7 @@ Edit project's `pom.xml` file
 <dependency>
    <groupId>com.github.invictum</groupId>
    <artifactId>serenity-reportportal-integration</artifactId>
-   <version>1.4.2</version>
+   <version>1.4.0</version>
 </dependency>
 ```
 Report Portal core libraries are used, but they placed in a separate repository, so its URL also should be added to your build configuration
@@ -60,7 +59,7 @@ Report Portal core libraries are used, but they placed in a separate repository,
 
 Edit your project `build.gradle` file
 ```
-compile: 'com.github.invictum:serenity-reportportal-integration:1.4.2'
+compile: 'com.github.invictum:serenity-reportportal-integration:1.4.0'
 ```
 External Report Portal repository should be defined as the same as for Maven
 ```
@@ -96,7 +95,7 @@ Serenity TAF may produce its own reporting via separate plugins. But `serenity-r
 
 ## Integration configuration
 
-Most of available configuration options are provided via `ReportIntegrationConfig` object:
+All available configurations are provided via `ReportIntegrationConfig` object:
 ```
 ReportIntegrationConfig configuration = ReportIntegrationConfig.get();
 configuration.usePreset(LogsPreset.FULL);
@@ -177,40 +176,6 @@ ReportIntegrationConfig.get().usePreset(preset);
 > To emit log to Report Portal proper time should be specified. If log timestamp is out of range of active test it won't be emitted at all. `TestStep` object contains all the data required to determinate start, end and duration
 
 Provided collection of `SaveLogRQ` will be used to push logs to to Report Portal and their order will be based on timestamp.
-
-#### Merge launches
-
-By default separate launch will be created in RP for each module in case of multi-module project. This behavior can be changed with merge launches feature.
-
-To understand a concept, let's assume following multi-module structure
-```
-my-project
-.
-+-- core    
-+-- api
-+-- ui
-```
-
-`core` is a module with some code that shared across `api` and `ui`. `ui` and `api` modules contain UI and API tests code. If tests will be run in a project root two launches will be produced - one for `ui` and another for `api`. 
-
-To merge all launches that relates to submodules two options should be specified:
- - `serenity.rp.communication.dir` a path to a directory that will be used for sync
- Absolute paths are supported as well as relevant. So `/opt/sync` and `../sync` directories are valid. If supplied directory is absent it will be created automatically. Specified path must be writable.
- 
- > **Caution**
- > Don't specify existing directories with data, because at the end of execution mentioned directory will be removed with all files inside it
- 
- > **Warning**
- > If relevant path is specified target directory should be the same for all submodules, otherwise merge feature will fail
- - `serenity.rp.modules.count` total quantity of modules with tests
- Value should be positive integer more that 1. So minimal modules quantity to activate feature is 2
- 
-Both mentioned options are required before test mechanism start and must be specified as JVM arguments. For example for project described above
-```
-mvn clean verify -Dserenity.rp.communication.dir=../sync-dir -Dserenity.rp.modules.count=2
-```
-
-With merge feature activation each submodule still produce separate launch on execution phase, but they will be merged into one at the end of all tests execution.  
 
 ## Data mapping
 
