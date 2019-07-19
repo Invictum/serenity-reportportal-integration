@@ -1,7 +1,5 @@
 package com.github.invictum.reportportal;
 
-import com.github.invictum.reportportal.injector.IntegrationInjector;
-
 import java.util.Objects;
 
 /**
@@ -10,17 +8,24 @@ import java.util.Objects;
  */
 public class ReportIntegrationConfig {
 
-    private LogsPreset preset;
+    static final String COMMUNICATION_DIR_KEY = "serenity.rp.communication.dir";
+    static final String MODULES_COUNT_KEY = "serenity.rp.modules.count";
+    private static volatile ReportIntegrationConfig instance;
+
+    private LogsPreset preset = LogsPreset.DEFAULT;
 
     /**
-     * Provides injected {@link ReportIntegrationConfig} configuration object
+     * Access to shared configuration instance
      */
     public static ReportIntegrationConfig get() {
-        return IntegrationInjector.getInjector().getInstance(ReportIntegrationConfig.class);
-    }
-
-    public ReportIntegrationConfig() {
-        resetToDefaults();
+        if (instance == null) {
+            synchronized (ReportIntegrationConfig.class) {
+                if (instance == null) {
+                    instance = new ReportIntegrationConfig();
+                }
+            }
+        }
+        return instance;
     }
 
     /**
@@ -35,10 +40,12 @@ public class ReportIntegrationConfig {
         return preset;
     }
 
-    /**
-     * Sets default values for configuration
-     */
-    public void resetToDefaults() {
-        this.preset = LogsPreset.DEFAULT;
+    public String communicationDirectory() {
+        return System.getProperty(COMMUNICATION_DIR_KEY);
+    }
+
+    public int modulesQuantity() {
+        String value = System.getProperty(MODULES_COUNT_KEY);
+        return value == null ? 0 : Integer.valueOf(value);
     }
 }
