@@ -4,6 +4,8 @@ __1.4.2__
 
 [#77](https://github.com/Invictum/serenity-reportportal-integration/issues/77): Fixed empty body logging in request
 
+[#83](https://github.com/Invictum/serenity-reportportal-integration/issues/83): Upgraded libraries: serenity-core-2.0.70, client-java-4.0.16
+
 __1.4.1__
 
 [#73](https://github.com/Invictum/serenity-reportportal-integration/issues/73): Fixed NPE on logs collect for Firefox Driver
