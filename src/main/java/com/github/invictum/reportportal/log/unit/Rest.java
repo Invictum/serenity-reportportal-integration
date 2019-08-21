@@ -28,7 +28,7 @@ public class Rest {
                 if (query.getRequestCookies() != null && !query.getRequestCookies().isEmpty()) {
                     builder.append("***Cookies***\n").append(query.getRequestCookies()).append("\n\n");
                 }
-                if (query.getContent() != null) {
+                if (query.getContent() != null && !query.getContent().isEmpty()) {
                     builder.append("***Body***\n```\n").append(query.getContent()).append("\n```\n");
                 }
                 // Response

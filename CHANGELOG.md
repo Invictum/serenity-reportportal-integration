@@ -1,3 +1,9 @@
+__1.4.2__
+
+[#63](https://github.com/Invictum/serenity-reportportal-integration/issues/63): Implemented launches merge for multi-module projects 
+
+[#77](https://github.com/Invictum/serenity-reportportal-integration/issues/77): Fixed empty body logging in request
+
 __1.4.1__
 
 [#73](https://github.com/Invictum/serenity-reportportal-integration/issues/73): Fixed NPE on logs collect for Firefox Driver
