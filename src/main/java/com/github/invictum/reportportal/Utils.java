@@ -1,5 +1,6 @@
 package com.github.invictum.reportportal;
 
+import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestResult;
 import net.thucydides.core.model.TestStep;
 
@@ -27,6 +28,17 @@ public class Utils {
      */
     public static Date stepEndDate(TestStep step) {
         ZonedDateTime endTimeZoned = step.getStartTime().plus(Duration.ofMillis(step.getDuration()));
+        return Date.from(endTimeZoned.toInstant());
+    }
+
+    /**
+     * Calculates test's end time.
+     *
+     * @param test to calculate time on
+     * @return test end time in {@link Date} format
+     */
+    public static Date testEndDate(TestOutcome test) {
+        ZonedDateTime endTimeZoned = test.getStartTime().plus(Duration.ofMillis(test.getDuration()));
         return Date.from(endTimeZoned.toInstant());
     }
 

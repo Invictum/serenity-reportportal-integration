@@ -1,10 +1,15 @@
 package com.github.invictum.reportportal.log.unit;
 
-import com.epam.ta.reportportal.ws.model.log.SaveLogRQ;
-import com.github.invictum.reportportal.LogLevel;
+import java.time.ZonedDateTime;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.Optional;
+
+import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestResult;
 import net.thucydides.core.model.TestStep;
 import net.thucydides.core.model.stacktrace.FailureCause;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -12,14 +17,17 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import java.time.ZonedDateTime;
-import java.util.Collection;
+import com.epam.ta.reportportal.ws.model.log.SaveLogRQ;
+import com.github.invictum.reportportal.LogLevel;
 
 @RunWith(MockitoJUnitRunner.StrictStubs.class)
 public class ErrorTest {
 
     @Mock
     private TestStep stepMock;
+
+    @Mock(lenient = true)
+    private TestOutcome testOutcomeMock;
 
     @Mock
     private FailureCause failureCauseMock;
@@ -36,10 +44,27 @@ public class ErrorTest {
         Mockito.when(stepMock.getStartTime()).thenReturn(ZonedDateTime.now());
         Mockito.when(stepMock.getException()).thenReturn(failureCauseMock);
         Mockito.when(stepMock.getConciseErrorMessage()).thenReturn("Custom error");
-        SaveLogRQ actual = Error.configuredError(TestStep::getConciseErrorMessage).apply(stepMock).iterator().next();
+        SaveLogRQ actual = Error.configuredStepError(TestStep::getConciseErrorMessage).apply(stepMock).iterator().next();
         // Verification
         Assert.assertEquals("Custom error", actual.getMessage());
         Assert.assertEquals(LogLevel.ERROR.toString(), actual.getLevel());
+    }
+
+    @Test
+    public void errorAtTestLevelShouldBeLogged(){
+        Mockito.when(testOutcomeMock.getStartTime()).thenReturn(ZonedDateTime.now());
+        Mockito.when(testOutcomeMock.getTestFailureCause()).thenReturn(new FailureCause(new RuntimeException()));
+        Iterator<SaveLogRQ> iterator = Error.configuredTestError(TestOutcome::getConciseErrorMessage).apply(testOutcomeMock).iterator();
+        Assert.assertTrue(iterator.hasNext());
+    }
+
+    @Test
+    public void errorAtStepLevelShouldNotBeLoggedAtTestLevel(){
+        Mockito.when(testOutcomeMock.getStartTime()).thenReturn(ZonedDateTime.now());
+        Mockito.when(testOutcomeMock.getTestFailureCause()).thenReturn(new FailureCause(new RuntimeException()));
+        Mockito.when(testOutcomeMock.getFailingStep()).thenReturn(Optional.of(new TestStep()));
+        Iterator<SaveLogRQ> iterator = Error.configuredTestError(TestOutcome::getConciseErrorMessage).apply(testOutcomeMock).iterator();
+        Assert.assertFalse(iterator.hasNext());
     }
 
     @Test
