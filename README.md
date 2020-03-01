@@ -7,6 +7,15 @@ Serenity integration with Report Portal
 
 Module allows to report Serenity powered tests to [reportportal.io](http://reportportal.io) server. Adds additional reporting to Serenity based test automation frameworks.
 
+> **Warning**
+> Make sure used integration version corresponds to documentation.
+
+By default `development` branch documentation is selected and it may contains unreleased features description.
+
+To view specific documentation version use tags switch at the top of github page as shown on image below
+
+![Tag switcher](images/tag-switcher.png)
+
 Table of Contents
 -----------------
 1. [Setup](#setup)
@@ -36,7 +45,7 @@ Edit project's `pom.xml` file
 <dependency>
    <groupId>com.github.invictum</groupId>
    <artifactId>serenity-reportportal-integration</artifactId>
-   <version>1.4.2</version>
+   <version>1.4.3</version>
 </dependency>
 ```
 Report Portal core libraries are used, but they placed in a separate repository, so its URL also should be added to your build configuration
@@ -60,7 +69,7 @@ Report Portal core libraries are used, but they placed in a separate repository,
 
 Edit your project `build.gradle` file
 ```
-compile: 'com.github.invictum:serenity-reportportal-integration:1.4.2'
+compile: 'com.github.invictum:serenity-reportportal-integration:1.4.3'
 ```
 External Report Portal repository should be defined as the same as for Maven
 ```

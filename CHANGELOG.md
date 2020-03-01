@@ -1,3 +1,9 @@
+__1.4.3__
+
+[#90](https://github.com/Invictum/serenity-reportportal-integration/issues/90): Added log an exception if it happened not just in a step but in a test method as well
+
+[#91](https://github.com/Invictum/serenity-reportportal-integration/issues/91): Upgraded libraries: serenity-core-2.1.8, client-java-4.0.19
+
 __1.4.2__
 
 [#63](https://github.com/Invictum/serenity-reportportal-integration/issues/63): Implemented launches merge for multi-module projects 
