@@ -42,10 +42,10 @@ public class FileStorageTest {
     public void loadAndClean() throws IOException {
         directory.newFile("1");
         directory.newFile("2");
-        Set<String> actual = fileStorage.loadAndClean();
-        Set<String> expected = new HashSet<>();
-        expected.add("1");
-        expected.add("2");
+        Set<Long> actual = fileStorage.loadAndClean();
+        Set<Long> expected = new HashSet<>();
+        expected.add(Long.valueOf("1"));
+        expected.add(Long.valueOf("2"));
         Assert.assertEquals(expected, actual);
     }
 }

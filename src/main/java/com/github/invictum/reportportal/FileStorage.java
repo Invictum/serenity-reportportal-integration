@@ -69,11 +69,11 @@ public class FileStorage {
     /**
      * Collects the set of launches and removes storage
      */
-    public Set<String> loadAndClean() {
-        Set<String> ids = new HashSet<>();
+    public Set<Long> loadAndClean() {
+        Set<Long> ids = new HashSet<>();
         try {
             Files.list(root).filter(VALID).forEach(path -> {
-                ids.add(path.getFileName().toString());
+                ids.add(Long.valueOf(path.getFileName().toString()));
                 secureRemove(path);
             });
             Files.delete(root);

@@ -68,7 +68,8 @@ public class Regular implements TestRecorder {
     private void recordNonStepFailure(TestOutcome out){
         Collection<SaveLogRQ> logs = Error.errorInTest().apply(out);
         logs.forEach(l -> ReportPortal.emitLog(id -> {
-            l.setTestItemId(id);
+//            l.setTestItemId(id);
+            l.setItemUuid(id);
             return l;
         }));
     }
