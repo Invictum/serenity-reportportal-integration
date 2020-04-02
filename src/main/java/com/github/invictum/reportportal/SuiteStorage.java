@@ -56,7 +56,7 @@ public class SuiteStorage {
     /**
      * Node class that holds suite metadata
      */
-    private class SuiteMetadata {
+    private static class SuiteMetadata {
         private Maybe<String> id;
         private Runnable finisher;
     }

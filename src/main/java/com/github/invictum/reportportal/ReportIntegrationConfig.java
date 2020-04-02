@@ -46,6 +46,6 @@ public class ReportIntegrationConfig {
 
     public int modulesQuantity() {
         String value = System.getProperty(MODULES_COUNT_KEY);
-        return value == null ? 0 : Integer.valueOf(value);
+        return value == null ? 0 : Integer.parseInt(value);
     }
 }

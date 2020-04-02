@@ -2,6 +2,7 @@ package com.github.invictum.reportportal;
 
 import com.epam.ta.reportportal.ws.model.ParameterResource;
 import com.epam.ta.reportportal.ws.model.StartTestItemRQ;
+import com.epam.ta.reportportal.ws.model.attribute.ItemAttributesRQ;
 import net.thucydides.core.model.DataTable;
 import net.thucydides.core.model.TestTag;
 import org.junit.Assert;
@@ -92,6 +93,6 @@ public class StartEventBuilderTest {
                 .withName("name")
                 .withTags(tags)
                 .build();
-//        Assert.assertEquals(Collections.singleton("type:name"), event.getTags());
+        Assert.assertEquals(Collections.singleton(new ItemAttributesRQ("type", "name")), event.getAttributes());
     }
 }

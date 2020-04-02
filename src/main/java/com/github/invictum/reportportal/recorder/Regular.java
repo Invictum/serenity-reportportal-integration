@@ -1,23 +1,17 @@
 package com.github.invictum.reportportal.recorder;
 
-import java.util.Collection;
-
-import net.thucydides.core.model.TestOutcome;
-
 import com.epam.reportportal.service.Launch;
 import com.epam.reportportal.service.ReportPortal;
 import com.epam.ta.reportportal.ws.model.FinishTestItemRQ;
 import com.epam.ta.reportportal.ws.model.StartTestItemRQ;
 import com.epam.ta.reportportal.ws.model.log.SaveLogRQ;
-import com.github.invictum.reportportal.FinishEventBuilder;
-import com.github.invictum.reportportal.ItemType;
-import com.github.invictum.reportportal.LogUnitsHolder;
-import com.github.invictum.reportportal.StartEventBuilder;
-import com.github.invictum.reportportal.Status;
-import com.github.invictum.reportportal.SuiteStorage;
+import com.github.invictum.reportportal.*;
 import com.github.invictum.reportportal.log.unit.Error;
 import com.google.inject.Inject;
 import io.reactivex.Maybe;
+import net.thucydides.core.model.TestOutcome;
+
+import java.util.Collection;
 
 /**
  * Common test recorder suitable for most cases
@@ -65,12 +59,11 @@ public class Regular implements TestRecorder {
         suiteStorage.suiteFinisher(out.getUserStory().getId(), () -> launch.finishTestItem(id, finishSuite));
     }
 
-    private void recordNonStepFailure(TestOutcome out){
+    private void recordNonStepFailure(TestOutcome out) {
         Collection<SaveLogRQ> logs = Error.errorInTest().apply(out);
-        logs.forEach(l -> ReportPortal.emitLog(id -> {
-//            l.setTestItemId(id);
-            l.setItemUuid(id);
-            return l;
+        logs.forEach(log -> ReportPortal.emitLog(id -> {
+            log.setItemUuid(id);
+            return log;
         }));
     }
 }

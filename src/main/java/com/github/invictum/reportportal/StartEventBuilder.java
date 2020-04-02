@@ -2,6 +2,7 @@ package com.github.invictum.reportportal;
 
 import com.epam.ta.reportportal.ws.model.ParameterResource;
 import com.epam.ta.reportportal.ws.model.StartTestItemRQ;
+import com.epam.ta.reportportal.ws.model.attribute.ItemAttributesRQ;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import net.thucydides.core.model.DataTable;
@@ -52,9 +53,9 @@ public class StartEventBuilder {
     }
 
     public StartEventBuilder withTags(Set<TestTag> tags) {
-        Set<String> result = tags.stream().filter(t -> !t.getType().contentEquals("story"))
-                .map(tag -> tag.getType() + ":" + tag.getName()).collect(Collectors.toSet());
-//        startEvent.setTags(result);
+        Set<ItemAttributesRQ> result = tags.stream().filter(t -> !t.getType().contentEquals("story"))
+                .map(tag -> new ItemAttributesRQ(tag.getType(), tag.getName())).collect(Collectors.toSet());
+        startEvent.setAttributes(result);
         return this;
     }
 

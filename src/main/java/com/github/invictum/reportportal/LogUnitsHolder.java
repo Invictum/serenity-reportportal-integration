@@ -38,7 +38,6 @@ public class LogUnitsHolder {
         units.forEach(item -> {
             Collection<SaveLogRQ> logs = item.apply(step);
             logs.forEach(log -> ReportPortal.emitLog(id -> {
-//                log.setTestItemId(id);
                 log.setItemUuid(id);
                 return log;
             }));
