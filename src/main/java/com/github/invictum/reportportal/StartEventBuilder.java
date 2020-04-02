@@ -54,7 +54,7 @@ public class StartEventBuilder {
     public StartEventBuilder withTags(Set<TestTag> tags) {
         Set<String> result = tags.stream().filter(t -> !t.getType().contentEquals("story"))
                 .map(tag -> tag.getType() + ":" + tag.getName()).collect(Collectors.toSet());
-        startEvent.setTags(result);
+//        startEvent.setTags(result);
         return this;
     }
 

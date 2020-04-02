@@ -59,12 +59,12 @@
         <dependency>
             <groupId>com.epam.reportportal</groupId>
             <artifactId>client-java</artifactId>
-            <version>4.0.19</version>
+            <version>5.0.0-BETA-9</version>
         </dependency>
         <dependency>
             <groupId>com.epam.reportportal</groupId>
             <artifactId>commons-model</artifactId>
-            <version>4.2.0</version>
+            <version>5.0.0</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
