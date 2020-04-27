@@ -23,7 +23,7 @@ public class StartEventBuilder {
     private StartTestItemRQ startEvent = new StartTestItemRQ();
 
     public StartEventBuilder(ItemType type) {
-        startEvent.setType(type.key());
+        startEvent.setType(type.name());
     }
 
     public StartEventBuilder withStartTime(ZonedDateTime time) {
@@ -56,6 +56,11 @@ public class StartEventBuilder {
         Set<ItemAttributesRQ> result = tags.stream().filter(t -> !t.getType().contentEquals("story"))
                 .map(tag -> new ItemAttributesRQ(tag.getType(), tag.getName())).collect(Collectors.toSet());
         startEvent.setAttributes(result);
+        return this;
+    }
+
+    public StartEventBuilder treeOptimized(boolean isOptimized) {
+        startEvent.setHasStats(!isOptimized);
         return this;
     }
 

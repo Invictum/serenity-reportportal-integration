@@ -26,7 +26,7 @@ public class StartEventBuilderTest {
                 .withStartTime(ZonedDateTime.now())
                 .withName("name")
                 .build();
-        Assert.assertEquals("STEP", event.getType());
+        Assert.assertEquals("TEST", event.getType());
     }
 
     @Test

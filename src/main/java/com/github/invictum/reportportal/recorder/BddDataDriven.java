@@ -12,50 +12,44 @@ import net.thucydides.core.model.TestStep;
 /**
  * Recorder aware of parameterized BDD style test specific handling
  */
-public class BddDataDriven implements TestRecorder {
-
-    private SuiteStorage suiteStorage;
-    private Launch launch;
-    private LogUnitsHolder holder;
+public class BddDataDriven extends TestRecorder {
 
     @Inject
     public BddDataDriven(SuiteStorage suiteStorage, Launch launch, LogUnitsHolder holder) {
-        this.suiteStorage = suiteStorage;
-        this.launch = launch;
-        this.holder = holder;
+        super(suiteStorage, launch, holder);
     }
 
     @Override
     public void record(TestOutcome out) {
         int last = out.getTestSteps().size() - 1;
         TestStep test = out.getTestSteps().get(last);
-        StartTestItemRQ startSuite = new StartEventBuilder(ItemType.SUITE)
+        StartTestItemRQ startStory = new StartEventBuilder(ItemType.TEST)
                 .withName(out.getUserStory().getName())
                 .withStartTime(test.getStartTime())
                 .withDescription(out.getUserStory().getNarrative())
                 .build();
-        Maybe<String> id = suiteStorage.start(out.getUserStory().getId(), () -> launch.startTestItem(startSuite));
+        Maybe<String> id = suiteStorage.start(out.getUserStory().getId(), () -> launch.startTestItem(startStory));
         // Start test
-        StartTestItemRQ startTest = new StartEventBuilder(ItemType.TEST)
+        StartTestItemRQ startScenario = new StartEventBuilder(ItemType.STEP)
                 .withName(out.getName())
                 .withStartTime(test.getStartTime())
                 .withParameters(out.getDataTable().row(last))
                 .withTags(out.getTags())
                 .build();
-        Maybe<String> testId = launch.startTestItem(id, startTest);
+        Maybe<String> testId = launch.startTestItem(id, startScenario);
         // Steps
-        test.getFlattenedSteps().forEach(holder::proceed);
+        proceedSteps(testId, out.getTestSteps());
         // Stop test
-        FinishTestItemRQ finishTest = new FinishEventBuilder()
+        FinishTestItemRQ finishScenario = new FinishEventBuilder()
                 .withStatus(Status.mapTo(test.getResult()))
                 .withEndTime(test.getStartTime(), test.getDuration())
                 .build();
-        launch.finishTestItem(testId, finishTest);
+        launch.finishTestItem(testId, finishScenario);
         // Finish suite
-        FinishTestItemRQ finishSuite = new FinishEventBuilder()
+        FinishTestItemRQ finishStory = new FinishEventBuilder()
                 .withStatus(Status.PASSED)
                 .withEndTime(test.getStartTime(), test.getDuration())
                 .build();
-        suiteStorage.suiteFinisher(out.getUserStory().getId(), () -> launch.finishTestItem(id, finishSuite));
+        suiteStorage.suiteFinisher(out.getUserStory().getId(), () -> launch.finishTestItem(id, finishStory));
     }
 }

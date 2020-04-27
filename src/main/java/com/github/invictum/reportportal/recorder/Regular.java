@@ -16,35 +16,29 @@ import java.util.Collection;
 /**
  * Common test recorder suitable for most cases
  */
-public class Regular implements TestRecorder {
-
-    private SuiteStorage suiteStorage;
-    private Launch launch;
-    private LogUnitsHolder holder;
+public class Regular extends TestRecorder {
 
     @Inject
     public Regular(SuiteStorage suiteStorage, Launch launch, LogUnitsHolder holder) {
-        this.suiteStorage = suiteStorage;
-        this.launch = launch;
-        this.holder = holder;
+        super(suiteStorage, launch, holder);
     }
 
     @Override
     public void record(TestOutcome out) {
-        StartTestItemRQ startSuite = new StartEventBuilder(ItemType.SUITE)
+        StartTestItemRQ startSuite = new StartEventBuilder(ItemType.TEST)
                 .withName(out.getUserStory().getDisplayName())
                 .withStartTime(out.getStartTime())
                 .withDescription(out.getUserStory().getNarrative())
                 .build();
         Maybe<String> id = suiteStorage.start(out.getUserStory().getId(), () -> launch.startTestItem(startSuite));
-        StartEventBuilder builder = new StartEventBuilder(ItemType.TEST);
+        StartEventBuilder builder = new StartEventBuilder(ItemType.STEP);
         builder.withName(out.getName()).withStartTime(out.getStartTime()).withTags(out.getTags());
         if (out.isDataDriven()) {
             builder.withParameters(out.getDataTable().row(0));
         }
         Maybe<String> testId = launch.startTestItem(id, builder.build());
         // Steps
-        out.getFlattenedTestSteps().forEach(holder::proceed);
+        proceedSteps(testId, out.getTestSteps());
         // failed assertions in test itself
         recordNonStepFailure(out);
         FinishTestItemRQ finishTest = new FinishEventBuilder()
