@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Calendar;
+import java.util.HashSet;
 
 public class ReportLaunchProvider implements Provider<Launch> {
 
@@ -57,8 +58,7 @@ public class ReportLaunchProvider implements Provider<Launch> {
         event.setName(parameters.getLaunchName());
         event.setStartTime(Calendar.getInstance().getTime());
         event.setMode(parameters.getLaunchRunningMode());
-//        As I understood Tags functionality moved to somewhere in RP 5. Unfortunately, I can't find right way to use Tags
-//        event.setTags(parameters.getTags());
+        event.setAttributes(parameters.getAttributes());
         event.setDescription(parameters.getDescription());
         return event;
     }
@@ -66,7 +66,7 @@ public class ReportLaunchProvider implements Provider<Launch> {
     private MergeLaunchesRQ buildMergeLaunchesEvent(ListenerParameters parameters) {
         MergeLaunchesRQ merge = new MergeLaunchesRQ();
         merge.setName(parameters.getLaunchName());
-//        merge.setTags(parameters.getTags());
+        merge.setAttributes(new HashSet<>(parameters.getAttributes()));
         merge.setExtendSuitesDescription(true);
         merge.setMergeStrategyType("DEEP");
         merge.setLaunches(fileStorage.loadAndClean());

@@ -5,16 +5,14 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
+import java.util.stream.Stream;
+
 @RunWith(JUnit4.class)
 public class ItemTypeTest {
 
     @Test
-    public void suiteKey() {
-        Assert.assertEquals("TEST", ItemType.SUITE.key());
-    }
-
-    @Test
-    public void testKey() {
-        Assert.assertEquals("STEP", ItemType.TEST.key());
+    public void itemsContent() {
+        String[] items = Stream.of(ItemType.values()).map(ItemType::name).toArray(String[]::new);
+        Assert.assertArrayEquals(new String[]{"TEST", "STEP"}, items);
     }
 }
