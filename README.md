@@ -137,8 +137,6 @@ ReportIntegrationConfig.get().usePreset(preset);
 
 All log units that are available out of the box may be observed in `com.github.invictum.reportportal.log.unit` package.
 For now following units are available:
-- `Essentials.startStep()` retrieves step's data relevant to its start.
-- `Essentials.finishStep()` extracts step's data related to its finish. Log level depends on step result.
 - `Error.basic()` extracts step's error if present. Includes regular errors as well as assertion fails. By default full stack trace will be reported.
 - `Error.configuredError()` extract step's error using passed function in order to implement custom error logic message formatting.
 ```

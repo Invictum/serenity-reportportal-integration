@@ -1,6 +1,6 @@
 package com.github.invictum.reportportal;
 
-import com.github.invictum.reportportal.log.unit.Essentials;
+import com.github.invictum.reportportal.log.unit.Error;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -12,23 +12,23 @@ public class LogsPresetTest {
     @Test
     public void fullPreset() {
         int actual = LogsPreset.FULL.logUnits().length;
-        Assert.assertEquals(7, actual);
+        Assert.assertEquals(5, actual);
     }
 
     @Test(expected = UnsupportedOperationException.class)
     public void fullPresetCustomization() {
-        LogsPreset.FULL.register(Essentials.startStep());
+        LogsPreset.FULL.register(Error.basic());
     }
 
     @Test
     public void defaultPreset() {
         int actual = LogsPreset.DEFAULT.logUnits().length;
-        Assert.assertEquals(4, actual);
+        Assert.assertEquals(3, actual);
     }
 
     @Test
     public void customProfileCustomization() {
-        LogsPreset preset = LogsPreset.CUSTOM.register(Essentials.startStep());
+        LogsPreset preset = LogsPreset.CUSTOM.register(Error.basic());
         Assert.assertEquals(1, preset.logUnits().length);
     }
 }

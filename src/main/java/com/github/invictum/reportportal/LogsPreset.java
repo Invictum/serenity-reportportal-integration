@@ -22,7 +22,6 @@ public enum LogsPreset {
         @Override
         public Function<TestStep, Collection<SaveLogRQ>>[] logUnits() {
             return new Function[]{
-                    Essentials.finishStep(),
                     Attachment.screenshots(),
                     Rest.restQuery(),
                     Error.basic()
@@ -37,10 +36,8 @@ public enum LogsPreset {
         @Override
         public Function<TestStep, Collection<SaveLogRQ>>[] logUnits() {
             return new Function[]{
-                    Essentials.startStep(),
                     Attachment.screenshots(),
                     Rest.restQuery(),
-                    Essentials.finishStep(),
                     Error.basic(),
                     Attachment.htmlSources(),
                     Selenium.allLogs()
