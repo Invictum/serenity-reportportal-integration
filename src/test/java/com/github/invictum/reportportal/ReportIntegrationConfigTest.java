@@ -1,5 +1,6 @@
 package com.github.invictum.reportportal;
 
+import net.thucydides.core.annotations.Narrative;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -57,5 +58,20 @@ public class ReportIntegrationConfigTest {
     public void modulesQuantity() {
         System.setProperty(MODULES_COUNT_KEY, "42");
         Assert.assertEquals(42, config.modulesQuantity());
+    }
+
+    @Test
+    public void defaultClassNarrativeFormatter() {
+        Narrative narrative = TestInstance.class.getAnnotation(Narrative.class);
+        String actual = config.formatter().apply(narrative);
+        Assert.assertEquals("line 1\nline 2", actual);
+    }
+
+    @Test
+    public void overrideClassNarrativeFormatter() {
+        config.useClassNarrativeFormatter(n -> n.text()[0]);
+        Narrative narrative = TestInstance.class.getAnnotation(Narrative.class);
+        String actual = config.formatter().apply(narrative);
+        Assert.assertEquals("line 1", actual);
     }
 }

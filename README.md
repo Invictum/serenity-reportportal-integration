@@ -256,6 +256,23 @@ public class SimpleTest {
 }
 ```
 
+By default each line of narrative is separated by a new line, so for example above following results is expected
+```
+line 1
+line 2
+```
+
+It is possible to override default narrative formatter for jUnut style tests. For example let's use as narrative only the fist line of text.
+```
+// Define new mapping function
+Function<Narrative, String> formatter = narrative -> narrative.text()[0];
+// Set it in configuration before tests run
+ReportIntegrationConfig.get().useClassNarrativeFormatter(formatter);
+// Run you tests normally
+```
+
+In this example only the first line of narrative will be set to description. I. e. `line 1`. All the text that returned by formatter is treated as markdown, so markdown format is welcome.
+
 **Tags** supplying depends on test source.
 For jBehave (BDD) tests tags is defined in Meta section with `@tag` or `@tags` keyword
 ```

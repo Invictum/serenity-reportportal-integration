@@ -25,11 +25,13 @@ public class Regular extends TestRecorder {
 
     @Override
     public void record(TestOutcome out) {
-        StartTestItemRQ startSuite = new StartEventBuilder(ItemType.TEST)
+        StartEventBuilder startEventBuilder = new StartEventBuilder(ItemType.TEST)
                 .withName(out.getUserStory().getDisplayName())
                 .withStartTime(out.getStartTime())
-                .withDescription(out.getUserStory().getNarrative())
-                .build();
+                .withDescription(out.getUserStory().getNarrative());
+        NarrativeExtractor extractor = new NarrativeExtractor(out, ReportIntegrationConfig.get().formatter());
+        extractor.extract().ifPresent(startEventBuilder::withDescription);
+        StartTestItemRQ startSuite = startEventBuilder.build();
         Maybe<String> id = suiteStorage.start(out.getUserStory().getId(), () -> launch.startTestItem(startSuite));
         StartEventBuilder builder = new StartEventBuilder(ItemType.STEP);
         builder.withName(out.getName()).withStartTime(out.getStartTime()).withTags(out.getTags());
