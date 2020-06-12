@@ -137,7 +137,8 @@ public class ReportPortalListener implements StepListener {
     }
 
     private void harvestDriverLogs() {
-        if (ThucydidesWebDriverSupport.isDriverInstantiated()) {
+        boolean harvestLogs = ReportIntegrationConfig.get().harvestSeleniumLogs;
+        if (harvestLogs && ThucydidesWebDriverSupport.isDriverInstantiated()) {
             Logs logs = ThucydidesWebDriverSupport.getDriver().manage().logs();
             logStorage.collect(logs);
         }

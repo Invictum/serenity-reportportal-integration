@@ -112,11 +112,11 @@ configuration.usePreset(LogsPreset.FULL);
 ```
 
 > **Notice**
-All integration configurations should be done before Serenity facility (For example on `@BeforeClass` method on the parent test class for jUnit style tests). Otherwise default values will be used.
+All integration configurations should be done before the start of Serenity facility. Otherwise default values will be used.
 
 #### Presets
 
-Each Serenity `TestStep` object is passed through chain of configured log units. This approach allows to flexible configure reporting behaviour on a step level. By default integration provides a few log presets:
+Each Serenity `TestStep` object is passed through chain of configured log units. Each particular log unit analyses step and creates a collection of records that will be send to RP. This approach allows to flexible configure reporting behaviour on a step level. By default integration provides a few log presets:
 
 - DEFAULT
 - FULL
@@ -126,10 +126,10 @@ Each Serenity `TestStep` object is passed through chain of configured log units.
 
 `FULL` preset contains all available log units and generates full reporting. It suitable for demo purposes in order to choose a set of units.
 
-To configure what should be logged manually `CUSTOM` preset is used. In following example `CUSTOM` preset with `startStep` and `finishStep` log units is configured.
+To configure what should be logged manually `CUSTOM` preset is used. In following example `CUSTOM` preset with `Error.basic()` log unit is configured.
 ```
 LogsPreset preset = LogsPreset.CUSTOM;
-preset.register(Essentials.startStep(), Essentials.finishStep());
+preset.register(Error.basic());
 ReportIntegrationConfig.get().usePreset(preset);
 ```
 
@@ -147,12 +147,14 @@ ReportIntegrationConfig.get().usePreset(preset);
 ```
 - `Attachment.screenshots()` extracts screenshots if present. It simply retrieves all available step's screenshots, so screenshot strategy is configured on Serenity level.
 - `Attachment.htmlSources()` extracts page source if available. Work in the same way as screenshots attachment.
-- `Selenium.allLogs()` retrieves all logs supplied by Selenium. Suitable only for UI tests, when web driver supply some logs. 
+- `Selenium.allLogs()` retrieves all logs supplied by Selenium. Suitable only for UI tests, when web driver supply some logs. Selenium logs works in conjunction with Selenium logs harvesting feature.
 - `Selenium.filteredLogs()` retrieves logs supplied by Selenium, but filtered by passed predicate.
 ```
 LogsPreset preset = LogsPreset.CUSTOM;
 preset.register(Selenium.filteredLogs(log -> log.getType().contentEquals("browser")));
 ReportIntegrationConfig.get().usePreset(preset);
+// Enable Selenium logs harvesting
+ReportIntegrationConfig.get().harvestSeleniumLogs(true);
 ```
 - `Rest.restQuery()` records API call details, if present 
 

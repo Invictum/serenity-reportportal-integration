@@ -17,6 +17,7 @@ public class ReportIntegrationConfig {
 
     private LogsPreset preset = LogsPreset.DEFAULT;
     private Function<Narrative, String> classNarrativeFormatter = n -> String.join("\n", n.text());
+    boolean harvestSeleniumLogs = false;
 
     /**
      * Access to shared configuration instance
@@ -49,6 +50,16 @@ public class ReportIntegrationConfig {
      */
     public ReportIntegrationConfig useClassNarrativeFormatter(Function<Narrative, String> formatter) {
         classNarrativeFormatter = Objects.requireNonNull(formatter, "Formatter must not be null");
+        return this;
+    }
+
+    /**
+     * Option allows to enable or disable selenium based logs harvesting
+     * Designed to be used in conjunction with {@link com.github.invictum.reportportal.log.unit.Selenium} log unit
+     * Disabled by default that means selenium logs won't be collected even if selenium log unit was added to preset
+     */
+    public ReportIntegrationConfig harvestSeleniumLogs(boolean harvestLogs) {
+        harvestSeleniumLogs = harvestLogs;
         return this;
     }
 
