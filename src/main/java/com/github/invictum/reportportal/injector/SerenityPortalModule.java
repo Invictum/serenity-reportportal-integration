@@ -3,7 +3,6 @@ package com.github.invictum.reportportal.injector;
 import com.epam.reportportal.service.Launch;
 import com.github.invictum.reportportal.LogStorage;
 import com.github.invictum.reportportal.LogUnitsHolder;
-import com.github.invictum.reportportal.LogUnitsHolderProvider;
 import com.github.invictum.reportportal.SuiteStorage;
 import com.google.inject.AbstractModule;
 import com.google.inject.Scopes;

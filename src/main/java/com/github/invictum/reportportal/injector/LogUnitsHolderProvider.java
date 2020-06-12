@@ -1,5 +1,7 @@
-package com.github.invictum.reportportal;
+package com.github.invictum.reportportal.injector;
 
+import com.github.invictum.reportportal.LogUnitsHolder;
+import com.github.invictum.reportportal.ReportIntegrationConfig;
 import com.google.inject.Provider;
 
 public class LogUnitsHolderProvider implements Provider<LogUnitsHolder> {
