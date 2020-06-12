@@ -17,7 +17,7 @@ import java.util.Collection;
 @RunWith(MockitoJUnitRunner.StrictStubs.class)
 public class RestTest {
 
-    private static String MESSAGE = "!!!MARKDOWN_MODE!!!## Request\n" +
+    private static String MESSAGE = "## Request\n" +
             "\n" +
             "GET path\n" +
             "\n" +

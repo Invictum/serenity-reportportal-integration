@@ -19,7 +19,7 @@ public class Rest {
         return step -> {
             if (step.hasRestQuery()) {
                 RestQuery query = step.getRestQuery();
-                StringBuilder builder = new StringBuilder("!!!MARKDOWN_MODE!!!");
+                StringBuilder builder = new StringBuilder();
                 // Request
                 builder.append("## Request\n\n").append(query.getFormattedQuery()).append("\n\n");
                 if (query.getRequestHeaders() != null) {
