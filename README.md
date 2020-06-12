@@ -45,7 +45,7 @@ Edit project's `pom.xml` file
 <dependency>
    <groupId>com.github.invictum</groupId>
    <artifactId>serenity-reportportal-integration</artifactId>
-   <version>1.4.3</version>
+   <version>1.5.0</version>
 </dependency>
 ```
 Report Portal core libraries are used, but they placed in a separate repository, so its URL also should be added to your build configuration
@@ -57,7 +57,7 @@ Report Portal core libraries are used, but they placed in a separate repository,
         </snapshots>
         <id>bintray-epam-reportportal</id>
         <name>bintray</name>
-        <url>http://dl.bintray.com/epam/reportportal</url>
+        <url>https://dl.bintray.com/epam/reportportal</url>
     </repository>
 </repositories>
 ```
@@ -69,13 +69,13 @@ Report Portal core libraries are used, but they placed in a separate repository,
 
 Edit your project `build.gradle` file
 ```
-compile: 'com.github.invictum:serenity-reportportal-integration:1.4.3'
+compile: 'com.github.invictum:serenity-reportportal-integration:1.5.0'
 ```
 External Report Portal repository should be defined as the same as for Maven
 ```
 repositories {
     maven {
-        url "http://dl.bintray.com/epam/reportportal"
+        url "https://dl.bintray.com/epam/reportportal"
     }
 }
 ```
@@ -89,15 +89,7 @@ rp.project = My_Cool_Project
 ```
 For more details related to Report Portal configuration please refer to [Report Portal Documentation](http://reportportal.io/docs/JVM-based-clients-configuration).
 
-Now run tests normally and report should appear on Report Portal in accordance to configuration. To add custom messages to Report Portal, you may emit logs in any place in your test
-```
-ReportPortal.emitLog("My message", "INFO", Calendar.getInstance().getTime());
-```
-Message will appear in the scope of entity it was triggered. I. e. inside related test.
-It is also possible to use Report portal integration with log frameworks in order to push messages to RP server. Please refer to [Report Portal logging integration](http://reportportal.io/docs/Logging-Integration) for more details.
-
-> **Notice**
-> Actually to add logs to Report Portal, they should be emitted in its start and finish range, otherwise they will not be displayed at all
+Now run tests normally and report should appear on Report Portal in accordance to configuration.
 
 #### Native Serenity reporting
 
@@ -148,7 +140,7 @@ ReportIntegrationConfig.get().usePreset(preset);
 - `Attachment.screenshots()` extracts screenshots if present. It simply retrieves all available step's screenshots, so screenshot strategy is configured on Serenity level.
 - `Attachment.htmlSources()` extracts page source if available. Work in the same way as screenshots attachment.
 - `Selenium.allLogs()` retrieves all logs supplied by Selenium. Suitable only for UI tests, when web driver supply some logs. Selenium logs works in conjunction with Selenium logs harvesting feature.
-- `Selenium.filteredLogs()` retrieves logs supplied by Selenium, but filtered by passed predicate.
+- `Selenium.filteredLogs(...)` retrieves logs supplied by Selenium, but filtered by passed predicate.
 ```
 LogsPreset preset = LogsPreset.CUSTOM;
 preset.register(Selenium.filteredLogs(log -> log.getType().contentEquals("browser")));
@@ -156,7 +148,7 @@ ReportIntegrationConfig.get().usePreset(preset);
 // Enable Selenium logs harvesting
 ReportIntegrationConfig.get().harvestSeleniumLogs(true);
 ```
-- `Rest.restQuery()` records API call details, if present 
+- `Rest.restQuery()` records API call details, if they are present
 
 It is possible to use integrated log units as well as custom implemented. To make own log unit just create a `Function<TestStep, Collection<SaveLogRQ>>`.
 For example, let's implement log unit that generates greetings message for each started step
@@ -318,7 +310,8 @@ Important release notes are described below. Use [releases](https://github.com/I
 1.1.0 - 1.1.3  | Minor version update due RP v4 release. Versions older than 1.1.0 are not compatible with RP v4+ and vise versa
 1.2.0 - 1.2.1  | Minor version updated due internal mechanisms approach major refactoring
 1.3.0          | Minor version updated due to log units approach rework
-1.4.0+         | Minor version update: removed tree handler, refactored to support DDT for BDD
+1.4.0 - 1.4.3  | Minor version update: removed tree handler, refactored to support DDT for BDD
+1.5.0+         | Minor version update due RP v5 release
 
 ## Limitations
 

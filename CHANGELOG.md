@@ -1,3 +1,15 @@
+__1.5.0__
+
+[#94](https://github.com/Invictum/serenity-reportportal-integration/issues/94): Added nested steps support
+
+[#96](https://github.com/Invictum/serenity-reportportal-integration/issues/96): Markdown mode adjustments
+
+[#97](https://github.com/Invictum/serenity-reportportal-integration/issues/97): Added narrative text support
+
+[#98](https://github.com/Invictum/serenity-reportportal-integration/issues/98): Removed obsolete log units
+
+[#101](https://github.com/Invictum/serenity-reportportal-integration/issues/101): Fixed: Selenium logs are collected even when their reporting is disabled
+
 __1.4.3__
 
 [#90](https://github.com/Invictum/serenity-reportportal-integration/issues/90): Added log an exception if it happened not just in a step but in a test method as well

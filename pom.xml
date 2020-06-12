@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.github.invictum</groupId>
@@ -46,7 +47,7 @@
             </snapshots>
             <id>bintray-epam-reportportal</id>
             <name>bintray</name>
-            <url>http://dl.bintray.com/epam/reportportal</url>
+            <url>https://dl.bintray.com/epam/reportportal</url>
         </repository>
     </repositories>
 
@@ -54,17 +55,17 @@
         <dependency>
             <groupId>net.serenity-bdd</groupId>
             <artifactId>serenity-core</artifactId>
-            <version>2.1.8</version>
+            <version>2.2.9</version>
         </dependency>
         <dependency>
             <groupId>com.epam.reportportal</groupId>
             <artifactId>client-java</artifactId>
-            <version>5.0.0-BETA-10</version>
+            <version>5.0.1</version>
         </dependency>
         <dependency>
             <groupId>com.epam.reportportal</groupId>
             <artifactId>commons-model</artifactId>
-            <version>5.0.0</version>
+            <version>5.2.2</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
