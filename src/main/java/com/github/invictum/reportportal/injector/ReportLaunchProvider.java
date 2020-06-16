@@ -9,6 +9,7 @@ import com.epam.ta.reportportal.ws.model.launch.StartLaunchRQ;
 import com.github.invictum.reportportal.FileStorage;
 import com.github.invictum.reportportal.ReportIntegrationConfig;
 import com.google.inject.Provider;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,14 +29,15 @@ public class ReportLaunchProvider implements Provider<Launch> {
         StartLaunchRQ startEvent = buildStartLaunchEvent(reportPortal.getParameters());
         Launch launch = reportPortal.newLaunch(startEvent);
         LOG.debug("Report Portal communication is engaged");
-        // Record launch ID
-        String id = launch.start().blockingGet();
         // Register shutdown hook. RP connection will be closed before VM shutdown
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            // Record launch ID and UUID
+            String uuid = launch.start().blockingGet();
+            Long id = reportPortal.getClient().getLaunchByUuid(uuid).blockingGet().getLaunchId();
             // Finish launch
             FinishExecutionRQ finishExecutionRQ = new FinishExecutionRQ();
             finishExecutionRQ.setEndTime(Calendar.getInstance().getTime());
-            reportPortal.getClient().finishLaunch(id, finishExecutionRQ).blockingGet();
+            reportPortal.getClient().finishLaunch(uuid, finishExecutionRQ).blockingGet();
             // Activate merge if parameters are passed
             if (DIR != null && MODULES_COUNT > 1) {
                 fileStorage = new FileStorage(DIR);
@@ -69,6 +71,7 @@ public class ReportLaunchProvider implements Provider<Launch> {
         merge.setAttributes(new HashSet<>(parameters.getAttributes()));
         merge.setExtendSuitesDescription(true);
         merge.setMergeStrategyType("DEEP");
+        merge.setDescription(parameters.getDescription() == null ? StringUtils.EMPTY : parameters.getDescription());
         merge.setLaunches(fileStorage.loadAndClean());
         return merge;
     }

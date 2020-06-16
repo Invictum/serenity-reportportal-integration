@@ -8,7 +8,9 @@ __1.5.0__
 
 [#98](https://github.com/Invictum/serenity-reportportal-integration/issues/98): Removed obsolete log units
 
-[#101](https://github.com/Invictum/serenity-reportportal-integration/issues/101): Fixed: Selenium logs are collected even when their reporting is disabled
+[#101](https://github.com/Invictum/serenity-reportportal-integration/issues/101): Fixed selenium logs are collected even when their reporting is disabled
+
+[#107](https://github.com/Invictum/serenity-reportportal-integration/issues/107): Fixed file storage
 
 __1.4.3__
 
