@@ -26,26 +26,26 @@ public class FileStorageTest {
 
     @Test
     public void touch() {
-        fileStorage.touch("1");
+        fileStorage.touch("abcd-ef12-3456-7890");
         String[] actual = directory.getRoot().list();
-        Assert.assertArrayEquals(new String[]{"1"}, actual);
+        Assert.assertArrayEquals(new String[]{"abcd-ef12-3456-7890"}, actual);
     }
 
     @Test
     public void count() throws IOException {
-        directory.newFile("1");
-        directory.newFile("2");
+        directory.newFile("abcd-ef12-3456-789a");
+        directory.newFile("abcd-ef12-3456-789b");
         Assert.assertEquals(2, fileStorage.count());
     }
 
     @Test
     public void loadAndClean() throws IOException {
-        directory.newFile("1");
-        directory.newFile("2");
+        directory.newFile("abcd-ef12-3456-789a");
+        directory.newFile("abcd-ef12-3456-789b");
         Set<String> actual = fileStorage.loadAndClean();
         Set<String> expected = new HashSet<>();
-        expected.add("1");
-        expected.add("2");
+        expected.add("abcd-ef12-3456-789a");
+        expected.add("abcd-ef12-3456-789b");
         Assert.assertEquals(expected, actual);
     }
 }

@@ -21,7 +21,7 @@ public class FileStorage {
     /**
      * Valid file name pattern
      */
-    private static final Predicate<Path> VALID = path -> path.getFileName().toString().matches("^[\\dabcdef]+$");
+    private static final Predicate<Path> VALID = path -> path.getFileName().toString().matches("^[\\dabcdef-]+$");
 
     private Path root;
 
