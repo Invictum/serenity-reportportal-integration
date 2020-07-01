@@ -16,6 +16,8 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @RunWith(JUnit4.class)
 public class StartEventBuilderTest {
@@ -51,6 +53,29 @@ public class StartEventBuilderTest {
                 .withName("name")
                 .build();
         Assert.assertEquals("name", event.getName());
+    }
+
+    @Test
+    public void withTruncatedNameTest() {
+        ReportIntegrationConfig.get().truncateNames(true);
+        String name = IntStream.range(0, 1024).mapToObj(i -> "0").collect(Collectors.joining()) + "extra";
+        StartTestItemRQ event = new StartEventBuilder(ItemType.TEST)
+                .withStartTime(ZonedDateTime.now())
+                .withName(name)
+                .build();
+        String expected = name.substring(0, 1021) + "...";
+        Assert.assertEquals(expected, event.getName());
+    }
+
+    @Test
+    public void noTruncationIfDisabledTest() {
+        ReportIntegrationConfig.get().truncateNames(false);
+        String name = IntStream.range(0, 1024).mapToObj(i -> "0").collect(Collectors.joining()) + "extra";
+        StartTestItemRQ event = new StartEventBuilder(ItemType.TEST)
+                .withStartTime(ZonedDateTime.now())
+                .withName(name)
+                .build();
+        Assert.assertEquals(name, event.getName());
     }
 
     @Test(expected = IllegalArgumentException.class)
