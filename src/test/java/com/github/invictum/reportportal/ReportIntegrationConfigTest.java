@@ -74,4 +74,14 @@ public class ReportIntegrationConfigTest {
         String actual = config.formatter().apply(narrative);
         Assert.assertEquals("line 1", actual);
     }
+
+    @Test
+    public void defaultTruncateNames() {
+        Assert.assertFalse(config.truncateNames);
+    }
+
+    @Test
+    public void truncateNames() {
+        Assert.assertTrue(config.truncateNames(true).truncateNames);
+    }
 }

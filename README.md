@@ -26,6 +26,7 @@ Table of Contents
     1. [Presets](#presets)
     2. [Log units](#log-units)
     3. [Merge launches](#merge-launches)
+    4. [Other settings](#other-settings)
 3. [Data mapping](#data-mapping)
 4. [Versioning](#versioning)
 5. [Important release notes](#important-release-notes)
@@ -212,6 +213,15 @@ mvn clean verify -Dserenity.rp.communication.dir=../sync-dir -Dserenity.rp.modul
 ```
 
 With merge feature activation each submodule still produce separate launch on execution phase, but they will be merged into one at the end of all tests execution.  
+
+#### Other settings
+
+Section includes minor settings that available to configure and describes their usage.
+
+ Setting                 | Usage         | Description
+-------------------------|---------------|----------------
+Selenium logs harvesting |`ReportIntegrationConfig.get().harvestSeleniumLogs(true)` | Special option that works in conjunction with `Selenium.filteredLogs(...)` unit and must be enabled as well in order it to works. By default it is disabled.
+Truncate names           |`ReportIntegrationConfig.get().truncateNames(true)`       | Allows to hide RP server errors that related to entities with long names (more that 1024 symbols) creation. It is not recommended to use it. By default it is disabled.
 
 ## Data mapping
 

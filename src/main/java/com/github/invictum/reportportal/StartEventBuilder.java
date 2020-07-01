@@ -7,6 +7,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import net.thucydides.core.model.DataTable;
 import net.thucydides.core.model.TestTag;
+import org.apache.commons.lang3.StringUtils;
 
 import java.time.ZonedDateTime;
 import java.util.Date;
@@ -20,6 +21,7 @@ import java.util.stream.Collectors;
  */
 public class StartEventBuilder {
 
+    private static final int NAME_LIMIT = 1024;
     private StartTestItemRQ startEvent = new StartTestItemRQ();
 
     public StartEventBuilder(ItemType type) {
@@ -66,6 +68,10 @@ public class StartEventBuilder {
 
     public StartTestItemRQ build() {
         Preconditions.checkArgument(!Strings.isNullOrEmpty(startEvent.getName()), "Event name must not be null or empty");
+        if (ReportIntegrationConfig.get().truncateNames) {
+            String name = startEvent.getName();
+            startEvent.setName(name.length() > NAME_LIMIT ? StringUtils.truncate(name, NAME_LIMIT - 3) + "..." : name);
+        }
         Objects.requireNonNull(startEvent.getStartTime(), "Start date must not be null");
         return startEvent;
     }

@@ -18,6 +18,7 @@ public class ReportIntegrationConfig {
     private LogsPreset preset = LogsPreset.DEFAULT;
     private Function<Narrative, String> classNarrativeFormatter = n -> String.join("\n", n.text());
     boolean harvestSeleniumLogs = false;
+    boolean truncateNames = false;
 
     /**
      * Access to shared configuration instance
@@ -65,6 +66,14 @@ public class ReportIntegrationConfig {
 
     public Function<Narrative, String> formatter() {
         return classNarrativeFormatter;
+    }
+
+    /**
+     * Option sets names truncation feature, that allows to avoid RP errors with long entities creation
+     */
+    public ReportIntegrationConfig truncateNames(boolean setting) {
+        truncateNames = setting;
+        return this;
     }
 
     public String communicationDirectory() {
