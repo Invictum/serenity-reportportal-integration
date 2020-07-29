@@ -37,7 +37,7 @@ public class ReportLaunchProvider implements Provider<Launch> {
             // Finish launch
             FinishExecutionRQ finishExecutionRQ = new FinishExecutionRQ();
             finishExecutionRQ.setEndTime(Calendar.getInstance().getTime());
-            reportPortal.getClient().finishLaunch(uuid, finishExecutionRQ).blockingGet();
+            launch.finish(finishExecutionRQ);
             // Activate merge if parameters are passed
             if (DIR != null && MODULES_COUNT > 1) {
                 fileStorage = new FileStorage(DIR);
