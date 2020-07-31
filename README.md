@@ -21,7 +21,8 @@ Table of Contents
 1. [Setup](#setup)
     1. [Maven](#maven)
     2. [Gradle](#gradle)
-    3. [Native Serenity reporting](#native-serenity-reporting)
+    3. [Snapshots](#snapshots)
+    4. [Native Serenity reporting](#native-serenity-reporting)
 2. [Integration configuration](#integration-configuration)
     1. [Presets](#presets)
     2. [Log units](#log-units)
@@ -46,7 +47,7 @@ Edit project's `pom.xml` file
 <dependency>
    <groupId>com.github.invictum</groupId>
    <artifactId>serenity-reportportal-integration</artifactId>
-   <version>1.5.0</version>
+   <version>1.5.1</version>
 </dependency>
 ```
 Report Portal core libraries are used, but they placed in a separate repository, so its URL also should be added to your build configuration
@@ -70,7 +71,7 @@ Report Portal core libraries are used, but they placed in a separate repository,
 
 Edit your project `build.gradle` file
 ```
-compile: 'com.github.invictum:serenity-reportportal-integration:1.5.0'
+compile: 'com.github.invictum:serenity-reportportal-integration:1.5.1'
 ```
 External Report Portal repository should be defined as the same as for Maven
 ```
@@ -91,6 +92,55 @@ rp.project = My_Cool_Project
 For more details related to Report Portal configuration please refer to [Report Portal Documentation](http://reportportal.io/docs/JVM-based-clients-configuration).
 
 Now run tests normally and report should appear on Report Portal in accordance to configuration.
+
+#### Snapshots
+
+Sometimes it is necessary to use integration version that isn't released yet, but available in `develop` branch. Those builds available as snapshots and suffixed with `-SNAPSHOT` word.
+To enable snapshots, extra configuration is required depending of build tool used.
+
+> **Warning**
+Snapshots may have issues and are not intended to be used in production.
+
+**Maven**
+
+Add repository section to `pom.xml` as follows
+```
+<repository>
+    <id>sonatype-snapshot</id>
+    <url>http://oss.sonatype.org/content/repositories/snapshots/</url>
+    <releases>
+        <enabled>false</enabled>
+    </releases>
+    <snapshots>
+        <enabled>true</enabled>
+    </snapshots>
+</repository>
+```
+
+Then define snapshot artifact version in dependencies
+```
+<dependency>
+    <groupId>com.github.invictum</groupId>
+    <artifactId>serenity-reportportal-integration</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+</dependency>
+```
+
+**Gradle**
+
+Edit `build.gradle` file as follows
+```
+repositories {
+    maven {
+        url 'http://oss.sonatype.org/content/repositories/snapshots/'
+    }
+}
+```
+
+Add snapshots artifact in dependencies
+```
+compile: 'com.github.invictum:serenity-reportportal-integration:1.0.0-SNAPSHOT'
+```
 
 #### Native Serenity reporting
 
