@@ -120,4 +120,14 @@ public class StartEventBuilderTest {
                 .build();
         Assert.assertEquals(Collections.singleton(new ItemAttributesRQ("type", "name")), event.getAttributes());
     }
+
+    @Test
+    public void withRetryTest() {
+        StartTestItemRQ event = new StartEventBuilder(ItemType.TEST)
+                .withStartTime(ZonedDateTime.now())
+                .withName("name")
+                .withRetry()
+                .build();
+        Assert.assertTrue(event.isRetry());
+    }
 }

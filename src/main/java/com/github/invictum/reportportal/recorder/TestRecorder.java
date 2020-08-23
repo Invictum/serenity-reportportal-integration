@@ -16,7 +16,6 @@ import java.util.List;
  * Defines steps to use to record particular test in context of suite
  */
 public abstract class TestRecorder {
-
     protected SuiteStorage suiteStorage;
     protected Launch launch;
     protected LogUnitsHolder holder;
@@ -27,7 +26,7 @@ public abstract class TestRecorder {
         this.holder = holder;
     }
 
-    abstract public void record(TestOutcome out);
+    public abstract void record(TestOutcome out);
 
     /**
      * Factory method to discover suitable {@link TestRecorder} approach
