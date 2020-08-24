@@ -62,6 +62,8 @@ public class ReportLaunchProvider implements Provider<Launch> {
         event.setMode(parameters.getLaunchRunningMode());
         event.setAttributes(parameters.getAttributes());
         event.setDescription(parameters.getDescription());
+        event.setRerun(parameters.isRerun());
+        event.setRerunOf(parameters.getRerunOf());
         return event;
     }
 
