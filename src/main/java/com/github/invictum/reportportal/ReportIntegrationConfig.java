@@ -83,9 +83,12 @@ public class ReportIntegrationConfig {
     }
 
     public int retriesCount() {
-        String value = System.getProperty(FAILSAFE_RERUN_KEY);
-        value = value == null ? System.getProperty(SUREFIRE_RERUN_KEY) : value;
-        return value == null ? 0 : Integer.parseInt(value);
+        String value = System.getProperty(FAILSAFE_RERUN_KEY, System.getProperty(SUREFIRE_RERUN_KEY));
+        try {
+            return value == null ? 0 : Integer.parseInt(value);
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("Wrong retires count", e);
+        }
     }
 
     public int modulesQuantity() {

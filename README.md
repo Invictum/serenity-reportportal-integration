@@ -265,8 +265,10 @@ mvn clean verify -Dserenity.rp.communication.dir=../sync-dir -Dserenity.rp.modul
 With merge feature activation each submodule still produce separate launch on execution phase, but they will be merged into one at the end of all tests execution.
 
 #### Test retries
+
 Report portal have the feature to show [test retries](https://github.com/reportportal/documentation/blob/master/src/md/src/DevGuides/retries.md).  
-Serenity RP client will report all retries automatically if you are add `failsafe.rerunFailingTestsCount` or `surefire.rerunFailingTestsCount` property to your test execution.    
+Serenity RP client will report all retries automatically if you are use maven with *failsafe/surefire* plugin, *junit4* and add `failsafe.rerunFailingTestsCount` or `surefire.rerunFailingTestsCount` property to your test execution.  
+The feature work 100% only with this configuration. 
 
 #### Other settings
 

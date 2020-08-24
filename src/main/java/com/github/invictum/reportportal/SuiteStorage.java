@@ -75,7 +75,7 @@ public class SuiteStorage {
      * @param suiteId id of suite where fail test was detected
      * @param testId  id of failed test
      */
-    public boolean isFailAdded(String suiteId, String testId) {
+    public boolean isFailPresent(String suiteId, String testId) {
         SuiteMetadata meta = suites.get(suiteId);
         return meta.failedTests.contains(testId);
     }

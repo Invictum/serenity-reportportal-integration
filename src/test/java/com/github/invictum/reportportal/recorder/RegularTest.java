@@ -51,7 +51,7 @@ public class RegularTest {
     }
 
     @Test
-    public void retryRecordCallIsFailAddedTest() {
+    public void retryRecordCallIsFailPresentTest() {
         System.setProperty(SUREFIRE_RERUN_KEY, "2");
         TestRecorder recorder = new Regular(suiteStorageMock, launchMock, logUnitsHolderMock);
         TestOutcome testOutcome = Mockito.mock(TestOutcome.class);
@@ -62,7 +62,7 @@ public class RegularTest {
         Mockito.when(testOutcome.getName()).thenReturn("Test name");
         recorder.record(testOutcome);
         Mockito.verify(suiteStorageMock,
-                Mockito.times(1)).isFailAdded(
+                Mockito.times(1)).isFailPresent(
                 Mockito.eq("story"), Mockito.eq("testId"));
     }
 
@@ -77,7 +77,7 @@ public class RegularTest {
         ZonedDateTime start = ZonedDateTime.now();
         Mockito.when(testOutcome.getStartTime()).thenReturn(start);
         Mockito.when(testOutcome.getName()).thenReturn("Test name");
-        Mockito.when(suiteStorageMock.isFailAdded(Mockito.any(), Mockito.any())).thenReturn(false);
+        Mockito.when(suiteStorageMock.isFailPresent(Mockito.any(), Mockito.any())).thenReturn(false);
         recorder.record(testOutcome);
         Mockito.when(testOutcome.getResult()).thenReturn(TestResult.FAILURE);
         recorder.record(testOutcome);
@@ -97,7 +97,7 @@ public class RegularTest {
         ZonedDateTime start = ZonedDateTime.now();
         Mockito.when(testOutcome.getStartTime()).thenReturn(start);
         Mockito.when(testOutcome.getName()).thenReturn("Test name");
-        Mockito.when(suiteStorageMock.isFailAdded(Mockito.any(), Mockito.any())).thenReturn(true);
+        Mockito.when(suiteStorageMock.isFailPresent(Mockito.any(), Mockito.any())).thenReturn(true);
         recorder.record(testOutcome);
         Mockito.verify(suiteStorageMock,
                 Mockito.times(1)).removeFail(

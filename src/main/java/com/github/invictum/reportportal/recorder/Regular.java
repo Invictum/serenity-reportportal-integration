@@ -81,7 +81,7 @@ public class Regular extends TestRecorder {
     private void processRetries(TestOutcome out, StartEventBuilder builder) {
         String testId = out.getId();
         String suiteId = out.getUserStory().getId();
-        if (suiteStorage.isFailAdded(suiteId, testId)) {
+        if (suiteStorage.isFailPresent(suiteId, testId)) {
             builder.withRetry();
             if (!isTestFailed(out)) {
                 suiteStorage.removeFail(suiteId, testId);
