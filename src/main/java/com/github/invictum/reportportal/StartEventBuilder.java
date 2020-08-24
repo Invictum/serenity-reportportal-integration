@@ -43,6 +43,11 @@ public class StartEventBuilder {
         return this;
     }
 
+    public StartEventBuilder withRetry() {
+        startEvent.setRetry(true);
+        return this;
+    }
+
     public StartEventBuilder withParameters(DataTable.RowValueAccessor data) {
         List<ParameterResource> parameters = data.toStringMap().entrySet().stream().map(param -> {
             ParameterResource parameter = new ParameterResource();

@@ -10,6 +10,9 @@ import java.util.Date;
 
 public class Utils {
 
+    private Utils() {
+    }
+
     /**
      * Finds log level based on step result status.
      *

@@ -11,8 +11,10 @@ import java.util.function.Function;
  */
 public class ReportIntegrationConfig {
 
-    static final String COMMUNICATION_DIR_KEY = "serenity.rp.communication.dir";
-    static final String MODULES_COUNT_KEY = "serenity.rp.modules.count";
+    public static final String COMMUNICATION_DIR_KEY = "serenity.rp.communication.dir";
+    public static final String MODULES_COUNT_KEY = "serenity.rp.modules.count";
+    public static final String FAILSAFE_RERUN_KEY = "failsafe.rerunFailingTestsCount";
+    public static final String SUREFIRE_RERUN_KEY = "surefire.rerunFailingTestsCount";
     private static volatile ReportIntegrationConfig instance;
 
     private LogsPreset preset = LogsPreset.DEFAULT;
@@ -78,6 +80,15 @@ public class ReportIntegrationConfig {
 
     public String communicationDirectory() {
         return System.getProperty(COMMUNICATION_DIR_KEY);
+    }
+
+    public int retriesCount() {
+        String value = System.getProperty(FAILSAFE_RERUN_KEY, System.getProperty(SUREFIRE_RERUN_KEY));
+        try {
+            return value == null ? 0 : Integer.parseInt(value);
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("Wrong retires count", e);
+        }
     }
 
     public int modulesQuantity() {
