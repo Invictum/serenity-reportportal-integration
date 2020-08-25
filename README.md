@@ -8,6 +8,7 @@ Serenity integration with Report Portal
 Module allows to report Serenity powered tests to [reportportal.io](http://reportportal.io) server. Adds additional reporting to Serenity based test automation frameworks.
 
 > **Warning**
+>
 > Make sure used integration version corresponds to documentation.
 
 By default `development` branch documentation is selected and it may contains unreleased features description.
@@ -27,7 +28,8 @@ Table of Contents
     1. [Presets](#presets)
     2. [Log units](#log-units)
     3. [Merge launches](#merge-launches)
-    4. [Other settings](#other-settings)
+    4. [Test retries](#test-retries)
+    5. [Other settings](#other-settings)
 3. [Data mapping](#data-mapping)
 4. [Versioning](#versioning)
 5. [Important release notes](#important-release-notes)
@@ -38,6 +40,7 @@ Table of Contents
 To add support of integration between Serenity and Report Portal simply add dependencies to your project based on used build tool.
 
 > **Warning**
+>
 > Don't add any extra Report Portal listeners or agents. Integration is provided by single module for all available Serenity approaches
 
 #### Maven
@@ -47,7 +50,7 @@ Edit project's `pom.xml` file
 <dependency>
    <groupId>com.github.invictum</groupId>
    <artifactId>serenity-reportportal-integration</artifactId>
-   <version>1.5.1</version>
+   <version>1.5.2</version>
 </dependency>
 ```
 Report Portal core libraries are used, but they placed in a separate repository, so its URL also should be added to your build configuration
@@ -71,7 +74,7 @@ Report Portal core libraries are used, but they placed in a separate repository,
 
 Edit your project `build.gradle` file
 ```
-compile: 'com.github.invictum:serenity-reportportal-integration:1.5.1'
+compile: 'com.github.invictum:serenity-reportportal-integration:1.5.2'
 ```
 External Report Portal repository should be defined as the same as for Maven
 ```
@@ -99,7 +102,8 @@ Sometimes it is necessary to use integration version that isn't released yet, bu
 To enable snapshots, extra configuration is required depending of build tool used.
 
 > **Warning**
-Snapshots may have issues and are not intended to be used in production.
+>
+> Snapshots may have issues and are not intended to be used in production.
 
 **Maven**
 
@@ -155,7 +159,8 @@ configuration.usePreset(LogsPreset.FULL);
 ```
 
 > **Notice**
-All integration configurations should be done before the start of Serenity facility. Otherwise default values will be used.
+>
+> All integration configurations should be done before the start of Serenity facility. Otherwise default values will be used.
 
 #### Presets
 
@@ -226,6 +231,7 @@ ReportIntegrationConfig.get().usePreset(preset);
 ```
  
 > **Warning**
+>
 > To emit log to Report Portal proper time should be specified. If log timestamp is out of range of active test it won't be emitted at all. `TestStep` object contains all the data required to determinate start, end and duration
 
 Provided collection of `SaveLogRQ` will be used to push logs to to Report Portal and their order will be based on timestamp.
@@ -250,9 +256,11 @@ To merge all launches that relates to submodules two options should be specified
  Absolute paths are supported as well as relevant. So `/opt/sync` and `../sync` directories are valid. If supplied directory is absent it will be created automatically. Specified path must be writable.
  
  > **Caution**
+ >
  > Don't specify existing directories with data, because at the end of execution mentioned directory will be removed with all files inside it
  
  > **Warning**
+ >
  > If relevant path is specified target directory should be the same for all submodules, otherwise merge feature will fail
  - `serenity.rp.modules.count` total quantity of modules with tests
  Value should be positive integer more that 1. So minimal modules quantity to activate feature is 2
@@ -266,9 +274,12 @@ With merge feature activation each submodule still produce separate launch on ex
 
 #### Test retries
 
-Report portal have the feature to show [test retries](https://github.com/reportportal/documentation/blob/master/src/md/src/DevGuides/retries.md).  
-Serenity RP client will report all retries automatically if you are use maven with *failsafe/surefire* plugin, *junit4* and add `failsafe.rerunFailingTestsCount` or `surefire.rerunFailingTestsCount` property to your test execution.  
-The feature work 100% only with this configuration. 
+Report Portal has a feature to show [test retries](https://github.com/reportportal/documentation/blob/master/src/md/src/DevGuides/retries.md).
+Serenity RP client will report all retries automatically if you are use maven with *failsafe/surefire* plugin, *junit4* and add `failsafe.rerunFailingTestsCount` or `surefire.rerunFailingTestsCount` property to your test execution.
+
+> **Notice**
+>
+> Consider using RP rerun options if you don't use maven as a build tool. Check [documentation](https://github.com/reportportal/documentation/blob/master/src/md/src/DevGuides/rerun.md) for more details.
 
 #### Other settings
 
