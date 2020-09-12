@@ -9,6 +9,7 @@ import com.epam.ta.reportportal.ws.model.launch.StartLaunchRQ;
 import com.github.invictum.reportportal.FileStorage;
 import com.github.invictum.reportportal.ReportIntegrationConfig;
 import com.google.inject.Provider;
+import io.reactivex.Maybe;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,17 +30,20 @@ public class ReportLaunchProvider implements Provider<Launch> {
         StartLaunchRQ startEvent = buildStartLaunchEvent(reportPortal.getParameters());
         Launch launch = reportPortal.newLaunch(startEvent);
         LOG.debug("Report Portal communication is engaged");
+        //We should run launch immediately to avoid problem with rp.client.join functionality
+        Maybe<String> launchId = launch.start();
         // Register shutdown hook. RP connection will be closed before VM shutdown
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            // Record launch ID and UUID
-            String uuid = launch.start().blockingGet();
-            Long id = reportPortal.getClient().getLaunchByUuid(uuid).blockingGet().getLaunchId();
             // Finish launch
             FinishExecutionRQ finishExecutionRQ = new FinishExecutionRQ();
             finishExecutionRQ.setEndTime(Calendar.getInstance().getTime());
             launch.finish(finishExecutionRQ);
             // Activate merge if parameters are passed
             if (DIR != null && MODULES_COUNT > 1) {
+                //Record launch ID and UUID.
+                String uuid = launchId.blockingGet();
+                Long id = reportPortal.getClient().getLaunchByUuid(uuid).blockingGet().getLaunchId();
+                //Init fileStorage
                 fileStorage = new FileStorage(DIR);
                 fileStorage.touch(id);
                 // Perform merge
