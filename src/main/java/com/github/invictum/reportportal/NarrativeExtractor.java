@@ -22,10 +22,17 @@ public class NarrativeExtractor {
 
     public Optional<String> extract() {
         String storyNarrative = test.getUserStory().getNarrative();
+        /*
+        We test if storyNarrative is null, in that case we evaluate classNarrative method,
+          if this method is empty and storyNarrative null, then feature narrative is empty
+         */
         return Optional.ofNullable(storyNarrative == null ? classNarrative() : storyNarrative);
     }
 
     private String classNarrative() {
-        return NarrativeFinder.forClass(test.getTestCase()).map(formatter).orElse(null);
+        Class testCase = test.getTestCase();
+        //We test if test case is null, in that case narrative extracted from TestOutcome should be empty
+        if(testCase == null)    return "";
+        return NarrativeFinder.forClass(testCase).map(formatter).orElse(null);
     }
 }
