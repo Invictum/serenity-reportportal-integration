@@ -9,6 +9,8 @@ import io.reactivex.Maybe;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestStep;
 
+import java.util.Arrays;
+
 /**
  * Recorder aware of parameterized BDD style test specific handling
  */
@@ -38,7 +40,7 @@ public class BddDataDriven extends TestRecorder {
                 .build();
         Maybe<String> testId = launch.startTestItem(id, startScenario);
         // Steps
-        proceedSteps(testId, out.getTestSteps());
+        proceedSteps(testId, Arrays.asList(test));
         // Stop test
         FinishTestItemRQ finishScenario = new FinishEventBuilder()
                 .withStatus(Status.mapTo(test.getResult()))
