@@ -195,6 +195,17 @@ ReportIntegrationConfig.get().usePreset(preset);
 ```
 - `Attachment.screenshots()` extracts screenshots if present. It simply retrieves all available step's screenshots, so screenshot strategy is configured on Serenity level.
 - `Attachment.htmlSources()` extracts page source if available. Work in the same way as screenshots attachment.
+- `Attachment.evidences()` logs evidences provided by Serenity. Attach each evidence as step attachment.
+```
+// Evidence with manually specified content
+Serenity.recordReportData().asEvidence().withTitle("Title").andContents("My Content");
+// Evidence from file
+Serenity.recordReportData().asEvidence().withTitle("My Title").downloadable().fromFile(Paths.get("/Path/to/file"));
+```
+> **Notice**
+>
+> All evidences must be attached inside step method, otherwise they won't be send to RP.
+
 - `Selenium.allLogs()` retrieves all logs supplied by Selenium. Suitable only for UI tests, when web driver supply some logs. Selenium logs works in conjunction with Selenium logs harvesting feature.
 - `Selenium.filteredLogs(...)` retrieves logs supplied by Selenium, but filtered by passed predicate.
 ```

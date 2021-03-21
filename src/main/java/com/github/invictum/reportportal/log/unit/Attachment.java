@@ -1,21 +1,29 @@
 package com.github.invictum.reportportal.log.unit;
 
 import com.epam.ta.reportportal.ws.model.log.SaveLogRQ;
+import com.github.invictum.reportportal.LogLevel;
 import com.github.invictum.reportportal.Utils;
+import net.serenitybdd.core.environment.ConfiguredEnvironment;
+import net.thucydides.core.model.ReportData;
 import net.thucydides.core.model.TestStep;
 import net.thucydides.core.screenshots.ScreenshotAndHtmlSource;
+import org.apache.tika.Tika;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class Attachment {
 
     private final static Logger LOG = LoggerFactory.getLogger(Attachment.class);
+    private final static Tika TIKA = new Tika();
 
     /**
      * Logs screenshots from passed {@link TestStep} if present
@@ -85,5 +93,50 @@ public class Attachment {
             }
             return sources;
         };
+    }
+
+    /**
+     * Logs all evidences in a test step as attachment files in RP
+     */
+    public static Function<TestStep, Collection<SaveLogRQ>> evidences() {
+        return step -> step.getReportEvidence().stream()
+                .filter(ReportData::isEvidence)
+                .map(report -> report.getPath() == null ? fromContent(report) : fromFile(report))
+                .filter(Objects::nonNull)
+                .peek(log -> log.setLogTime(Utils.stepEndDate(step)))
+                .collect(Collectors.toSet());
+    }
+
+    private static SaveLogRQ fromFile(ReportData data) {
+        SaveLogRQ.File file = new SaveLogRQ.File();
+        file.setName(data.getId());
+        try {
+            String reportRoot = ConfiguredEnvironment.getConfiguration().getOutputDirectory().toString();
+            Path path = Paths.get(reportRoot, data.getPath());
+            byte[] content = Files.readAllBytes(path);
+            file.setContent(content);
+            String mime = TIKA.detect(content, data.getPath());
+            file.setContentType(mime);
+        } catch (IOException e) {
+            LOG.error("Unable to attach evidence", e);
+            return null;
+        }
+        SaveLogRQ log = new SaveLogRQ();
+        log.setMessage(data.getTitle());
+        log.setFile(file);
+        log.setLevel(LogLevel.DEBUG.toString());
+        return log;
+    }
+
+    private static SaveLogRQ fromContent(ReportData data) {
+        SaveLogRQ.File file = new SaveLogRQ.File();
+        file.setName(data.getId());
+        file.setContentType("application/txt");
+        file.setContent(data.getContents().getBytes());
+        SaveLogRQ log = new SaveLogRQ();
+        log.setFile(file);
+        log.setMessage(data.getTitle());
+        log.setLevel(LogLevel.DEBUG.toString());
+        return log;
     }
 }
