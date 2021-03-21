@@ -24,7 +24,8 @@ public enum LogsPreset {
             return new Function[]{
                     Attachment.screenshots(),
                     Rest.restQuery(),
-                    Error.basic()
+                    Error.basic(),
+                    Attachment.evidences()
             };
         }
     },
@@ -40,6 +41,7 @@ public enum LogsPreset {
                     Rest.restQuery(),
                     Error.basic(),
                     Attachment.htmlSources(),
+                    Attachment.evidences(),
                     Selenium.allLogs()
             };
         }
