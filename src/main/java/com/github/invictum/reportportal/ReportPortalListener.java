@@ -1,9 +1,7 @@
 package com.github.invictum.reportportal;
 
-import com.github.invictum.reportportal.injector.IntegrationInjector;
-import com.github.invictum.reportportal.recorder.TestRecorder;
-import com.google.inject.Inject;
 import net.thucydides.core.model.DataTable;
+import net.thucydides.core.model.ReportType;
 import net.thucydides.core.model.Story;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.steps.ExecutedStepDescription;
@@ -11,31 +9,47 @@ import net.thucydides.core.steps.StepFailure;
 import net.thucydides.core.steps.StepListener;
 import net.thucydides.core.webdriver.ThucydidesWebDriverSupport;
 import org.openqa.selenium.logging.Logs;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.util.Calendar;
+import java.util.LinkedHashSet;
 import java.util.Map;
 
 public class ReportPortalListener implements StepListener {
 
-    @Inject
-    private LogStorage logStorage;
+    private static final Logger LOGGER = LoggerFactory.getLogger(ReportPortalListener.class);
 
-    @Inject
-    private SuiteStorage suiteStorage;
+    private boolean exporterActive = false;
+    private final Context context = new Context();
 
     public ReportPortalListener() {
-        IntegrationInjector.getInjector().injectMembers(this);
+    }
+
+    private void activateExporterTask() {
+        if (context.rpParams.getEnable() && !exporterActive) {
+            synchronized (ReportPortalListener.class) {
+                if (!exporterActive) {
+                    context.startTime = Calendar.getInstance().getTime();
+                    Runnable importerTask = new ReportExporter(context);
+                    Runtime.getRuntime().addShutdownHook(new Thread(importerTask));
+                    exporterActive = true;
+                    LOGGER.debug("Exporter task was scheduled");
+                }
+            }
+        }
     }
 
     public void testSuiteStarted(Class<?> storyClass) {
-        // Not used by listener
+        activateExporterTask();
     }
 
     public void testSuiteStarted(Story story) {
-        // Not used by listener
+        activateExporterTask();
     }
 
     public void testSuiteFinished() {
-        suiteStorage.finalizeActive();
+        // Not used by listener
     }
 
     public void testStarted(String description) {
@@ -47,9 +61,12 @@ public class ReportPortalListener implements StepListener {
     }
 
     public void testFinished(TestOutcome result) {
-        TestRecorder recorder = TestRecorder.forTest(result);
-        recorder.record(result);
-        logStorage.clean();
+        String id = result.getUserStory().getPath();
+        context.suites.compute(id, (key, old) -> {
+            LinkedHashSet<String> set = old == null ? new LinkedHashSet<>() : old;
+            set.add(result.getReportName(ReportType.JSON));
+            return set;
+        });
     }
 
     public void testRetried() {
@@ -138,9 +155,9 @@ public class ReportPortalListener implements StepListener {
 
     private void harvestDriverLogs() {
         boolean harvestLogs = ReportIntegrationConfig.get().harvestSeleniumLogs;
-        if (harvestLogs && ThucydidesWebDriverSupport.isDriverInstantiated()) {
+        if (context.rpParams.getEnable() && harvestLogs && ThucydidesWebDriverSupport.isDriverInstantiated()) {
             Logs logs = ThucydidesWebDriverSupport.getDriver().manage().logs();
-            logStorage.collect(logs);
+            context.logStorage.collect(logs);
         }
     }
 }

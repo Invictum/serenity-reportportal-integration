@@ -21,6 +21,8 @@ public class ReportIntegrationConfig {
     private Function<Narrative, String> classNarrativeFormatter = n -> String.join("\n", n.text());
     boolean harvestSeleniumLogs = false;
     boolean truncateNames = false;
+    int exportThreadsQuantity = Runtime.getRuntime().availableProcessors();
+    EventsFactory eventsFactory = new EventsFactoryImpl();
 
     /**
      * Access to shared configuration instance
@@ -75,6 +77,11 @@ public class ReportIntegrationConfig {
      */
     public ReportIntegrationConfig truncateNames(boolean setting) {
         truncateNames = setting;
+        return this;
+    }
+
+    public ReportIntegrationConfig exportThreadsQuantity(int quantity) {
+        exportThreadsQuantity = quantity;
         return this;
     }
 
