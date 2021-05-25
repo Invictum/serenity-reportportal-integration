@@ -13,12 +13,11 @@ public enum Status {
 
     PASSED(LogLevel.INFO, TestResult.SUCCESS),
     FAILED(LogLevel.ERROR, TestResult.ERROR, TestResult.FAILURE),
-    SKIPPED(LogLevel.DEBUG, TestResult.IGNORED, TestResult.SKIPPED, TestResult.PENDING),
-    STOPPED(LogLevel.WARN, TestResult.COMPROMISED),
-    CANCELLED(LogLevel.FATAL, TestResult.UNDEFINED);
+    SKIPPED(LogLevel.DEBUG, TestResult.IGNORED, TestResult.SKIPPED, TestResult.PENDING, TestResult.COMPROMISED),
+    CANCELLED(LogLevel.FATAL, TestResult.UNDEFINED, TestResult.UNSUCCESSFUL);
 
-    private List<TestResult> map;
-    private LogLevel level;
+    private final List<TestResult> map;
+    private final LogLevel level;
 
     Status(LogLevel level, TestResult... statuses) {
         map = Arrays.asList(statuses);
@@ -30,6 +29,6 @@ public enum Status {
     }
 
     public static Status mapTo(TestResult result) {
-        return Arrays.stream(values()).filter(item -> item.map.contains(result)).findFirst().orElse(Status.STOPPED);
+        return Arrays.stream(values()).filter(item -> item.map.contains(result)).findFirst().orElse(Status.CANCELLED);
     }
 }

@@ -29,8 +29,9 @@ public class UtilsLogLevelTest {
                 {TestResult.PENDING, LogLevel.DEBUG},
                 {TestResult.SKIPPED, LogLevel.DEBUG},
                 {TestResult.IGNORED, LogLevel.DEBUG},
-                {TestResult.COMPROMISED, LogLevel.WARN},
-                {TestResult.UNDEFINED, LogLevel.FATAL}
+                {TestResult.COMPROMISED, LogLevel.DEBUG},
+                {TestResult.UNDEFINED, LogLevel.FATAL},
+                {TestResult.UNSUCCESSFUL, LogLevel.FATAL}
         };
     }
 }

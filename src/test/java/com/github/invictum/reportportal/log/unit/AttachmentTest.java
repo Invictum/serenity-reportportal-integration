@@ -70,7 +70,7 @@ public class AttachmentTest {
         Assert.assertEquals(1, logs.size());
         SaveLogRQ actual = logs.iterator().next();
         Assert.assertEquals("HTML Source", actual.getMessage());
-        Assert.assertEquals(LogLevel.WARN.toString(), actual.getLevel());
+        Assert.assertEquals(LogLevel.FATAL.toString(), actual.getLevel());
     }
 
     @Test

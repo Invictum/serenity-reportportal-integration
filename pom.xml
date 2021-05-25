@@ -39,17 +39,6 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     </properties>
 
-    <repositories>
-        <repository>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-            <id>bintray-epam-reportportal</id>
-            <name>bintray</name>
-            <url>https://dl.bintray.com/epam/reportportal</url>
-        </repository>
-    </repositories>
-
     <dependencies>
         <dependency>
             <groupId>net.serenity-bdd</groupId>
