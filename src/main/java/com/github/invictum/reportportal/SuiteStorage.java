@@ -52,8 +52,8 @@ public class SuiteStorage {
             SuiteMetadata meta = suites.get(id);
             if (meta.failedTests.isEmpty()) {
                 suites.remove(id);
+                meta.finisher.run();
             }
-            meta.finisher.run();
         });
     }
 
