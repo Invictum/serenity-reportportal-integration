@@ -50,21 +50,8 @@ Edit project's `pom.xml` file
 <dependency>
    <groupId>com.github.invictum</groupId>
    <artifactId>serenity-reportportal-integration</artifactId>
-   <version>1.5.2</version>
+   <version>1.5.7</version>
 </dependency>
-```
-Report Portal core libraries are used, but they placed in a separate repository, so its URL also should be added to your build configuration
-```
-<repositories>
-    <repository>
-        <snapshots>
-            <enabled>false</enabled>
-        </snapshots>
-        <id>bintray-epam-reportportal</id>
-        <name>bintray</name>
-        <url>https://dl.bintray.com/epam/reportportal</url>
-    </repository>
-</repositories>
 ```
 
 > **Warning**
@@ -74,18 +61,10 @@ Report Portal core libraries are used, but they placed in a separate repository,
 
 Edit your project `build.gradle` file
 ```
-compile: 'com.github.invictum:serenity-reportportal-integration:1.5.2'
-```
-External Report Portal repository should be defined as the same as for Maven
-```
-repositories {
-    maven {
-        url "https://dl.bintray.com/epam/reportportal"
-    }
-}
+compile: 'com.github.invictum:serenity-reportportal-integration:1.5.7'
 ```
 
-Actually from this point setup of integration is done. The only thing you have to do is to configure Report Portal itself. In general it means just adding of `reportportal.properties` file to you project tests root. Minimal properties example is described below:
+At this point setup of integration is done. The only thing you have to do is to configure Report Portal itself. In general it means just adding of `reportportal.properties` file to you project tests root. Minimal properties example is described below:
 ```
 rp.endpoint = http://report-portal-url
 rp.uuid = 385bha54-c1df-42c7-afa4-9e4c028930af
