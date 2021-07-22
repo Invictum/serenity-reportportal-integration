@@ -5,6 +5,7 @@ import io.reactivex.Maybe;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
 
 /**
@@ -67,7 +68,7 @@ public class SuiteStorage {
      */
     public void addNewFail(String suiteId, String testId) {
         SuiteMetadata meta = suites.get(suiteId);
-        meta.failedTests.put(testId, 0);
+        meta.failedTests.put(testId, new AtomicInteger(0));
     }
 
     /**
@@ -99,12 +100,10 @@ public class SuiteStorage {
      * @param testId  id of failed test
      * @return failCount count of retires after ++
      */
-    public int increaseFailCount(String suiteId, String testId) {
+    public int incrementAndGetRetriesCount(String suiteId, String testId) {
         SuiteMetadata meta = suites.get(suiteId);
-        int failCount = meta.failedTests.get(testId);
-        failCount++;
-        meta.failedTests.put(testId, failCount);
-        return failCount;
+        AtomicInteger failCount = meta.failedTests.get(testId);
+        return failCount.incrementAndGet();
     }
 
     /**
@@ -113,6 +112,6 @@ public class SuiteStorage {
     private static class SuiteMetadata {
         private Maybe<String> id;
         private Runnable finisher;
-        private final Map<String, Integer> failedTests = new HashMap<>();
+        private final Map<String, AtomicInteger> failedTests = new HashMap<>();
     }
 }

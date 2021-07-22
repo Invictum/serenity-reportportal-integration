@@ -42,9 +42,10 @@ public class RegularTest {
         Mockito.when(testOutcome.getStartTime()).thenReturn(start);
         Mockito.when(testOutcome.getName()).thenReturn("Test name");
         recorder.record(testOutcome);
-        Mockito.verify(suiteStorageMock, Mockito.times(1)).start("story", Mockito.any());
         Mockito.verify(suiteStorageMock,
-                Mockito.times(1)).suiteFinisher("story", Mockito.any());
+                Mockito.times(1)).start(Mockito.eq("story"), Mockito.any());
+        Mockito.verify(suiteStorageMock,
+                Mockito.times(1)).suiteFinisher(Mockito.eq("story"), Mockito.any());
     }
 
     @Test
@@ -111,7 +112,7 @@ public class RegularTest {
         Mockito.when(testOutcome.getStartTime()).thenReturn(start);
         Mockito.when(testOutcome.getName()).thenReturn("Test name");
         Mockito.when(suiteStorageMock.isFailPresent(Mockito.any(), Mockito.any())).thenReturn(true);
-        Mockito.when(suiteStorageMock.increaseFailCount(Mockito.any(), Mockito.any())).thenReturn(5);
+        Mockito.when(suiteStorageMock.incrementAndGetRetriesCount(Mockito.any(), Mockito.any())).thenReturn(5);
         recorder.record(testOutcome);
         Mockito.verify(suiteStorageMock,
                 Mockito.times(1)).removeFail("story", "testId");

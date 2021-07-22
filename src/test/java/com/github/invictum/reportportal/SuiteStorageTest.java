@@ -23,10 +23,11 @@ public class SuiteStorageTest {
     }
 
     @Test
-    public void testIncreaseFailCount() {
+    public void testIncrementRetiresCount() {
         storage.addNewFail("suite", "storage");
-        Assert.assertEquals(1, storage.increaseFailCount("suite", "storage"));
-        Assert.assertEquals(2, storage.increaseFailCount("suite", "storage"));
+        Assert.assertEquals(1, storage.incrementAndGetRetriesCount("suite", "storage"));
+        Assert.assertEquals(2, storage.incrementAndGetRetriesCount("suite", "storage"));
+        Assert.assertEquals(3, storage.incrementAndGetRetriesCount("suite", "storage"));
     }
 
 }
