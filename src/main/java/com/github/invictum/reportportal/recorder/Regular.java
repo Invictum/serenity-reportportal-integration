@@ -83,11 +83,12 @@ public class Regular extends TestRecorder {
         String suiteId = out.getUserStory().getId();
         if (suiteStorage.isFailPresent(suiteId, testId)) {
             builder.withRetry();
-            if (!isTestFailed(out)) {
+            int retriesCount = suiteStorage.incrementAndGetRetriesCount(suiteId, testId);
+            if (!isTestFailed(out) || retriesCount == RETRIES_COUNT) {
                 suiteStorage.removeFail(suiteId, testId);
             }
         } else if (isTestFailed(out)) {
-            suiteStorage.addFail(suiteId, testId);
+            suiteStorage.addNewFail(suiteId, testId);
         }
     }
 }

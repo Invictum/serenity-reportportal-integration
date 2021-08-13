@@ -2,8 +2,10 @@ package com.github.invictum.reportportal;
 
 import io.reactivex.Maybe;
 
-import java.util.HashSet;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
 
 /**
@@ -11,7 +13,7 @@ import java.util.function.Supplier;
  */
 public class SuiteStorage {
 
-    private ConcurrentHashMap<String, SuiteMetadata> suites = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, SuiteMetadata> suites = new ConcurrentHashMap<>();
 
     /**
      * Starts a new suite entity
@@ -64,9 +66,9 @@ public class SuiteStorage {
      * @param suiteId id of suite where fail test was detected
      * @param testId  id of failed test
      */
-    public void addFail(String suiteId, String testId) {
+    public void addNewFail(String suiteId, String testId) {
         SuiteMetadata meta = suites.get(suiteId);
-        meta.failedTests.add(testId);
+        meta.failedTests.put(testId, new AtomicInteger(0));
     }
 
     /**
@@ -77,7 +79,7 @@ public class SuiteStorage {
      */
     public boolean isFailPresent(String suiteId, String testId) {
         SuiteMetadata meta = suites.get(suiteId);
-        return meta.failedTests.contains(testId);
+        return meta.failedTests.containsKey(testId);
     }
 
     /**
@@ -92,11 +94,24 @@ public class SuiteStorage {
     }
 
     /**
+     * Increase count of failed test to track when exceed count of retires.
+     *
+     * @param suiteId id of suite where fail test was detected
+     * @param testId  id of failed test
+     * @return failCount count of retires after ++
+     */
+    public int incrementAndGetRetriesCount(String suiteId, String testId) {
+        SuiteMetadata meta = suites.get(suiteId);
+        AtomicInteger failCount = meta.failedTests.get(testId);
+        return failCount.incrementAndGet();
+    }
+
+    /**
      * Node class that holds suite metadata
      */
     private static class SuiteMetadata {
         private Maybe<String> id;
         private Runnable finisher;
-        private final HashSet<String> failedTests = new HashSet<>();
+        private final Map<String, AtomicInteger> failedTests = new HashMap<>();
     }
 }
