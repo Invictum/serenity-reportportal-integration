@@ -18,7 +18,7 @@ import java.util.Collection;
  * Common test recorder suitable for most cases
  */
 public class Regular extends TestRecorder {
-    static final int RETRIES_COUNT = ReportIntegrationConfig.get().retriesCount();
+    final int RETRIES_COUNT = ReportIntegrationConfig.get().retriesCount();
 
     @Inject
     public Regular(SuiteStorage suiteStorage, Launch launch, LogUnitsHolder holder) {
@@ -75,7 +75,9 @@ public class Regular extends TestRecorder {
 
     private boolean isTestFailed(TestOutcome out) {
         TestResult testResult = out.getResult();
-        return testResult == TestResult.ERROR || testResult == TestResult.FAILURE;
+        return TestResult.ERROR.equals(testResult) ||
+                TestResult.FAILURE.equals(testResult) ||
+                TestResult.COMPROMISED.equals(testResult);
     }
 
     private void processRetries(TestOutcome out, StartEventBuilder builder) {
