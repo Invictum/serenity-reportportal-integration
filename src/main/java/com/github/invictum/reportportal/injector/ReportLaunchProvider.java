@@ -53,7 +53,6 @@ public class ReportLaunchProvider implements Provider<Launch> {
                     reportPortal.getClient().mergeLaunches(merge).blockingGet();
                 }
             }
-            reportPortal.getClient().close();
             LOG.debug("Report Portal communication is disengaged");
         }));
         return launch;

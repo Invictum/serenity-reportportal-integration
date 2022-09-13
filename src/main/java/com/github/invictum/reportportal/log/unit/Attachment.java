@@ -1,5 +1,6 @@
 package com.github.invictum.reportportal.log.unit;
 
+import com.epam.reportportal.utils.MimeTypeDetector;
 import com.epam.ta.reportportal.ws.model.log.SaveLogRQ;
 import com.github.invictum.reportportal.LogLevel;
 import com.github.invictum.reportportal.Utils;
@@ -7,7 +8,6 @@ import net.serenitybdd.core.environment.ConfiguredEnvironment;
 import net.thucydides.core.model.ReportData;
 import net.thucydides.core.model.TestStep;
 import net.thucydides.core.screenshots.ScreenshotAndHtmlSource;
-import org.apache.tika.Tika;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,7 +23,6 @@ import java.util.stream.Collectors;
 public class Attachment {
 
     private final static Logger LOG = LoggerFactory.getLogger(Attachment.class);
-    private final static Tika TIKA = new Tika();
 
     /**
      * Logs screenshots from passed {@link TestStep} if present
@@ -115,7 +114,7 @@ public class Attachment {
             Path path = Paths.get(reportRoot, data.getPath());
             byte[] content = Files.readAllBytes(path);
             file.setContent(content);
-            String mime = TIKA.detect(content, data.getPath());
+            String mime = MimeTypeDetector.detect(new File(path.toUri()));
             file.setContentType(mime);
         } catch (IOException e) {
             LOG.error("Unable to attach evidence", e);
