@@ -18,9 +18,31 @@ jobs:
         uses: actions/setup-java@v2
         with:
           java-version: '8'
+          distribution: 'adopt'
 
       - name: Build with Maven
         run: mvn clean install
 
       - name: Run JUnit tests
         run: mvn test
+
+      - name: Set status check
+        uses: actions/github-script@v5
+        with:
+          script: |
+            const { data: checks } = await github.checks.listForRef({
+              ...context.repo,
+              ref: context.payload.pull_request.head.sha,
+            });
+            const junitCheck = checks.check_runs.find((check) => check.name === 'JUnit Test');
+            if (junitCheck) {
+              await github.checks.update({
+                ...context.repo,
+                check_run_id: junitCheck.id,
+                conclusion: junitCheck.conclusion === 'success' ? 'success' : 'failure',
+                output: {
+                  title: 'JUnit Test',
+                  summary: junitCheck.conclusion === 'success' ? 'Tests passed' : 'Tests failed',
+                },
+              });
+            }
