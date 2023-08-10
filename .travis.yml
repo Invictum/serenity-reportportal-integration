@@ -1,9 +1,0 @@
-language: java
-
-script:
-  - sudo chmod ugo+x build.sh
-  - bash build.sh ${TRAVIS_BRANCH}
-
-cache:
-  directories:
-  - $HOME/.m2
