@@ -64,10 +64,23 @@ compile: 'com.github.invictum:serenity-reportportal-integration:1.5.7'
 
 At this point setup of integration is done. The only thing you have to do is to configure Report Portal itself. In general it means just adding of `reportportal.properties` file to you project tests root. Minimal properties example is described below:
 ```
+### If you are using the latest Reportportal instance then configure API KEY as below:
 rp.endpoint = http://report-portal-url
-rp.uuid = 385bha54-c1df-42c7-afa4-9e4c028930af
+rp.api.key = <API_KEY>
 rp.launch = My_Cool_Launch
 rp.project = My_Cool_Project
+### rp.enabled flag is mandatory otherwise default is considered as false
+rp.enabled = true
+```
+
+```
+### If you are using the older Reportportal instance then configure UUID as below:
+rp.endpoint = http://report-portal-url
+rp.uuid = <YOUR_UUID>
+rp.launch = My_Cool_Launch
+rp.project = My_Cool_Project
+### rp.enabled flag is mandatory otherwise default is considered as false
+rp.enabled = true
 ```
 For more details related to Report Portal configuration please refer to [Report Portal Documentation](http://reportportal.io/docs/JVM-based-clients-configuration).
 

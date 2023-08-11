@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Calendar;
 import java.util.HashSet;
+import java.util.Objects;
 
 public class ReportLaunchProvider implements Provider<Launch> {
 
@@ -42,7 +43,7 @@ public class ReportLaunchProvider implements Provider<Launch> {
             if (DIR != null && MODULES_COUNT > 1) {
                 //Record launch ID and UUID.
                 String uuid = launchId.blockingGet();
-                Long id = reportPortal.getClient().getLaunchByUuid(uuid).blockingGet().getLaunchId();
+                Long id = Objects.requireNonNull(reportPortal.getClient()).getLaunchByUuid(uuid).blockingGet().getLaunchId();
                 //Init fileStorage
                 fileStorage = new FileStorage(DIR);
                 fileStorage.touch(id);
@@ -53,7 +54,7 @@ public class ReportLaunchProvider implements Provider<Launch> {
                     reportPortal.getClient().mergeLaunches(merge).blockingGet();
                 }
             }
-            reportPortal.getClient().close();
+            Objects.requireNonNull(reportPortal.getClient()).finishLaunch(launchId.blockingGet(), finishExecutionRQ);
             LOG.debug("Report Portal communication is disengaged");
         }));
         return launch;
