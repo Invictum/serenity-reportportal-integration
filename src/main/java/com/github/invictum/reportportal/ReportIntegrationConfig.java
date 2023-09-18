@@ -1,6 +1,7 @@
 package com.github.invictum.reportportal;
 
-import net.thucydides.core.annotations.Narrative;
+
+import net.serenitybdd.annotations.Narrative;
 
 import java.util.Objects;
 import java.util.function.Function;

@@ -2,7 +2,7 @@ package com.github.invictum.reportportal;
 
 import com.epam.reportportal.service.ReportPortal;
 import com.epam.ta.reportportal.ws.model.log.SaveLogRQ;
-import net.thucydides.core.model.TestStep;
+import net.thucydides.model.domain.TestStep;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

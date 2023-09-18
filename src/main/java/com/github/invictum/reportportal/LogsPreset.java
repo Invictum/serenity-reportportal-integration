@@ -4,7 +4,7 @@ import com.epam.ta.reportportal.ws.model.log.SaveLogRQ;
 import com.github.invictum.reportportal.log.unit.*;
 import com.github.invictum.reportportal.log.unit.Error;
 import com.google.common.base.Preconditions;
-import net.thucydides.core.model.TestStep;
+import net.thucydides.model.domain.TestStep;
 
 import java.util.Collection;
 import java.util.function.Function;

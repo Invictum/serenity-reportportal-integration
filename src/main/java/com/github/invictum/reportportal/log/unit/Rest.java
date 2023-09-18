@@ -3,8 +3,8 @@ package com.github.invictum.reportportal.log.unit;
 import com.epam.ta.reportportal.ws.model.log.SaveLogRQ;
 import com.github.invictum.reportportal.LogLevel;
 import com.github.invictum.reportportal.Utils;
-import net.serenitybdd.core.rest.RestQuery;
-import net.thucydides.core.model.TestStep;
+import net.serenitybdd.model.rest.RestQuery;
+import net.thucydides.model.domain.TestStep;
 
 import java.util.Collection;
 import java.util.Collections;

@@ -1,8 +1,8 @@
 package com.github.invictum.reportportal;
 
-import net.thucydides.core.annotations.Narrative;
-import net.thucydides.core.model.Story;
-import net.thucydides.core.model.TestOutcome;
+import net.serenitybdd.annotations.Narrative;
+import net.thucydides.model.domain.Story;
+import net.thucydides.model.domain.TestOutcome;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;

@@ -1,6 +1,7 @@
 package com.github.invictum.reportportal;
 
-import net.thucydides.core.model.TestResult;
+
+import net.thucydides.model.domain.TestResult;
 
 import java.util.Arrays;
 import java.util.List;

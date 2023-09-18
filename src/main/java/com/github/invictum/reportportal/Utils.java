@@ -1,8 +1,8 @@
 package com.github.invictum.reportportal;
 
-import net.thucydides.core.model.TestOutcome;
-import net.thucydides.core.model.TestResult;
-import net.thucydides.core.model.TestStep;
+import net.thucydides.model.domain.TestOutcome;
+import net.thucydides.model.domain.TestResult;
+import net.thucydides.model.domain.TestStep;
 
 import java.time.Duration;
 import java.time.ZonedDateTime;

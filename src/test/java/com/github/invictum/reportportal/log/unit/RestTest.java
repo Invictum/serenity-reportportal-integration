@@ -1,9 +1,9 @@
 package com.github.invictum.reportportal.log.unit;
 
 import com.epam.ta.reportportal.ws.model.log.SaveLogRQ;
-import net.serenitybdd.core.rest.RestMethod;
-import net.serenitybdd.core.rest.RestQuery;
-import net.thucydides.core.model.TestStep;
+import net.serenitybdd.model.rest.RestMethod;
+import net.serenitybdd.model.rest.RestQuery;
+import net.thucydides.model.domain.TestStep;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
