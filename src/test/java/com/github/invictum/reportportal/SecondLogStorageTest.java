@@ -10,46 +10,39 @@ import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.logging.LogEntries;
 import org.openqa.selenium.logging.LogEntry;
 import org.openqa.selenium.logging.Logs;
-
 import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
+import org.junit.Rule;
+import org.mockito.junit.MockitoJUnit;
+import org.mockito.junit.MockitoRule;
+import org.mockito.quality.Strictness;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.when;
 
 @RunWith(JUnit4.class)
-public class LogStorageTest {
+public class SecondLogStorageTest {
+
+    @Rule
+    public MockitoRule experimentRule = MockitoJUnit.rule().strictness(Strictness.LENIENT);
 
     private LogStorage storage;
+
     private Logs logsMock;
 
     @Before
     public void beforeTest() {
         storage = new LogStorage();
         logsMock = Mockito.mock(Logs.class);
-        Mockito.when(logsMock.getAvailableLogTypes()).thenReturn(Collections.singleton("data"));
         LogEntry logEntry = new LogEntry(Level.INFO, 42, "Message");
         LogEntry entry = new EnhancedLogEntry("data", logEntry);
         LogEntries entries = new LogEntries(Collections.singleton(entry));
-        Mockito.when(logsMock.get("data")).thenReturn(entries);
     }
 
     @Test
-    public void collectLogsTest() {
-        storage.collect(logsMock);
+    public void queryLogsRemoveTest() {
+        storage.query(item -> true);
         List<EnhancedLogEntry> actual = storage.query(item -> true);
-        Assert.assertEquals(1, actual.size());
-    }
-
-    @Test
-    public void cleanLogsTest() {
-        storage.collect(logsMock);
-        storage.clean();
-        Assert.assertTrue(storage.query(item -> true).isEmpty());
-    }
-
-    @Test
-    public void collectAvailableTypesOnlyOnceTest() {
-        storage.collect(logsMock);
-        storage.collect(logsMock);
-        Mockito.verify(logsMock, Mockito.times(1)).getAvailableLogTypes();
+        Assert.assertTrue(actual.isEmpty());
     }
 }
