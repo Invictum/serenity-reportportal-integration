@@ -3,7 +3,7 @@
 Serenity integration with Report Portal
 =======================================
 
-he module allows reporting Serenity-powered tests to [reportportal.io](http://reportportal.io) server and adds
+The module allows reporting Serenity-powered tests to [reportportal.io](http://reportportal.io) server and adds
 additional reporting to Serenity-based test automation frameworks.
 
 > **Warning**
@@ -15,6 +15,9 @@ By default `development` branch documentation is selected and it may contains un
 To view specific documentation version use tags switch at the top of github page as shown on image below
 
 ![Tag switcher](images/tag-switcher.png)
+
+> **Warning**
+> Starting from version 1.6.0 Java 11 is required.
 
 Table of Contents
 -----------------
@@ -451,7 +454,7 @@ regular release notes.
  1.3.0         | Minor version updated due to log units approach rework                                                          
  1.4.0 - 1.4.3 | Minor version update: removed tree handler, refactored to support DDT for BDD                                   
  1.5.0+        | Minor version update due RP v5 release                                                                          
- 4.0.0+        | Major version update due Serenity 4 release. Report Portal is updated to 5.8 as well                            
+ 1.6.0+        | Minor version update due Serenity 4 release. Report Portal is updated to 5.8 as well                            
 
 ## Limitations
 
@@ -459,7 +462,7 @@ Integration has limited concurrency support.
 For versions < 4 concurrency for parametrized Serenity tests execution is not supported.
 For version >=4 concurrency is supported on feature level.
 
-The following line should be provided into `junit-platform.properties` for versions 4.0.0+ in order for integration to
+The following line should be provided into `junit-platform.properties` file of your project for versions 1.6.0+ in order for integration to
 work correctly:
 
 **JUnit**
