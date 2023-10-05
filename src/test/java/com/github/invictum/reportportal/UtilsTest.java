@@ -1,6 +1,6 @@
 package com.github.invictum.reportportal;
 
-import net.thucydides.core.model.TestStep;
+import net.thucydides.model.domain.TestStep;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;

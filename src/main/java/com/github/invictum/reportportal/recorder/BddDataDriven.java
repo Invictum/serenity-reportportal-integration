@@ -6,8 +6,8 @@ import com.epam.ta.reportportal.ws.model.StartTestItemRQ;
 import com.github.invictum.reportportal.*;
 import com.google.inject.Inject;
 import io.reactivex.Maybe;
-import net.thucydides.core.model.TestOutcome;
-import net.thucydides.core.model.TestStep;
+import net.thucydides.model.domain.TestOutcome;
+import net.thucydides.model.domain.TestStep;
 
 import java.util.Arrays;
 

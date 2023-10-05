@@ -6,7 +6,7 @@ import com.github.invictum.reportportal.LogLevel;
 import com.github.invictum.reportportal.LogStorage;
 import com.github.invictum.reportportal.Utils;
 import com.github.invictum.reportportal.injector.IntegrationInjector;
-import net.thucydides.core.model.TestStep;
+import net.thucydides.model.domain.TestStep;
 
 import java.util.Collection;
 import java.util.Date;

@@ -2,9 +2,8 @@ package com.github.invictum.reportportal.log.unit;
 
 import com.epam.ta.reportportal.ws.model.log.SaveLogRQ;
 import com.github.invictum.reportportal.Utils;
-
-import net.thucydides.core.model.TestOutcome;
-import net.thucydides.core.model.TestStep;
+import net.thucydides.model.domain.TestOutcome;
+import net.thucydides.model.domain.TestStep;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -24,7 +23,7 @@ public class Error {
         return stringifyStackTrace(cause);
     };
 
-    private static String stringifyStackTrace(Throwable cause){
+    private static String stringifyStackTrace(Throwable cause) {
         StringWriter writer = new StringWriter();
         cause.printStackTrace(new PrintWriter(writer));
         return writer.toString();

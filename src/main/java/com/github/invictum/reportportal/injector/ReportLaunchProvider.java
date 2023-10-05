@@ -3,6 +3,7 @@ package com.github.invictum.reportportal.injector;
 import com.epam.reportportal.listeners.ListenerParameters;
 import com.epam.reportportal.service.Launch;
 import com.epam.reportportal.service.ReportPortal;
+import com.epam.reportportal.service.ReportPortalClient;
 import com.epam.ta.reportportal.ws.model.FinishExecutionRQ;
 import com.epam.ta.reportportal.ws.model.launch.MergeLaunchesRQ;
 import com.epam.ta.reportportal.ws.model.launch.StartLaunchRQ;
@@ -16,6 +17,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Calendar;
 import java.util.HashSet;
+import java.util.Objects;
 
 public class ReportLaunchProvider implements Provider<Launch> {
 
@@ -38,11 +40,12 @@ public class ReportLaunchProvider implements Provider<Launch> {
             FinishExecutionRQ finishExecutionRQ = new FinishExecutionRQ();
             finishExecutionRQ.setEndTime(Calendar.getInstance().getTime());
             launch.finish(finishExecutionRQ);
+            ReportPortalClient reportPortalClient = Objects.requireNonNull(reportPortal.getClient());
             // Activate merge if parameters are passed
             if (DIR != null && MODULES_COUNT > 1) {
                 //Record launch ID and UUID.
                 String uuid = launchId.blockingGet();
-                Long id = reportPortal.getClient().getLaunchByUuid(uuid).blockingGet().getLaunchId();
+                Long id = reportPortalClient.getLaunchByUuid(uuid).blockingGet().getLaunchId();
                 //Init fileStorage
                 fileStorage = new FileStorage(DIR);
                 fileStorage.touch(id);
@@ -50,10 +53,10 @@ public class ReportLaunchProvider implements Provider<Launch> {
                 if (fileStorage.count() == MODULES_COUNT) {
                     LOG.debug("Launches merge is requested");
                     MergeLaunchesRQ merge = buildMergeLaunchesEvent(reportPortal.getParameters());
-                    reportPortal.getClient().mergeLaunches(merge).blockingGet();
+                    reportPortalClient.mergeLaunches(merge).blockingGet();
                 }
             }
-            reportPortal.getClient().close();
+            reportPortalClient.finishLaunch(launchId.blockingGet(), finishExecutionRQ);
             LOG.debug("Report Portal communication is disengaged");
         }));
         return launch;

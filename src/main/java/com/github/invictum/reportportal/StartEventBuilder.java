@@ -5,8 +5,8 @@ import com.epam.ta.reportportal.ws.model.StartTestItemRQ;
 import com.epam.ta.reportportal.ws.model.attribute.ItemAttributesRQ;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
-import net.thucydides.core.model.DataTable;
-import net.thucydides.core.model.TestTag;
+import net.thucydides.model.domain.DataTable;
+import net.thucydides.model.domain.TestTag;
 import org.apache.commons.lang3.StringUtils;
 
 import java.time.ZonedDateTime;
