@@ -24,33 +24,34 @@ public class BddDataDriven extends TestRecorder {
     @Override
     public void record(TestOutcome out) {
         int last = out.getTestSteps().size() - 1;
-        TestStep test = out.getTestSteps().get(last);
+        TestStep currentTest = out.getTestSteps().get(last);
+        TestStep firstTest = out.getTestSteps().get(0);
         StartTestItemRQ startStory = new StartEventBuilder(ItemType.TEST)
                 .withName(out.getUserStory().getName())
-                .withStartTime(test.getStartTime())
+                .withStartTime(firstTest.getStartTime())
                 .withDescription(out.getUserStory().getNarrative())
                 .build();
         Maybe<String> id = suiteStorage.start(out.getUserStory().getId(), () -> launch.startTestItem(startStory));
         // Start test
         StartTestItemRQ startScenario = new StartEventBuilder(ItemType.STEP)
                 .withName(out.getName())
-                .withStartTime(test.getStartTime())
+                .withStartTime(currentTest.getStartTime())
                 .withParameters(out.getDataTable().row(last))
                 .withTags(out.getTags())
                 .build();
         Maybe<String> testId = launch.startTestItem(id, startScenario);
         // Steps
-        proceedSteps(testId, Arrays.asList(test));
+        proceedSteps(testId, Arrays.asList(currentTest));
         // Stop test
         FinishTestItemRQ finishScenario = new FinishEventBuilder()
-                .withStatus(Status.mapTo(test.getResult()))
-                .withEndTime(test.getStartTime(), test.getDuration())
+                .withStatus(Status.mapTo(currentTest.getResult()))
+                .withEndTime(currentTest.getStartTime(), currentTest.getDuration())
                 .build();
         launch.finishTestItem(testId, finishScenario);
         // Finish suite
         FinishTestItemRQ finishStory = new FinishEventBuilder()
                 .withStatus(Status.PASSED)
-                .withEndTime(test.getStartTime(), test.getDuration())
+                .withEndTime(firstTest.getStartTime(), currentTest.getDuration())
                 .build();
         suiteStorage.suiteFinisher(out.getUserStory().getId(), () -> launch.finishTestItem(id, finishStory));
     }
