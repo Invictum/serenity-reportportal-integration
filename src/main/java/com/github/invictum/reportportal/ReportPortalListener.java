@@ -1,6 +1,7 @@
 package com.github.invictum.reportportal;
 
 import com.github.invictum.reportportal.injector.IntegrationInjector;
+import com.github.invictum.reportportal.model.TestType;
 import com.github.invictum.reportportal.recorder.TestRecorder;
 import com.google.inject.Inject;
 import net.thucydides.core.webdriver.ThucydidesWebDriverSupport;
@@ -129,7 +130,10 @@ public class ReportPortalListener implements StepListener {
 
     @Override
     public void testFailed(TestOutcome testOutcome, Throwable throwable) {
-        // Not used by listener
+        TestType testType = TestType.byTestSource(testOutcome.getTestSource());
+        if (testType == TestType.BDD) {
+            testFinished(testOutcome);
+        }
     }
 
     @Override

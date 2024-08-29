@@ -5,6 +5,7 @@ import com.epam.ta.reportportal.ws.model.FinishTestItemRQ;
 import com.epam.ta.reportportal.ws.model.StartTestItemRQ;
 import com.github.invictum.reportportal.*;
 import com.github.invictum.reportportal.injector.IntegrationInjector;
+import com.github.invictum.reportportal.model.TestType;
 import com.google.inject.Injector;
 import io.reactivex.Maybe;
 import net.thucydides.model.domain.TestOutcome;
@@ -36,7 +37,8 @@ public abstract class TestRecorder {
      */
     public static TestRecorder forTest(TestOutcome testOutcome) {
         Injector injector = IntegrationInjector.getInjector();
-        if (testOutcome.isDataDriven() && testOutcome.getTestSource().toLowerCase().matches("(cucumber|jbehave)")) {
+        boolean isBdd = TestType.byTestSource(testOutcome.getTestSource()) == TestType.BDD;
+        if (testOutcome.isDataDriven() && isBdd) {
             return injector.getInstance(BddDataDriven.class);
         }
         return injector.getInstance(Regular.class);
