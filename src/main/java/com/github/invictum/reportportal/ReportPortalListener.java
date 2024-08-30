@@ -129,7 +129,9 @@ public class ReportPortalListener implements StepListener {
 
     @Override
     public void testFailed(TestOutcome testOutcome, Throwable throwable) {
-        // Not used by listener
+        if (testOutcome.getTestSource().toLowerCase().contains("cucumber")) {
+            testFinished(testOutcome);
+        }
     }
 
     @Override

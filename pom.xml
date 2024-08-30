@@ -5,7 +5,7 @@
 
     <groupId>com.github.invictum</groupId>
     <artifactId>serenity-reportportal-integration</artifactId>
-    <version>1.6.0-SNAPSHOT</version>
+    <version>1.6.2-SNAPSHOT</version>
 
     <packaging>jar</packaging>
 
@@ -25,6 +25,11 @@
             <name>Yaroslav Yershov</name>
             <email>zim182@gmail.com</email>
             <organizationUrl>https://github.com/Invictum</organizationUrl>
+        </developer>
+        <developer>
+            <name>Daria Yershova</name>
+            <email>dariayershova@icloud.com</email>
+            <organizationUrl>https://github.com/grey-rain</organizationUrl>
         </developer>
     </developers>
 
