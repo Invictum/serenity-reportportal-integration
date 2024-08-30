@@ -5,7 +5,7 @@
 
     <groupId>com.github.invictum</groupId>
     <artifactId>serenity-reportportal-integration</artifactId>
-    <version>1.6.2-SNAPSHOT</version>
+    <version>1.6.2</version>
 
     <packaging>jar</packaging>
 
