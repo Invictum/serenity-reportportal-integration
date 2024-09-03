@@ -32,7 +32,8 @@ Table of Contents
     2. [Log units](#log-units)
     3. [Merge launches](#merge-launches)
     4. [Test retries](#test-retries)
-    5. [Other settings](#other-settings)
+    5. [BDD Scenario test name customization](#bdd-scenario-test-name-customization)
+    6. [Other settings](#other-settings)
 3. [Data mapping](#data-mapping)
 4. [Versioning](#versioning)
 5. [Important release notes](#important-release-notes)
@@ -160,14 +161,14 @@ configuration.usePreset(LogsPreset.FULL);
 
 > **Notice**
 >
-> All integration configurations should be done before the start of Serenity facility. Otherwise default values will be
-> used.
+> All integration configurations should be completed before starting the Serenity engine; otherwise, default values will
+> be used.
 
 #### Presets
 
 Each Serenity `TestStep` object is passed through chain of configured log units. Each particular log unit analyses step
-and creates a collection of records that will be send to RP. This approach allows to flexible configure reporting
-behaviour on a step level. By default integration provides a few log presets:
+and creates a collection of records that will be sent to RP. This approach allows to flexible configure reporting
+behaviour on a step level. By default, integration provides a few log presets:
 
 - DEFAULT
 - FULL
@@ -272,7 +273,7 @@ timestamp.
 
 #### Merge launches
 
-By default separate launch will be created in RP for each module in case of multi-module project. This behavior can be
+By default, separate launch will be created in RP for each module in case of multi-module project. This behavior can be
 changed with merge launches feature.
 
 To understand a concept, let's assume following multi-module structure
@@ -331,14 +332,35 @@ and add `failsafe.rerunFailingTestsCount` or `surefire.rerunFailingTestsCount` p
 > more
 > details.
 
+#### BDD Scenario test name customization
+
+n some cases, you may need to customize the test name for BDD Scenario Outlines (for example, to insert parameters into
+the test name in ReportPortal). To achieve this, you need to implement the desired customization logic in a class that
+implements the `TestNameTransformer` interface. This class should then be specified in the `ReportIntegrationConfig`.
+
+```
+ReportIntegrationConfig.get().useTestNameTransformer(new MyTransformer());
+```
+
+```
+public class MyTransformer implements TestNameTransformer {
+
+    @Override
+    public String transformName(TestOutcome testOutcome, int scenarioIndex) {
+        <...
+        //transformation logic
+        ...>
+    }
+```
+
 #### Other settings
 
 Section includes minor settings that available to configure and describes their usage.
 
- Setting                  | Usage                                                     | Description                                                                                                                                                             
---------------------------|-----------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------
- Selenium logs harvesting | `ReportIntegrationConfig.get().harvestSeleniumLogs(true)` | Special option that works in conjunction with `Selenium.filteredLogs(...)` unit and must be enabled as well in order it to works. By default it is disabled.            
- Truncate names           | `ReportIntegrationConfig.get().truncateNames(true)`       | Allows to hide RP server errors that related to entities with long names (more that 1024 symbols) creation. It is not recommended to use it. By default it is disabled. 
+| Setting                  | Usage                                                     | Description                                                                                                                                                             |
+|--------------------------|-----------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Selenium logs harvesting | `ReportIntegrationConfig.get().harvestSeleniumLogs(true)` | Special option that works in conjunction with `Selenium.filteredLogs(...)` unit and must be enabled as well in order it to works. By default it is disabled.            |
+| Truncate names           | `ReportIntegrationConfig.get().truncateNames(true)`       | Allows to hide RP server errors that related to entities with long names (more that 1024 symbols) creation. It is not recommended to use it. By default it is disabled. |
 
 ## Data mapping
 
@@ -347,12 +369,12 @@ relates to each other.
 
 **Name** relation is straightforward.
 
- Serenity    | Report portal 
--------------|---------------
- Test Class  | Suite         
- Test Method | Test          
- Scenario    | Test          
- Step        | Log entry     
+| Serenity    | Report portal |
+|-------------|---------------|
+| Test Class  | Suite         |
+| Test Method | Test          |
+| Scenario    | Test          |
+| Step        | Log entry     |
 
 **Description** Each non-log entity in Report Portal may has a description. This field is populated from Serenity
 narrative section for both jUnit and BDD test sources.
@@ -446,15 +468,15 @@ Important release notes are described below.
 Use [releases](https://github.com/Invictum/serenity-reportportal-integration/releases) section for details regarding
 regular release notes.
 
- Version       | Note                                                                                                            
----------------|-----------------------------------------------------------------------------------------------------------------
- 1.0.0 - 1.0.6 | Supports RP v3 and below                                                                                        
- 1.1.0 - 1.1.3 | Minor version update due RP v4 release. Versions older than 1.1.0 are not compatible with RP v4+ and vise versa 
- 1.2.0 - 1.2.1 | Minor version updated due internal mechanisms approach major refactoring                                        
- 1.3.0         | Minor version updated due to log units approach rework                                                          
- 1.4.0 - 1.4.3 | Minor version update: removed tree handler, refactored to support DDT for BDD                                   
- 1.5.0+        | Minor version update due RP v5 release                                                                          
- 1.6.0+        | Minor version update due Serenity 4 release. Report Portal is updated to 5.8 as well                            
+| Version       | Note                                                                                                                    |
+|---------------|-------------------------------------------------------------------------------------------------------------------------|
+| 1.0.0 - 1.0.6 | Supports RP v3 and below                                                                                                |
+| 1.1.0 - 1.1.3 | Minor version update due RP v4 release. Versions older than 1.1.0 are not compatible with RP v4+ and vise versa         |
+| 1.2.0 - 1.2.1 | Minor version updated due internal mechanisms approach major refactoring                                                |
+| 1.3.0         | Minor version updated due to log units approach rework                                                                  |
+| 1.4.0 - 1.4.3 | Minor version update: removed tree handler, refactored to support DDT for BDD                                           |
+| 1.5.0+        | Minor version update due RP v5 release                                                                                  |
+| 1.6.0+        | Minor version update due Serenity 4 release. Report Portal is updated to 5.8 as well. Bugfixes and some of new features |
 
 ## Limitations
 
@@ -462,8 +484,8 @@ Integration has limited concurrency support.
 For versions < 4 concurrency for parametrized Serenity tests execution is not supported.
 For version >=4 concurrency is supported on feature level.
 
-The following line should be provided into `junit-platform.properties` file of your project for versions 1.6.0+ in order for integration to
-work correctly:
+The following line should be provided into `junit-platform.properties` file of your project for versions 1.6.0+ in order
+for integration to work correctly:
 
 **JUnit**
 
