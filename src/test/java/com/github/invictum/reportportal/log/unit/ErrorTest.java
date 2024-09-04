@@ -9,17 +9,17 @@ import net.thucydides.model.domain.TestOutcome;
 import net.thucydides.model.domain.TestResult;
 import net.thucydides.model.domain.TestStep;
 import net.thucydides.model.domain.stacktrace.FailureCause;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.junit.MockitoJUnitRunner;
 
 import com.epam.ta.reportportal.ws.model.log.SaveLogRQ;
 import com.github.invictum.reportportal.LogLevel;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-@RunWith(MockitoJUnitRunner.StrictStubs.class)
+@ExtendWith(MockitoExtension.class)
 public class ErrorTest {
 
     @Mock
@@ -33,7 +33,7 @@ public class ErrorTest {
 
     @Test
     public void noException() {
-        Assert.assertTrue(Error.basic().apply(stepMock).isEmpty());
+        Assertions.assertTrue(Error.basic().apply(stepMock).isEmpty());
     }
 
     @Test
@@ -45,8 +45,8 @@ public class ErrorTest {
         Mockito.when(stepMock.getConciseErrorMessage()).thenReturn("Custom error");
         SaveLogRQ actual = Error.configuredStepError(TestStep::getConciseErrorMessage).apply(stepMock).iterator().next();
         // Verification
-        Assert.assertEquals("Custom error", actual.getMessage());
-        Assert.assertEquals(LogLevel.ERROR.toString(), actual.getLevel());
+        Assertions.assertEquals("Custom error", actual.getMessage());
+        Assertions.assertEquals(LogLevel.ERROR.toString(), actual.getLevel());
     }
 
     @Test
@@ -54,7 +54,7 @@ public class ErrorTest {
         Mockito.when(testOutcomeMock.getStartTime()).thenReturn(ZonedDateTime.now());
         Mockito.when(testOutcomeMock.getTestFailureCause()).thenReturn(new FailureCause(new RuntimeException()));
         Iterator<SaveLogRQ> iterator = Error.configuredTestError(TestOutcome::getConciseErrorMessage).apply(testOutcomeMock).iterator();
-        Assert.assertTrue(iterator.hasNext());
+        Assertions.assertTrue(iterator.hasNext());
     }
 
     @Test
@@ -63,7 +63,7 @@ public class ErrorTest {
         Mockito.when(testOutcomeMock.getTestFailureCause()).thenReturn(new FailureCause(new RuntimeException()));
         Mockito.when(testOutcomeMock.getFailingStep()).thenReturn(Optional.of(new TestStep()));
         Iterator<SaveLogRQ> iterator = Error.configuredTestError(TestOutcome::getConciseErrorMessage).apply(testOutcomeMock).iterator();
-        Assert.assertFalse(iterator.hasNext());
+        Assertions.assertFalse(iterator.hasNext());
     }
 
     @Test
@@ -75,8 +75,8 @@ public class ErrorTest {
         Mockito.when(failureCauseMock.getOriginalCause()).thenReturn(new IllegalStateException("Details"));
         Collection<SaveLogRQ> logs = Error.basic().apply(stepMock);
         // Verification
-        Assert.assertEquals(1, logs.size());
+        Assertions.assertEquals(1, logs.size());
         SaveLogRQ actual = logs.iterator().next();
-        Assert.assertEquals(LogLevel.ERROR.toString(), actual.getLevel());
+        Assertions.assertEquals(LogLevel.ERROR.toString(), actual.getLevel());
     }
 }

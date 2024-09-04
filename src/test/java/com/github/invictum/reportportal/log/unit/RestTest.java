@@ -4,17 +4,17 @@ import com.epam.ta.reportportal.ws.model.log.SaveLogRQ;
 import net.serenitybdd.model.rest.RestMethod;
 import net.serenitybdd.model.rest.RestQuery;
 import net.thucydides.model.domain.TestStep;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.ZonedDateTime;
 import java.util.Collection;
 
-@RunWith(MockitoJUnitRunner.StrictStubs.class)
+@ExtendWith(MockitoExtension.class)
 public class RestTest {
 
     private static String MESSAGE = "## Request\n" +
@@ -51,7 +51,7 @@ public class RestTest {
     public void noQueryTest() {
         Mockito.when(stepMock.hasRestQuery()).thenReturn(false);
         Collection<SaveLogRQ> logs = Rest.restQuery().apply(stepMock);
-        Assert.assertTrue(logs.isEmpty());
+        Assertions.assertTrue(logs.isEmpty());
     }
 
     @Test
@@ -68,6 +68,6 @@ public class RestTest {
         Mockito.when(stepMock.hasRestQuery()).thenReturn(true);
         Mockito.when(stepMock.getRestQuery()).thenReturn(query);
         Collection<SaveLogRQ> logs = Rest.restQuery().apply(stepMock);
-        Assert.assertEquals(MESSAGE, logs.iterator().next().getMessage());
+        Assertions.assertEquals(MESSAGE, logs.iterator().next().getMessage());
     }
 }

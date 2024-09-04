@@ -5,10 +5,8 @@ import com.epam.ta.reportportal.ws.model.StartTestItemRQ;
 import com.epam.ta.reportportal.ws.model.attribute.ItemAttributesRQ;
 import net.thucydides.model.domain.DataTable;
 import net.thucydides.model.domain.TestTag;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.time.ZonedDateTime;
@@ -19,7 +17,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-@RunWith(JUnit4.class)
 public class StartEventBuilderTest {
 
     @Test
@@ -28,7 +25,7 @@ public class StartEventBuilderTest {
                 .withStartTime(ZonedDateTime.now())
                 .withName("name")
                 .build();
-        Assert.assertEquals("TEST", event.getType());
+        Assertions.assertEquals("TEST", event.getType());
     }
 
     @Test
@@ -38,12 +35,14 @@ public class StartEventBuilderTest {
                 .withStartTime(time)
                 .withName("name")
                 .build();
-        Assert.assertEquals(Date.from(time.toInstant()), event.getStartTime());
+        Assertions.assertEquals(Date.from(time.toInstant()), event.getStartTime());
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void withNullStartTimeTest() {
-        new StartEventBuilder(ItemType.TEST).withStartTime(null).withName("name").build();
+        Assertions.assertThrows(NullPointerException.class,
+                () -> new StartEventBuilder(ItemType.TEST).withStartTime(null).withName("name")
+                        .build());
     }
 
     @Test
@@ -52,7 +51,7 @@ public class StartEventBuilderTest {
                 .withStartTime(ZonedDateTime.now())
                 .withName("name")
                 .build();
-        Assert.assertEquals("name", event.getName());
+        Assertions.assertEquals("name", event.getName());
     }
 
     @Test
@@ -64,7 +63,7 @@ public class StartEventBuilderTest {
                 .withName(name)
                 .build();
         String expected = name.substring(0, 1021) + "...";
-        Assert.assertEquals(expected, event.getName());
+        Assertions.assertEquals(expected, event.getName());
     }
 
     @Test
@@ -75,12 +74,14 @@ public class StartEventBuilderTest {
                 .withStartTime(ZonedDateTime.now())
                 .withName(name)
                 .build();
-        Assert.assertEquals(name, event.getName());
+        Assertions.assertEquals(name, event.getName());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void withNullNameTest() {
-        new StartEventBuilder(ItemType.TEST).withStartTime(ZonedDateTime.now()).withName(null).build();
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> new StartEventBuilder(ItemType.TEST).withStartTime(ZonedDateTime.now()).withName(null)
+                        .build());
     }
 
     @Test
@@ -90,7 +91,7 @@ public class StartEventBuilderTest {
                 .withName("name")
                 .withDescription("description")
                 .build();
-        Assert.assertEquals("description", event.getDescription());
+        Assertions.assertEquals("description", event.getDescription());
     }
 
     @Test
@@ -105,7 +106,7 @@ public class StartEventBuilderTest {
         ParameterResource expected = new ParameterResource();
         expected.setKey("one");
         expected.setValue("two");
-        Assert.assertEquals(Collections.singletonList(expected), event.getParameters());
+        Assertions.assertEquals(Collections.singletonList(expected), event.getParameters());
     }
 
     @Test
@@ -118,7 +119,7 @@ public class StartEventBuilderTest {
                 .withName("name")
                 .withTags(tags)
                 .build();
-        Assert.assertEquals(Collections.singleton(new ItemAttributesRQ("type", "name")), event.getAttributes());
+        Assertions.assertEquals(Collections.singleton(new ItemAttributesRQ("type", "name")), event.getAttributes());
     }
 
     @Test
@@ -128,6 +129,6 @@ public class StartEventBuilderTest {
                 .withName("name")
                 .withRetry()
                 .build();
-        Assert.assertTrue(event.isRetry());
+        Assertions.assertTrue(event.isRetry());
     }
 }
