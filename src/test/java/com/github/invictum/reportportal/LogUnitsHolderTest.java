@@ -2,17 +2,17 @@ package com.github.invictum.reportportal;
 
 import com.epam.ta.reportportal.ws.model.log.SaveLogRQ;
 import net.thucydides.model.domain.TestStep;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.function.Function;
 
-@RunWith(MockitoJUnitRunner.StrictStubs.class)
+@ExtendWith(MockitoExtension.class)
 public class LogUnitsHolderTest {
 
     @Mock

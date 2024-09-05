@@ -6,10 +6,8 @@ import com.github.invictum.reportportal.SuiteStorage;
 import net.thucydides.model.domain.Story;
 import net.thucydides.model.domain.TestOutcome;
 import net.thucydides.model.domain.TestResult;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.time.ZonedDateTime;
@@ -17,14 +15,13 @@ import java.time.ZonedDateTime;
 import static com.github.invictum.reportportal.ReportIntegrationConfig.FAILSAFE_RERUN_KEY;
 import static com.github.invictum.reportportal.ReportIntegrationConfig.SUREFIRE_RERUN_KEY;
 
-@RunWith(JUnit4.class)
 public class RegularTest {
 
     private SuiteStorage suiteStorageMock;
     private Launch launchMock;
     private LogUnitsHolder logUnitsHolderMock;
 
-    @Before
+    @BeforeEach
     public void before() {
         suiteStorageMock = Mockito.mock(SuiteStorage.class);
         launchMock = Mockito.mock(Launch.class);

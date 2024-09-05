@@ -1,69 +1,68 @@
 package com.github.invictum.reportportal;
 
 import net.serenitybdd.annotations.Narrative;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static com.github.invictum.reportportal.ReportIntegrationConfig.*;
 
-@RunWith(JUnit4.class)
 public class ReportIntegrationConfigTest {
 
     private ReportIntegrationConfig config;
 
-    @Before
+    @BeforeEach
     public void before() {
         config = new ReportIntegrationConfig();
     }
 
     @Test
     public void defaultPresetTest() {
-        Assert.assertEquals(LogsPreset.DEFAULT, config.preset());
+        Assertions.assertEquals(LogsPreset.DEFAULT, config.preset());
     }
 
     @Test
     public void customPresetTest() {
-        Assert.assertEquals(LogsPreset.CUSTOM, config.usePreset(LogsPreset.CUSTOM).preset());
+        Assertions.assertEquals(LogsPreset.CUSTOM, config.usePreset(LogsPreset.CUSTOM).preset());
     }
 
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void nullCustomPresetTest() {
-        config.usePreset(null);
+        Assertions.assertThrows(NullPointerException.class, () -> {
+            config.usePreset(null);
+        });
     }
 
     @Test
     public void communicationDirectoryNotDefinedTest() {
         System.clearProperty(COMMUNICATION_DIR_KEY);
-        Assert.assertNull(config.communicationDirectory());
+        Assertions.assertNull(config.communicationDirectory());
     }
 
     @Test
     public void communicationDirectoryTest() {
         System.setProperty(COMMUNICATION_DIR_KEY, "dir");
-        Assert.assertEquals("dir", config.communicationDirectory());
+        Assertions.assertEquals("dir", config.communicationDirectory());
     }
 
     @Test
     public void modulesQuantityNotDefinedTest() {
         System.clearProperty(MODULES_COUNT_KEY);
-        Assert.assertEquals(0, config.modulesQuantity());
+        Assertions.assertEquals(0, config.modulesQuantity());
     }
 
     @Test
     public void modulesQuantityTest() {
         System.setProperty(MODULES_COUNT_KEY, "42");
-        Assert.assertEquals(42, config.modulesQuantity());
+        Assertions.assertEquals(42, config.modulesQuantity());
     }
 
     @Test
     public void defaultClassNarrativeFormatterTest() {
         Narrative narrative = TestInstance.class.getAnnotation(Narrative.class);
         String actual = config.formatter().apply(narrative);
-        Assert.assertEquals("line 1\nline 2", actual);
+        Assertions.assertEquals("line 1\nline 2", actual);
     }
 
     @Test
@@ -71,17 +70,17 @@ public class ReportIntegrationConfigTest {
         config.useClassNarrativeFormatter(n -> n.text()[0]);
         Narrative narrative = TestInstance.class.getAnnotation(Narrative.class);
         String actual = config.formatter().apply(narrative);
-        Assert.assertEquals("line 1", actual);
+        Assertions.assertEquals("line 1", actual);
     }
 
     @Test
     public void defaultTruncateNamesTest() {
-        Assert.assertFalse(config.truncateNames);
+        Assertions.assertFalse(config.truncateNames);
     }
 
     @Test
     public void truncateNamesTest() {
-        Assert.assertTrue(config.truncateNames(true).truncateNames);
+        Assertions.assertTrue(config.truncateNames(true).truncateNames);
     }
 
 
@@ -89,20 +88,20 @@ public class ReportIntegrationConfigTest {
     public void retriesCountFailSafeTest() {
         System.clearProperty(SUREFIRE_RERUN_KEY);
         System.setProperty(FAILSAFE_RERUN_KEY, "42");
-        Assert.assertEquals(42, config.retriesCount());
+        Assertions.assertEquals(42, config.retriesCount());
     }
 
     @Test
     public void retriesCountSurefireTest() {
         System.clearProperty(FAILSAFE_RERUN_KEY);
         System.setProperty(SUREFIRE_RERUN_KEY, "69");
-        Assert.assertEquals(69, config.retriesCount());
+        Assertions.assertEquals(69, config.retriesCount());
     }
 
     @Test
     public void retriesCountDefaultTest() {
         System.clearProperty(FAILSAFE_RERUN_KEY);
         System.clearProperty(SUREFIRE_RERUN_KEY);
-        Assert.assertEquals(0, config.retriesCount());
+        Assertions.assertEquals(0, config.retriesCount());
     }
 }

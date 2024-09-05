@@ -7,28 +7,28 @@ import net.thucydides.model.domain.ReportData;
 import net.thucydides.model.domain.TestResult;
 import net.thucydides.model.domain.TestStep;
 import net.thucydides.model.screenshots.ScreenshotAndHtmlSource;
-import org.junit.Assert;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.io.TempDir;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.ZonedDateTime;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Optional;
 
-@RunWith(MockitoJUnitRunner.StrictStubs.class)
+@ExtendWith(MockitoExtension.class)
 public class AttachmentTest {
 
-    @Rule
-    public TemporaryFolder folder = new TemporaryFolder();
+    @TempDir
+    Path tempDir;
 
     @Mock
     private TestStep stepMock;
@@ -36,7 +36,7 @@ public class AttachmentTest {
     @Test
     public void noScreenshots() {
         Collection<SaveLogRQ> logs = Attachment.screenshots().apply(stepMock);
-        Assert.assertTrue(logs.isEmpty());
+        Assertions.assertTrue(logs.isEmpty());
     }
 
     @Test
@@ -45,18 +45,20 @@ public class AttachmentTest {
         Mockito.when(stepMock.getResult()).thenReturn(TestResult.SUCCESS);
         Mockito.when(stepMock.getScreenshots()).thenReturn(Collections.singletonList(screenshotMock));
         Mockito.when(stepMock.getStartTime()).thenReturn(ZonedDateTime.now());
-        Mockito.when(screenshotMock.getScreenshot()).thenReturn(folder.newFile("image.png"));
+        Path screenshotPath = tempDir.resolve("image.png");
+        Files.createFile(screenshotPath);
+        Mockito.when(screenshotMock.getScreenshot()).thenReturn(screenshotPath.toFile());
         Collection<SaveLogRQ> logs = Attachment.screenshots().apply(stepMock);
-        Assert.assertEquals(1, logs.size());
+        Assertions.assertEquals(1, logs.size());
         SaveLogRQ actual = logs.iterator().next();
-        Assert.assertEquals("Screenshot", actual.getMessage());
-        Assert.assertEquals(LogLevel.INFO.toString(), actual.getLevel());
+        Assertions.assertEquals("Screenshot", actual.getMessage());
+        Assertions.assertEquals(LogLevel.INFO.toString(), actual.getLevel());
     }
 
     @Test
     public void noSources() {
         Collection<SaveLogRQ> logs = Attachment.htmlSources().apply(stepMock);
-        Assert.assertTrue(logs.isEmpty());
+        Assertions.assertTrue(logs.isEmpty());
     }
 
     @Test
@@ -64,19 +66,21 @@ public class AttachmentTest {
         ScreenshotAndHtmlSource screenshotMock = Mockito.mock(ScreenshotAndHtmlSource.class);
         Mockito.when(stepMock.getScreenshots()).thenReturn(Collections.singletonList(screenshotMock));
         Mockito.when(stepMock.getStartTime()).thenReturn(ZonedDateTime.now());
-        Optional<File> source = Optional.of(folder.newFile("source.txt"));
+        Path sourcePath = tempDir.resolve("source.txt");
+        Files.createFile(sourcePath);
+        Optional<File> source = Optional.of(sourcePath.toFile());
         Mockito.when(screenshotMock.getHtmlSource()).thenReturn(source);
         Collection<SaveLogRQ> logs = Attachment.htmlSources().apply(stepMock);
-        Assert.assertEquals(1, logs.size());
+        Assertions.assertEquals(1, logs.size());
         SaveLogRQ actual = logs.iterator().next();
-        Assert.assertEquals("HTML Source", actual.getMessage());
-        Assert.assertEquals(LogLevel.FATAL.toString(), actual.getLevel());
+        Assertions.assertEquals("HTML Source", actual.getMessage());
+        Assertions.assertEquals(LogLevel.FATAL.toString(), actual.getLevel());
     }
 
     @Test
     public void noEvidences() {
         Collection<SaveLogRQ> logs = Attachment.evidences().apply(stepMock);
-        Assert.assertTrue(logs.isEmpty());
+        Assertions.assertTrue(logs.isEmpty());
     }
 
     @Test
@@ -85,26 +89,26 @@ public class AttachmentTest {
         Mockito.when(stepMock.getReportEvidence()).thenReturn(Collections.singletonList(reportData));
         Mockito.when(stepMock.getStartTime()).thenReturn(ZonedDateTime.now());
         Collection<SaveLogRQ> logs = Attachment.evidences().apply(stepMock);
-        Assert.assertEquals(1, logs.size());
+        Assertions.assertEquals(1, logs.size());
         SaveLogRQ actual = logs.iterator().next();
-        Assert.assertEquals("title", actual.getMessage());
-        Assert.assertEquals("content", new String(actual.getFile().getContent()));
-        Assert.assertEquals(LogLevel.DEBUG.toString(), actual.getLevel());
+        Assertions.assertEquals("title", actual.getMessage());
+        Assertions.assertEquals("content", new String(actual.getFile().getContent()));
+        Assertions.assertEquals(LogLevel.DEBUG.toString(), actual.getLevel());
     }
 
     @Test
     public void evidenceFromFile() throws IOException {
-        File evidence = folder.newFile("note.txt");
-        Files.write(evidence.toPath(), Collections.singleton("content"));
+        Path evidencePath = tempDir.resolve("note.txt");
+        Files.write(evidencePath, Collections.singleton("content"));
         ReportData reportData = new ReportData("note", null, "note.txt", true);
         Mockito.when(stepMock.getReportEvidence()).thenReturn(Collections.singletonList(reportData));
         Mockito.when(stepMock.getStartTime()).thenReturn(ZonedDateTime.now());
-        ConfiguredEnvironment.getConfiguration().setOutputDirectory(folder.getRoot());
+        ConfiguredEnvironment.getConfiguration().setOutputDirectory(tempDir.toFile());
         Collection<SaveLogRQ> logs = Attachment.evidences().apply(stepMock);
-        Assert.assertEquals(1, logs.size());
+        Assertions.assertEquals(1, logs.size());
         SaveLogRQ actual = logs.iterator().next();
-        Assert.assertEquals("note", actual.getMessage());
-        Assert.assertEquals("content" + System.lineSeparator(), new String(actual.getFile().getContent()));
-        Assert.assertEquals(LogLevel.DEBUG.toString(), actual.getLevel());
+        Assertions.assertEquals("note", actual.getMessage());
+        Assertions.assertEquals("content" + System.lineSeparator(), new String(actual.getFile().getContent()));
+        Assertions.assertEquals(LogLevel.DEBUG.toString(), actual.getLevel());
     }
 }

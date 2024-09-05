@@ -1,37 +1,32 @@
 package com.github.invictum.reportportal;
 
 import net.thucydides.model.domain.TestResult;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
-@RunWith(Parameterized.class)
+import java.util.stream.Stream;
+
 public class UtilsLogLevelTest {
 
-    @Parameterized.Parameter()
-    public TestResult testResult;
-
-    @Parameterized.Parameter(1)
-    public LogLevel status;
-
-    @Test
-    public void logLevelTest() {
-        Assert.assertEquals("Log level is wrong.", Utils.logLevel(testResult), status.toString());
+    @ParameterizedTest
+    @MethodSource("data")
+    public void logLevelTest(TestResult testResult, LogLevel status) {
+        Assertions.assertEquals(status.toString(), Utils.logLevel(testResult), "Log level is wrong.");
     }
 
-    @Parameterized.Parameters(name = "{index}: {0} - {1}")
-    public static Object[][] data() {
-        return new Object[][]{
-                {TestResult.SUCCESS, LogLevel.INFO},
-                {TestResult.ERROR, LogLevel.ERROR},
-                {TestResult.FAILURE, LogLevel.ERROR},
-                {TestResult.PENDING, LogLevel.DEBUG},
-                {TestResult.SKIPPED, LogLevel.DEBUG},
-                {TestResult.IGNORED, LogLevel.DEBUG},
-                {TestResult.COMPROMISED, LogLevel.DEBUG},
-                {TestResult.UNDEFINED, LogLevel.FATAL},
-                {TestResult.UNSUCCESSFUL, LogLevel.FATAL}
-        };
+    private static Stream<Arguments> data() {
+        return Stream.of(
+                Arguments.of(TestResult.SUCCESS, LogLevel.INFO),
+                Arguments.of(TestResult.ERROR, LogLevel.ERROR),
+                Arguments.of(TestResult.FAILURE, LogLevel.ERROR),
+                Arguments.of(TestResult.PENDING, LogLevel.DEBUG),
+                Arguments.of(TestResult.SKIPPED, LogLevel.DEBUG),
+                Arguments.of(TestResult.IGNORED, LogLevel.DEBUG),
+                Arguments.of(TestResult.COMPROMISED, LogLevel.DEBUG),
+                Arguments.of(TestResult.UNDEFINED, LogLevel.FATAL),
+                Arguments.of(TestResult.UNSUCCESSFUL, LogLevel.FATAL)
+        );
     }
 }

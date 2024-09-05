@@ -1,16 +1,13 @@
 package com.github.invictum.reportportal;
 
 import net.thucydides.model.domain.TestStep;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.time.Duration;
 import java.time.ZonedDateTime;
 import java.util.Date;
 
-@RunWith(JUnit4.class)
 public class UtilsTest {
 
     @Test
@@ -19,7 +16,7 @@ public class UtilsTest {
         TestStep step = new TestStep(startTime, "Step description");
         step.setDuration(60000);
         Date expected = Date.from(startTime.plus(Duration.ofMillis(60000)).toInstant());
-        Assert.assertEquals("End date is wrong.", Utils.stepEndDate(step), expected);
+        Assertions.assertEquals(expected, Utils.stepEndDate(step), "End date is wrong.");
     }
 
     @Test
@@ -27,6 +24,6 @@ public class UtilsTest {
         ZonedDateTime startTime = ZonedDateTime.now();
         TestStep step = new TestStep(startTime, "Step description");
         Date expected = Date.from(step.getStartTime().toInstant());
-        Assert.assertEquals("Start date is wrong.", Utils.stepStartDate(step), expected);
+        Assertions.assertEquals(expected, Utils.stepStartDate(step), "Start date is wrong.");
     }
 }

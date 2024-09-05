@@ -1,10 +1,8 @@
 package com.github.invictum.reportportal;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.logging.LogEntries;
@@ -15,13 +13,12 @@ import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 
-@RunWith(JUnit4.class)
 public class LogStorageTest {
 
     private LogStorage storage;
     private Logs logsMock;
 
-    @Before
+    @BeforeEach
     public void beforeTest() {
         storage = new LogStorage();
         logsMock = Mockito.mock(Logs.class);
@@ -36,21 +33,21 @@ public class LogStorageTest {
     public void collectLogsTest() {
         storage.collect(logsMock);
         List<EnhancedLogEntry> actual = storage.query(item -> true);
-        Assert.assertEquals(1, actual.size());
+        Assertions.assertEquals(1, actual.size());
     }
 
     @Test
     public void queryLogsRemoveTest() {
         storage.query(item -> true);
         List<EnhancedLogEntry> actual = storage.query(item -> true);
-        Assert.assertTrue(actual.isEmpty());
+        Assertions.assertTrue(actual.isEmpty());
     }
 
     @Test
     public void cleanLogsTest() {
         storage.collect(logsMock);
         storage.clean();
-        Assert.assertTrue(storage.query(item -> true).isEmpty());
+        Assertions.assertTrue(storage.query(item -> true).isEmpty());
     }
 
     @Test
@@ -64,7 +61,7 @@ public class LogStorageTest {
     public void skipCollectionIfNull() {
         Mockito.when(logsMock.get("data")).thenReturn(null);
         storage.collect(logsMock);
-        Assert.assertTrue(storage.query(item -> true).isEmpty());
+        Assertions.assertTrue(storage.query(item -> true).isEmpty());
     }
 
     @Test
