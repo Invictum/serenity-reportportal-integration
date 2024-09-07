@@ -334,23 +334,42 @@ and add `failsafe.rerunFailingTestsCount` or `surefire.rerunFailingTestsCount` p
 
 #### BDD Scenario test name customization
 
-n some cases, you may need to customize the test name for BDD Scenario Outlines (for example, to insert parameters into
-the test name in ReportPortal). To achieve this, you need to implement the desired customization logic in a class that
-implements the `TestNameTransformer` interface. This class should then be specified in the `ReportIntegrationConfig`.
+In some cases, you may need to customize the test name for BDD Scenario Outlines (for example, to insert parameters into
+the test name in ReportPortal). To achieve this, you need to implement the desired customization logic in a class which
+implements the `TestNameProvider` interface. This class should then be specified in the `ReportIntegrationConfig`.
+For example, to provide ability for test name to insert parameters, the following steps should be performed:
+
+1. Create class `ParametrizedNameProvider`
 
 ```
-ReportIntegrationConfig.get().useTestNameTransformer(new MyTransformer());
-```
-
-```
-public class MyTransformer implements TestNameTransformer {
+public class ParametrizedNameProvider implements TestNameProvider {
 
     @Override
-    public String transformName(TestOutcome testOutcome, int scenarioIndex) {
-        <...
-        //transformation logic
-        ...>
+    public String provideName(TestOutcome testOutcome, int scenarioIndex) {
+        // Regular expression to match content within < >
+        final String parameterRegexp = "<([^>]+)>";
+        final Pattern pattern = Pattern.compile(parameterRegexp);
+        final Matcher matcher = pattern.matcher(testOutcome.getName());
+        final StringBuilder result = new StringBuilder();
+        int index = 0;
+        List<String> replacements = testOutcome.getDataTable().getRows().get(scenarioIndex).getStringValues();
+        // Iterate through the matches and replace with values from the ArrayList
+        while (matcher.find()) {
+            if (index < replacements.size()) {
+                matcher.appendReplacement(result, replacements.get(index));
+                index++;
+            }
+        }
+        // Append the rest of the string
+        matcher.appendTail(result);
+        return result.toString();
     }
+```
+
+2. Update integration configuration
+
+```
+ReportIntegrationConfig.get().useTestNameTransformer(new ParametrizedNameProvider());
 ```
 
 #### Other settings

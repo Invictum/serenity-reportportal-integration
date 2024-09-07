@@ -5,10 +5,10 @@ import net.thucydides.model.domain.TestOutcome;
 /**
  * Default implementation of name as seen in Serenity.
  */
-public class DefaultBddOutlineTestNameTransformer implements TestNameTransformer {
+public class DefaultBddOutlineTestNameProvider implements TestNameProvider {
 
     @Override
-    public String transformName(TestOutcome testOutcome, int scenarioIndex) {
+    public String provideName(TestOutcome testOutcome, int scenarioIndex) {
         return testOutcome.getName();
     }
 }

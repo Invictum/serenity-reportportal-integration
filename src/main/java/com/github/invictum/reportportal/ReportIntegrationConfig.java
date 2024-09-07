@@ -1,7 +1,7 @@
 package com.github.invictum.reportportal;
 
-import com.github.invictum.reportportal.recorder.DefaultBddOutlineTestNameTransformer;
-import com.github.invictum.reportportal.recorder.TestNameTransformer;
+import com.github.invictum.reportportal.recorder.DefaultBddOutlineTestNameProvider;
+import com.github.invictum.reportportal.recorder.TestNameProvider;
 import net.serenitybdd.annotations.Narrative;
 
 import java.util.Objects;
@@ -21,7 +21,7 @@ public class ReportIntegrationConfig {
 
     private LogsPreset preset = LogsPreset.DEFAULT;
     private Function<Narrative, String> classNarrativeFormatter = n -> String.join("\n", n.text());
-    private TestNameTransformer testNameTransformer = new DefaultBddOutlineTestNameTransformer();
+    private TestNameProvider testNameProvider = new DefaultBddOutlineTestNameProvider();
     boolean harvestSeleniumLogs = false;
     boolean truncateNames = false;
 
@@ -62,13 +62,13 @@ public class ReportIntegrationConfig {
     /**
      * Overrides default test name, passed from Serenity, with custom logic.
      */
-    public ReportIntegrationConfig useTestNameTransformer(TestNameTransformer testNameTransformer) {
-        this.testNameTransformer = testNameTransformer;
+    public ReportIntegrationConfig useTestNameTransformer(TestNameProvider testNameProvider) {
+        this.testNameProvider = testNameProvider;
         return this;
     }
 
-    public TestNameTransformer getTestNameTransformer() {
-        return testNameTransformer;
+    public TestNameProvider getTestNameTransformer() {
+        return testNameProvider;
     }
 
     /**

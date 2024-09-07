@@ -32,10 +32,10 @@ public class BddDataDriven extends TestRecorder {
                 .withDescription(out.getUserStory().getNarrative())
                 .build();
         Maybe<String> id = suiteStorage.start(out.getUserStory().getId(), () -> launch.startTestItem(startStory));
-        TestNameTransformer testNameTransformer = ReportIntegrationConfig.get().getTestNameTransformer();
+        TestNameProvider testNameProvider = ReportIntegrationConfig.get().getTestNameTransformer();
         // Start test
         StartTestItemRQ startScenario = new StartEventBuilder(ItemType.STEP)
-                .withName(testNameTransformer.transformName(out, last))
+                .withName(testNameProvider.provideName(out, last))
                 .withStartTime(currentTest.getStartTime())
                 .withParameters(out.getDataTable().row(last))
                 .withTags(out.getTags())
